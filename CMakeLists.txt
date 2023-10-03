@@ -9,7 +9,7 @@ find_package(Threads REQUIRED)
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
 
-add_executable(game1 main.cpp)
+add_executable(game1 main.cpp raylib_impl.cpp)
 
 target_include_directories(game1 PRIVATE ${RAYGUI_INCLUDE_DIRS})
 
@@ -19,7 +19,6 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
 endif()
 
 target_link_libraries(game1 PUBLIC Threads::Threads)
-
 target_link_libraries(game1 PRIVATE raylib)
 
 

@@ -1,36 +1,44 @@
 #include <iostream>
 #include <raylib.h>
-
-#define RAYGUI_IMPLEMENTATION
 #include <raygui.h>
 
-void* print_hello(void* /*data*/) {
-    printf("Hello from thread!\n");
-    return NULL;
-}
-
-void test_pthread()
+struct Game
 {
-//    pthread_t thread_id;
-//    pthread_create(&thread_id, NULL, print_hello, NULL);
-//    pthread_join(thread_id, NULL);
-}
+    uint64_t frameNumber = 0;
+    float buttonX = 100.0f;
+    float buttonY = 100.0f;
+};
+Game game;
 
-void test_raylib()
+void Init()
 {
-    const int screenWidth = 800;
-    const int screenHeight = 600;
+    int screenWidth = 800;
+    int screenHeight = 600;
 
     InitWindow(screenWidth, screenHeight, "Raylib Force Exit Example");
     SetTargetFPS(60);
+}
 
+void Deinit()
+{
+    CloseWindow();
+}
+
+
+void MainLoop()
+{
     while (!WindowShouldClose())
     {
+        game.frameNumber++;
         BeginDrawing();
 
-        if (GuiButton({100.0f, 100.0f, 40.0f, 30.0f}, "Exit"))
+        game.buttonX += float(GetRandomValue(0, 99) - 50) / 50.0f;
+        game.buttonY += float(GetRandomValue(0, 99) - 50) / 100.0f;
+
+        if (GuiButton({game.buttonX, game.buttonY, 40.0f, 30.0f}, "Exit"))
         {
-            CloseWindow();
+            EndDrawing();
+            break;
         }
 
         ClearBackground(RAYWHITE);
@@ -41,7 +49,11 @@ void test_raylib()
 
 int main()
 {
-    test_pthread();
-    test_raylib();
+    Init();
+
+    MainLoop(); // this is the real game
+
+    Deinit();
+
     return 0;
 }
