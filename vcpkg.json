@@ -1,0 +1,4 @@
+ 
+{
+    "dependencies": ["raylib", "pthread", "raygui"]
+}
