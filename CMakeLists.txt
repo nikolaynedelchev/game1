@@ -12,6 +12,7 @@ find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 add_executable(game1 main.cpp raylib_impl.cpp)
 
 target_include_directories(game1 PRIVATE ${RAYGUI_INCLUDE_DIRS})
+target_include_directories(game1 PRIVATE ${RAYLIB_INCLUDE_DIRS})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(game1 PRIVATE -fsanitize=address -fsanitize=undefined)

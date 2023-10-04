@@ -15,7 +15,9 @@ void Init()
     int screenWidth = 800;
     int screenHeight = 600;
 
+    //SetConfigFlags(FLAG_FULLSCREEN_MODE);
     InitWindow(screenWidth, screenHeight, "Raylib Force Exit Example");
+    SetExitKey(KEY_NULL);
     SetTargetFPS(60);
 }
 
@@ -23,7 +25,6 @@ void Deinit()
 {
     CloseWindow();
 }
-
 
 void MainLoop()
 {
@@ -40,6 +41,11 @@ void MainLoop()
             EndDrawing();
             break;
         }
+
+        if (IsKeyDown(KEY_UP))    {  game.buttonY -= 3.0f;}
+        if (IsKeyDown(KEY_DOWN))  {  game.buttonY += 3.0f;}
+        if (IsKeyDown(KEY_LEFT))  {  game.buttonX -= 3.0f;}
+        if (IsKeyDown(KEY_RIGHT)) {  game.buttonX += 3.0f;}
 
         ClearBackground(RAYWHITE);
         DrawText("HELLO WORLD!", 10, 10, 20, DARKGRAY);
