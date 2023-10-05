@@ -1,64 +1,82 @@
 #include "sprite.h"
 
-void test_loader()
-{
-    std::cout << "Hello from loader" << std::endl;
-}
+static map<string, uint32_t> s_texturesIds;
+static vector<Texture2D> s_textures;
 
-void Sprite_Load(Sprite& sprite, string imageFile )
+static bool CreateTexture(const string& imageFile)
 {
-    Sprite_Load(sprite, {0.0f, 0.0f, 0.0f, 0.0f}, imageFile);
-}
-
-void Sprite_Load(Sprite &sprite, Rectangle sourceSubimage, string imageKey)
-{
-    sprite.isLoaded = false;
-
-    Image image = GetImage(imageKey);
+    if (s_texturesIds.find(imageFile) != s_texturesIds.end())
+    {
+        return true;
+    }
+    uint32_t textureId = s_textures.size();
+    Image image = LoadImage(imageFile.c_str());
     if (image.data == nullptr)
     {
-        PrintLn("Error: Empty image: {}", imageKey);
-        return;
+        PrintLn("Error: Empty image: {}", imageFile);
+        return false;
     }
-    sprite.texture = LoadTextureFromImage(image);
-    if (sprite.texture.id == 0)
+    Texture2D texture = LoadTextureFromImage(image);
+    if (texture.id == 0)
     {
-        PrintLn("Error: Texture construct failed: {}", imageKey);
-        return;
+        UnloadImage(image);
+        PrintLn("Error: Texture construct failed: {}", imageFile);
+        return false;
     }
+    s_texturesIds[imageFile] = s_textures.size();
+    s_textures.push_back(texture);
+    UnloadImage(image);
+    return true;
+}
+
+Sprite CreateSprite(const string& imageFile, Rectangle sourceSubimage)
+{
+    if (CreateTexture(imageFile) == false)
+    {
+        return Sprite();
+    }
+    Sprite sprite;
+    sprite.textureId = s_texturesIds[imageFile];
+    Texture2D texture = s_textures[sprite.textureId];
     sprite.rotate = 0.0f;
-    if (sourceSubimage.x != 0.0f || sourceSubimage.y != 0.0 ||
-        sourceSubimage.width != 0.0f || sourceSubimage.height != 0.0)
+    if (sourceSubimage.x != 0.0f || sourceSubimage.y != 0.0f ||
+        sourceSubimage.width != 0.0f || sourceSubimage.height != 0.0f)
     {
         sprite.sourceSubimage = sourceSubimage;
     }
     else
     {
-        sprite.sourceSubimage = {0.0f, 0.0f, float(sprite.texture.width), float(sprite.texture.height)};
+        sprite.sourceSubimage = {0.0f, 0.0f, float(texture.width), float(texture.height)};
     }
-    sprite.position = {0.0f, 0.0f, float(sprite.texture.width), float(sprite.texture.height)};
+    sprite.position = {0.0f, 0.0f, float(texture.width), float(texture.height)};
     sprite.enabled = true;
     sprite.isLoaded = true;
+    return sprite;
 }
 
-void Sprite_Unload(Sprite&sprite)
+void ReleaseSpritres()
 {
-    UnloadTexture(sprite.texture);
+    for(auto& t : s_textures)
+    {
+        UnloadTexture(t);   
+    }
+    s_textures.clear();
+    s_texturesIds.clear();
 }
 
-void Sprite_Draw(const Sprite& sprite)
+void DrawSprite(const Sprite& sprite)
 {
     if (sprite.isLoaded == false ||
         sprite.enabled == false)
     {
         return;
     }
-    DrawTexturePro(sprite.texture, 
+    DrawTexturePro(s_textures[ sprite.textureId ], 
                    sprite.sourceSubimage, 
                    {
                         // destination rectangle
-                        sprite.position.x - float(sprite.sourceSubimage.width) / 2.0f,
-                        sprite.position.y - float(sprite.sourceSubimage.height) / 2.0f,
+                        sprite.position.x,
+                        sprite.position.y,
                         float(sprite.sourceSubimage.width),
                         float(sprite.sourceSubimage.height)
                    },

@@ -1,20 +1,16 @@
 #pragma once
-#include "tools.h"
+#include "engine.h"
 
 struct Sprite
 {
     bool enabled = false;
     bool isLoaded = false;
-    Rectangle position;
-    Rectangle sourceSubimage;
+    Rectangle position = {0.0f, 0.0f, 0.0f, 0.0f};
+    Rectangle sourceSubimage = {0.0f, 0.0f, 0.0f, 0.0f};
     float rotate = 0.0f;
-    Texture2D texture;
+    uint32_t textureId = 0;
 };
 
-void Sprite_Load(Sprite&, string imageKey);
-void Sprite_Load(Sprite&, Rectangle sourceSubimage, string imageKey);
-
-void Sprite_Unload(Sprite&);
-void Sprite_Draw(const Sprite&);
-
-void test_loader();
+Sprite CreateSprite(const string& imageFile, Rectangle sourceSubimage);
+void ReleaseSpritres();
+void DrawSprite(const Sprite&);

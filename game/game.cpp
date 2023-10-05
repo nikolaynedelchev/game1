@@ -1,4 +1,4 @@
-#include <engine/tools.h>
+#include <engine/engine.h>
 
 struct Game
 {
@@ -7,7 +7,6 @@ struct Game
     float buttonY = 100.0f;
 };
 Game game;
-Texture2D testTexture;
 Sprite testSprite;
 
 void Init()
@@ -20,12 +19,9 @@ void Init()
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
     //
-    LoadImage("../resources/images/test/coins.png", "coins");
-    Sprite_Load(testSprite, {40.0f, 40.0f, 85.0f, 85.0f}, "coins");
-
-    Image myImage = LoadImage("../resources/images/test/coins.png");
-    testTexture = LoadTextureFromImage(myImage);
-
+    testSprite = CreateSprite("../resources/images/test/coins.png", {});
+    testSprite.position.width = 100;
+    testSprite.position.height = 100;
 }
 
 void Deinit()
@@ -43,12 +39,6 @@ void MainLoop()
         game.buttonX += float(GetRandomValue(0, 99) - 50) / 50.0f;
         game.buttonY += float(GetRandomValue(0, 99) - 50) / 100.0f;
 
-        if (GuiButton({game.buttonX, game.buttonY, 40.0f, 30.0f}, "Exit"))
-        {
-            EndDrawing();
-            break;
-        }
-
         if (IsKeyDown(KEY_UP))    {  game.buttonY -= 3.0f;}
         if (IsKeyDown(KEY_DOWN))  {  game.buttonY += 3.0f;}
         if (IsKeyDown(KEY_LEFT))  {  game.buttonX -= 3.0f;}
@@ -57,22 +47,16 @@ void MainLoop()
         ClearBackground(RAYWHITE);
         DrawText("HELLO WORLD!", 10, 10, 20, DARKGRAY);
 
-        // DrawTexturePro(testTexture, {0.0f, 0.0f, 190.0f, 250.0f}, 
-        //                             {game.buttonX + 40.0f, game.buttonY + 20.0f, 190.0f, 250.0f}, 
-        //                             {0.0f, 0.0f}, 
-        //                             0, 
-        //                             WHITE);
+        testSprite.position.x = game.buttonX;
+        testSprite.position.y = game.buttonY;
+        
+        DrawSprite(testSprite);
 
-
-        // DrawTexturePro(testTexture, {0.0f, 0.0f, 190.0f, 250.0f}, 
-        //                             {game.buttonX + 90.0f, game.buttonY + 120.0f, 190.0f, 250.0f}, 
-        //                             {0.0f, 0.0f}, 
-        //                             0, 
-        //                             WHITE);
-
-        testSprite.position.x = game.buttonX + 11;
-        testSprite.position.y = game.buttonY + 33;
-        Sprite_Draw(testSprite);
+        if (GuiButton({game.buttonX, game.buttonY, 40.0f, 30.0f}, "Exit"))
+        {
+            EndDrawing();
+            break;
+        }
 
         EndDrawing();
     }
@@ -80,7 +64,6 @@ void MainLoop()
 
 int main()
 {
-    test_loader();
     Init();
 
     MainLoop(); // this is the real game
