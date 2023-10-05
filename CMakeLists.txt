@@ -22,6 +22,7 @@ endif()
 target_link_libraries(game1 PUBLIC Threads::Threads)
 target_link_libraries(game1 PRIVATE raylib)
 
+file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
 
 

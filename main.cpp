@@ -9,7 +9,7 @@ struct Game
     float buttonY = 100.0f;
 };
 Game game;
-
+Texture2D testTexture;
 void Init()
 {
     int screenWidth = 800;
@@ -19,6 +19,9 @@ void Init()
     InitWindow(screenWidth, screenHeight, "Raylib Force Exit Example");
     SetExitKey(KEY_NULL);
     SetTargetFPS(60);
+    //
+    Image myImage = LoadImage("../resources/images/test/coins.png");
+    testTexture = LoadTextureFromImage(myImage);
 }
 
 void Deinit()
@@ -49,6 +52,13 @@ void MainLoop()
 
         ClearBackground(RAYWHITE);
         DrawText("HELLO WORLD!", 10, 10, 20, DARKGRAY);
+
+        DrawTexturePro(testTexture, {0.0f, 0.0f, 190.0f, 250.0f}, 
+                                    {game.buttonX + 40.0f, game.buttonY + 20.0f, 190.0f, 250.0f}, 
+                                    {0.0f, 0.0f}, 
+                                    0, 
+                                    WHITE);
+
         EndDrawing();
     }
 }
