@@ -1,4 +1,4 @@
  
 {
-    "dependencies": ["raylib", "pthread", "raygui"]
+    "dependencies": ["raylib", "pthread", "raygui", "fmt"]
 }

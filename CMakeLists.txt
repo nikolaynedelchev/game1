@@ -6,13 +6,20 @@ project(Game1 VERSION 1.0)
 
 find_package(raylib CONFIG REQUIRED)
 find_package(Threads REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+
 find_path(RAYGUI_INCLUDE_DIRS "raygui.h")
 
+file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/engine/*.cpp
+                               ${CMAKE_SOURCE_DIR}/engine/*.c
+                               ${CMAKE_SOURCE_DIR}/game/*.cpp
+                               ${CMAKE_SOURCE_DIR}/game/*.c)
 
-add_executable(game1 main.cpp raylib_impl.cpp)
+add_executable(game1 ${SOURCE_FILES})
 
 target_include_directories(game1 PRIVATE ${RAYGUI_INCLUDE_DIRS})
 target_include_directories(game1 PRIVATE ${RAYLIB_INCLUDE_DIRS})
+target_include_directories(game1 PRIVATE ${CMAKE_SOURCE_DIR})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     target_compile_options(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
@@ -21,6 +28,7 @@ endif()
 
 target_link_libraries(game1 PUBLIC Threads::Threads)
 target_link_libraries(game1 PRIVATE raylib)
+target_link_libraries(game1 PRIVATE fmt::fmt)
 
 file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
