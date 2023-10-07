@@ -1,102 +1,112 @@
 #include "sprite.h"
-
-static map<string, uint32_t> s_texturesIds;
-static vector<Texture2D> s_textures;
-
-static bool CreateTexture(const string& imageFile)
+#include "casts.h"
+namespace dd
 {
-    if (s_texturesIds.find(imageFile) != s_texturesIds.end())
+    static map<string, uint32_t> s_ids;
+    static vector<texture> s_textures;
+
+    static bool create(const string& imageFile)
     {
+        if (s_ids.find(imageFile) != s_ids.end())
+        {
+            return true;
+        }
+        uint32_t textureId = s_textures.size();
+        string fullFileName = "../resources/images/" + imageFile;
+        Image image = LoadImage(fullFileName.c_str());
+        if (image.data == nullptr)
+        {
+            PrintLn("Error: Empty image: key: {} , full: {}", imageFile, fullFileName);
+            return false;
+        }
+        Texture2D texture = LoadTextureFromImage(image);
+        if (texture.id == 0)
+        {
+            UnloadImage(image);
+            PrintLn("Error: Texture construct failed: key: {} , full: {}", imageFile, fullFileName);
+            return false;
+        }
+        s_ids[imageFile] = s_textures.size();
+        s_textures.push_back(cast(texture));
+        UnloadImage(image);
         return true;
     }
-    uint32_t textureId = s_textures.size();
-    string fullFileName = "../resources/images/" + imageFile;
-    Image image = LoadImage(fullFileName.c_str());
-    if (image.data == nullptr)
-    {
-        PrintLn("Error: Empty image: key: {} , full: {}", imageFile, fullFileName);
-        return false;
-    }
-    Texture2D texture = LoadTextureFromImage(image);
-    if (texture.id == 0)
-    {
-        UnloadImage(image);
-        PrintLn("Error: Texture construct failed: key: {} , full: {}", imageFile, fullFileName);
-        return false;
-    }
-    s_texturesIds[imageFile] = s_textures.size();
-    s_textures.push_back(texture);
-    UnloadImage(image);
-    return true;
-}
 
-Sprite CreateSprite(const string& imageFile, 
-                    Rectangle sourceShape, 
-                    float scale, 
-                    Vector2 offset)
-{
-    auto textureIdIt = s_texturesIds.find(imageFile);
-    if (textureIdIt == s_texturesIds.end())
+    namespace gfx
     {
-        if (CreateTexture(imageFile) == false)
+        ::dd::sprite load_sprite(const string& imageFile, 
+                                 rectangle source,
+                                 transform targetTransform)
         {
-            FatalError("Faild to create texture: {}", imageFile);
-            return Sprite();
+            auto id_it = s_ids.find(imageFile);
+            if (id_it == s_ids.end())
+            {
+                if (create(imageFile) == false)
+                {
+                    FatalError("Faild to create texture: {}", imageFile);
+                    return ::dd::sprite();
+                }
+                id_it = s_ids.find(imageFile);
+                if (id_it == s_ids.end())
+                {
+                    FatalError("Error: CreateTexture unknown failier: {}", imageFile);
+                    return ::dd::sprite();
+                }
+            }
+            ::dd::sprite sprite;
+            sprite.textureId = id_it->second;
+            texture texture = s_textures[sprite.textureId];
+            sprite.rotate = 0.0f;
+            sprite.source = source;
+            if (sprite.source.width == 0.0f && sprite.source.height == 0.0f)
+            {
+                sprite.source.width = float(texture.width);
+                sprite.source.height = float(texture.height);
+            }
+            sprite.target = targetTransform;
+            sprite.position = {0.0f, 0.0f};
+            sprite.enabled = true;
+            sprite.isLoaded = true;
+            return sprite;
         }
-        textureIdIt = s_texturesIds.find(imageFile);
-        if (textureIdIt == s_texturesIds.end())
+
+        void release_spritres()
         {
-            FatalError("Error: CreateTexture unknown failier: {}", imageFile);
-            return Sprite();
+            for(auto& t : s_textures)
+            {
+                UnloadTexture(cast(t));   
+            }
+            s_textures.clear();
+            s_ids.clear();
         }
-    }
-    Sprite sprite;
-    sprite.textureId = textureIdIt->second;
-    Texture2D texture = s_textures[sprite.textureId];
-    sprite.rotate = 0.0f;
-    if (sourceShape.x != 0.0f || sourceShape.y != 0.0f ||
-        sourceShape.width != 0.0f || sourceShape.height != 0.0f)
-    {
-        sprite.sourceShape = sourceShape;
-    }
-    else
-    {
-        sprite.sourceShape = {0.0f, 0.0f, float(texture.width), float(texture.height)};
-    }
-    sprite.targetShape = {0.0f, 0.0f, float(texture.width), float(texture.height)};
-    sprite.position = {0.0f, 0.0f};
-    sprite.enabled = true;
-    sprite.isLoaded = true;
-    sprite.targetShape *= scale;
-    sprite.targetShape += offset * scale;
-    return sprite;
-}
 
-void ReleaseSpritres()
-{
-    for(auto& t : s_textures)
-    {
-        UnloadTexture(t);   
-    }
-    s_textures.clear();
-    s_texturesIds.clear();
-}
+        void draw(const ::dd::sprite& sprite)
+        {
+            if (sprite.isLoaded == false ||
+                sprite.enabled == false)
+            {
+                return;
+            }
 
-void DrawSprite(const Sprite& sprite)
-{
-    if (sprite.isLoaded == false ||
-        sprite.enabled == false)
-    {
-        return;
-    }
-    DrawTexturePro(s_textures[ sprite.textureId ], 
-                   sprite.sourceShape,
-                   sprite.targetShape + sprite.position,
-                   {
-                        // origin of the sprite (set to the center of the image)
-                        float(sprite.targetShape.width) / 2.0f,
-                        float(sprite.targetShape.height) / 2.0f
-                   }, 
-                   sprite.rotate, WHITE);
+            auto dest = (dd::rectangle{0.0f, 0.0f, sprite.source.width, sprite.source.height} *
+                        sprite.target) + sprite.position;
 
+            auto origin = (point{sprite.source.width,
+                                 sprite.source.height} * sprite.target.scale) / 2.0f;
+
+            DrawTexturePro(cast(s_textures[ sprite.textureId ]), 
+                           cast(sprite.source),
+                           cast(dest),
+                           cast(origin),
+                           0.0f,
+                           WHITE);
+        }
+
+        point global_pos(const sprite& sprite)
+        {
+            return (dd::point{0.0f, 0.0f} * sprite.target) + sprite.position;
+        }
+
+
+    }
 }

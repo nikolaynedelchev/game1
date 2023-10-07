@@ -6,9 +6,6 @@
 #include <map>
 #include <cinttypes>
 #include <cmath>
-
-#include <raylib.h>
-#include <raygui.h>
 #include <fmt/format.h>
 
 using namespace std;

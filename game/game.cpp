@@ -6,72 +6,56 @@ struct Game
 };
 Game game;
 
-Sprite testSprite;
-Sprite heroSprite;
-Sprite heroUpSprite;
-Sprite powerupSprite;
-Sprite leftMissileSprite;
-Sprite rightMissileSprite;
-Sprite bulletSprite;
+dd::sprite heroSprite;
+dd::sprite leftMissileSprite;
+dd::sprite rightMissileSprite;
+dd::sprite bulletSprite;
 
-Bound heroBound;
+dd::bound heroBound;
+dd::sound shotSound;
 
-Bound testBound;
 
-Sound shotSound;
 void Init()
 {
-    int screenWidth = 1680;
-    int screenHeight = 1050;
+    int screenWidth = 1440;
+    int screenHeight = 900;
 
-    //SetConfigFlags(FLAG_FULLSCREEN_MODE);
-    InitWindow(screenWidth, screenHeight, "Raylib Force Exit Example");
-    InitAudioDevice();
-    //SetExitKey(KEY_NULL);
-    SetTargetFPS(60);
-    HideCursor();
+    //dd::window::set_fullscreen_flag();
+    dd::window::init(screenWidth, screenHeight, "Raylib Force Exit Example");
+    dd::audio::init();
+    //dd::kbd::set_exitkey(dd::keys::NONE);
+    //
+    dd::time::target_fps(60);
+    dd::mouse::cursor_hide();
 
     PrintLn("Loading resources...");
     //
-    testSprite = CreateSprite("test/coins.png", {});
-    testSprite.targetShape.width = 80;
-    testSprite.targetShape.height = 80;
-    //
-    float heroScale = 0.5f;
-    heroSprite = CreateSprite("test/hero.png", {}, heroScale);
+    dd::transform heroTr = {{}, {0.30f, 0.35f}};
+    dd::transform heroLeftMissilesTr = dd::transform{-80.0f, -80.0f, 1.0f, 0.8f} * heroTr;
+    dd::transform heroRightMissilesTr = dd::transform{+80.0f, -80.0f, 1.0f, 0.8f} * heroTr;
+    dd::transform bulletTr = dd::transform{{}, {0.3f, 0.5f}} * heroTr;
+
+    heroSprite = dd::gfx::load_sprite("test/hero.png", {}, heroTr);
     heroSprite.position.x = 250.0f;
     heroSprite.position.y = 800.0f;
-    heroBound.rects.push_back({-25.0f, -20.0f, 50, 60});
-    heroBound.rects.push_back({-50.0f, 3.0f, 40, 35});
-    heroBound.rects.push_back({+10.0f, 3.0f, 40, 35});
-    heroBound.rects.push_back({-10.0f, -40.0f, 20, 20});
+    heroBound.rects.push_back(heroTr * dd::rectangle{-50.0f, -40.0f, 100, 120});
+    heroBound.rects.push_back(heroTr * dd::rectangle{-100.0f, 6.0f,   80,   70});
+    heroBound.rects.push_back(heroTr * dd::rectangle{+20.0f, 6.0f,  80, 70});
+    heroBound.rects.push_back(heroTr * dd::rectangle{-20.0f  , -80.0f, 40,  40});
 
-    //heroBound.circles.push_back({{0.0f, -150.0f}, 35.0f});
-    //heroBound.circles.push_back({{0.0f, 160.0f}, 30.0f});
-
-
-    testBound.rects.push_back({-55.0f, 3.0f, 40, 35});
-    testBound.rects.push_back({+85.0f, 3.0f, 40, 35});
-    testBound.circles.push_back({{360.0f, 5.0f}, 35.0f});
-    testBound.circles.push_back({{620.0f, 8.0f}, 30.0f});
+    leftMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroLeftMissilesTr);
+    rightMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroTr * heroRightMissilesTr);
+    bulletSprite = dd::gfx::load_sprite("test/bullet.png", {}, heroTr * bulletTr);
 
 
-    heroUpSprite = CreateSprite("test/hero_up.png", {});
-    leftMissileSprite = CreateSprite("test/hero_missile.png", {}, heroScale * 0.8f, {-45, +40});
-    rightMissileSprite = CreateSprite("test/hero_missile.png", {}, heroScale * 0.8f, {+45, +40});
-    bulletSprite = CreateSprite("test/bullet.png", {}, heroScale * 0.4f);
-
-    powerupSprite = CreateSprite("test/powerup.png", {});
-
-    shotSound = LoadSound("../resources/sounds/tests/shot.wav");
-
+    shotSound = dd::audio::load_sound("../resources/sounds/tests/shot.wav");
 
     PrintLn("Resource loaded!");
 }
 
 void Deinit()
 {
-    CloseWindow();
+    dd::window::close();
 }
 
 void MainLoop()
@@ -79,77 +63,77 @@ void MainLoop()
     bool showMissilies = true;
     int bulletsCooldown = 0;
     int equipCooldown = 0;
-    std::vector<Sprite> bullets;
-    while (!WindowShouldClose())
+    std::vector<dd::sprite> bullets;
+    while ( !dd::window::should_close() )
     {
         game.frameNumber++;
-        BeginDrawing();
-
-        //heroSprite.position.x += float(GetRandomValue(0, 99) - 50) / 50.0f;
-        //heroSprite.position.y += float(GetRandomValue(0, 99) - 50) / 100.0f;
 
         if (1)
         {
-            if (IsKeyDown(KEY_UP))    {  heroSprite.position.y -= 3.0f;}
-            if (IsKeyDown(KEY_DOWN))  {  heroSprite.position.y += 3.0f;}
-            if (IsKeyDown(KEY_LEFT))  {  heroSprite.position.x -= 3.0f;}
-            if (IsKeyDown(KEY_RIGHT)) {  heroSprite.position.x += 3.0f;}
-            if (IsKeyDown(KEY_F))     { ToggleFullscreen(); }
+            if (dd::kbd::key_down(dd::keys::UP))    {  heroSprite.position.y -= 3.0f;}
+            if (dd::kbd::key_down(dd::keys::DOWN))  {  heroSprite.position.y += 3.0f;}
+            if (dd::kbd::key_down(dd::keys::LEFT))  {  heroSprite.position.x -= 3.0f;}
+            if (dd::kbd::key_down(dd::keys::RIGHT)) {  heroSprite.position.x += 3.0f;}
+            if (dd::kbd::key_down(dd::keys::F))     {  dd::window::toggle_fullscreen(); }
             if (equipCooldown <= 0)
             {
-                if (IsKeyDown(KEY_LEFT_CONTROL)) 
+                if (dd::kbd::key_down(dd::keys::LEFT_CONTROL)) 
                 {
                     equipCooldown = 10;
                     showMissilies = !showMissilies; 
                 }
             }
-            else if (IsKeyUp(KEY_LEFT_CONTROL))
+            else if (dd::kbd::key_up(dd::keys::LEFT_CONTROL))
             {
                 equipCooldown = 0;
             }
-            heroSprite.position += GetMouseDelta();
+            heroSprite.position += dd::mouse::delta();
         }
 
-        if (heroSprite.position.y < 750.0f)
+        if (heroSprite.position.y < 650.0f)
         {
-            heroSprite.position.y = 750.0f;
+            heroSprite.position.y = 650.0f;
         }
-        if (heroSprite.position.y > 1000.0f)
+        if (heroSprite.position.y > 850.0f)
         {
-            heroSprite.position.y = 1000.0f;
+            heroSprite.position.y = 850.0f;
         }
         if (heroSprite.position.x < 0.0f)
         {
             heroSprite.position.x = 0.0f;
         }
-        if (heroSprite.position.x > 1680.0f)
+        if (heroSprite.position.x > 1440.0f)
         {
-            heroSprite.position.x = 1680.0f;
+            heroSprite.position.x = 1440.0f;
         }
+
+        leftMissileSprite.position = heroSprite.position;
+        rightMissileSprite.position = heroSprite.position;
 
         if (bulletsCooldown <= 0)
         {
-            if (IsKeyDown(KEY_SPACE) || IsMouseButtonDown(0))  
+            if ( dd::kbd::key_down(dd::keys::SPACE) || dd::mouse::btn_down(0))
             {  
                 bulletsCooldown = 15;
 
                 bullets.push_back(bulletSprite);
                 bullets.back().position = heroSprite.position;
-                bullets.push_back(bulletSprite);
                 if (showMissilies)
                 {
-                    bullets.back().position = heroSprite.position + Vector2{+40.0f, +35.0f};
                     bullets.push_back(bulletSprite);
-                    bullets.back().position = heroSprite.position + Vector2{-40.0f, +35.0f};
+                    bullets.back().position = dd::gfx::global_pos(leftMissileSprite);
+                    bullets.push_back(bulletSprite);
+                    bullets.back().position = dd::gfx::global_pos(rightMissileSprite);
                 } 
-                PlaySound(shotSound);
+                dd::audio::play(shotSound);
             }
         }
         else
         {
             bulletsCooldown--;
         }
-        std::vector<Sprite> tmpBullets = std::move(bullets);
+
+        std::vector<dd::sprite> tmpBullets = std::move(bullets);
         for(auto& b : tmpBullets)
         {
             if (b.position.y > 0)
@@ -158,34 +142,21 @@ void MainLoop()
                 bullets.push_back(b);
             }
         }
-        for(const auto& b : bullets) DrawSprite(b);
+        for(const auto& b : bullets) dd::gfx::draw(b);
 
-        ClearBackground(BLACK);
-        string msg = fmt::format("X={}, Y={}", leftMissileSprite.targetShape.x, leftMissileSprite.targetShape.y);
-        DrawText(msg.c_str(), 10, 10, 40, DARKGRAY);
+        dd::gfx::begin();
+        dd::gfx::clear(dd::colors::black);
 
-        DrawSprite(heroSprite);
-
-        leftMissileSprite.position = heroSprite.position;
-        rightMissileSprite.position = heroSprite.position;
+        dd::gfx::write({"Hello world", {100, 100}, 50, dd::colors::red});
+        dd::gfx::draw(heroSprite);
 
         if (showMissilies)
         {
-            DrawSprite(leftMissileSprite);
-            DrawSprite(rightMissileSprite);
+            dd::gfx::draw(leftMissileSprite);
+            dd::gfx::draw(rightMissileSprite);
         }
 
-        //DrawBound(heroSprite, heroBound);
-
-        powerupSprite.position = {300.0f, 700.0f};
-        //DrawBound(powerupSprite, testBound);
-
-        if (CheckCollision(heroSprite, heroBound, powerupSprite, testBound))
-        {
-            //DrawText("Collision", 10, 60, 40, DARKGRAY);
-        }
-
-        EndDrawing();
+        dd::gfx::end();
     }
 }
 

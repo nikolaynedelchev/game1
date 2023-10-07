@@ -1,19 +1,31 @@
 #pragma once
 #include "libs.h"
+#include "engine_bridge.h"
 
-struct Circle
+namespace dd
 {
-    Vector2 center;
+struct circle
+{
+    point center;
     float radius;
 };
+}
 
-Circle& operator+=(Circle& c1, const Vector2& v2);
-Circle operator+(const Circle& c1, const Vector2& v2);
-Circle& operator-=(Circle& c1, const Vector2& v2);
-Circle operator-(const Circle& c1, const Vector2& v2);
-Circle& operator*=(Circle& c1, const float& v2);
-Circle operator*(const Circle& c1, const float& v2);
-Circle& operator/=(Circle& c1, const float& v2);
-Circle operator/(const Circle& c1, const float& v2);
+dd::circle& operator+=(dd::circle& c1, const dd::point& v2);
+dd::circle operator+(const dd::circle& c1, const dd::point& v2);
+dd::circle& operator-=(dd::circle& c1, const dd::point& v2);
+dd::circle operator-(const dd::circle& c1, const dd::point& v2);
+dd::circle& operator*=(dd::circle& c1, const float& v2);
+dd::circle operator*(const dd::circle& c1, const float& v2);
+dd::circle& operator/=(dd::circle& c1, const float& v2);
+dd::circle operator/(const dd::circle& c1, const float& v2);
 
-void DrawCircle(const Circle&, Color, bool filled = false);
+namespace dd
+{
+    namespace gfx
+    {
+        void draw(const dd::circle&, color, bool filled = false);
+        void draw(const dd::rectangle&, color, bool filled = false);
+        void draw(const dd::point&, color, bool bold = false);
+    }
+}

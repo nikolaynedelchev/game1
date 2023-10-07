@@ -3,13 +3,19 @@
 #include "sprite.h"
 #include "shapes.h"
 
-struct Bound
+namespace dd
 {
-    vector<Rectangle> rects;
-    vector<Circle> circles;
+struct bound
+{
+    vector<rectangle> rects;
+    vector<circle> circles;
 };
 
-bool CheckCollision(const Sprite& s1, const Bound& b1,
-                    const Sprite& s2, const Bound& b2);
+namespace gfx
+{
+bool collision(const dd::sprite& s1, const dd::bound& b1,
+               const dd::sprite& s2, const dd::bound& b2);
 
-void DrawBound(const Sprite& s, const Bound& b);
+void draw(const dd::sprite& s, const dd::bound& b);
+}
+}
