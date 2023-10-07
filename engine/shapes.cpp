@@ -50,22 +50,46 @@ circle operator/(const circle& c1, const float& v2)
 
 namespace dd
 {
-    namespace gfx
+namespace gfx
+{
+    void draw(const ::dd::circle& circle, color color, bool filled)
     {
-        void draw(const ::dd::circle& circle, color color, bool filled)
+        if (filled)
         {
-            if (filled)
-            {
-                DrawCircle(int(circle.center.x),
-                        int(circle.center.y),
-                        circle.radius, cast(color));
-            }
-            else
-            {
-                DrawCircleLines(int(circle.center.x),
-                                int(circle.center.y),
-                                circle.radius, cast(color));
-            }
+            DrawCircle(int(circle.center.x),
+                    int(circle.center.y),
+                    circle.radius, cast(color));
+        }
+        else
+        {
+            DrawCircleLines(int(circle.center.x),
+                            int(circle.center.y),
+                            circle.radius, cast(color));
         }
     }
+
+    void draw(const rect& r, color c, bool filled)
+    {
+        if (filled)
+        {
+            DrawRectangle(int(r.x), int(r.y), int(r.width), int(r.height), cast(c));
+        }
+        else
+        {
+            DrawRectangleLines(int(r.x), int(r.y), int(r.width), int(r.height), cast(c));
+        }
+    }
+
+    void draw(const point& p, color c, bool bold)
+    {
+        if (bold)
+        {
+            draw(circle{p, 3.0f}, c, true);
+        }
+        else
+        {
+            DrawPixel(int(p.x), int(p.y), cast(c));
+        }
+    }
+}
 }

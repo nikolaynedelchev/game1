@@ -19,7 +19,7 @@ dd::vec operator*(const dd::vec&, const dd::transform&);
 dd::vec operator*(const dd::transform&, const dd::vec&);
 dd::vec& operator*=(dd::vec&, const dd::transform&);
 //
-dd::rectangle operator*(const dd::rectangle&, const dd::transform&);
-dd::rectangle operator*(const dd::transform&, const dd::rectangle&);
-dd::rectangle& operator*=(dd::rectangle&, const dd::transform&);
+dd::rect operator*(const dd::rect&, const dd::transform&);
+dd::rect operator*(const dd::transform&, const dd::rect&);
+dd::rect& operator*=(dd::rect&, const dd::transform&);
 //

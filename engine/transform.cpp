@@ -41,7 +41,7 @@ dd::vec& operator*=(dd::vec& v1, const dd::transform& t2)
     return v1;
 }
 
-dd::rectangle operator*(const dd::rectangle& r1, const dd::transform& t2)
+dd::rect operator*(const dd::rect& r1, const dd::transform& t2)
 {
     auto r = r1;
     r.x += t2.offset.x;
@@ -53,7 +53,7 @@ dd::rectangle operator*(const dd::rectangle& r1, const dd::transform& t2)
     return r;
 }
 
-dd::rectangle operator*(const dd::transform& t1, const dd::rectangle& r2)
+dd::rect operator*(const dd::transform& t1, const dd::rect& r2)
 {
     auto r = r2;
     r.x += t1.offset.x;
@@ -65,7 +65,7 @@ dd::rectangle operator*(const dd::transform& t1, const dd::rectangle& r2)
     return r;
 }
 
-dd::rectangle& operator*=(dd::rectangle& r1, const dd::transform& t2)
+dd::rect& operator*=(dd::rect& r1, const dd::transform& t2)
 {
     r1.x += t2.offset.x;
     r1.y += t2.offset.y;

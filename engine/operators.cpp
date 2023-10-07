@@ -183,14 +183,14 @@ dd::point operator/(float v1, dd::point& v2)
     return r;
 }
 
-dd::rectangle& operator+=(dd::rectangle& r1, const dd::point& v2)
+dd::rect& operator+=(dd::rect& r1, const dd::point& v2)
 {
     r1.x += v2.x;
     r1.y += v2.y;
     return r1;
 }
 
-dd::rectangle operator+(const dd::rectangle& r1, const dd::point& v2)
+dd::rect operator+(const dd::rect& r1, const dd::point& v2)
 {
     auto r = r1;
     r.x += v2.x;
@@ -198,14 +198,14 @@ dd::rectangle operator+(const dd::rectangle& r1, const dd::point& v2)
     return r;
 }
 
-dd::rectangle& operator-=(dd::rectangle& r1, const dd::point& v2)
+dd::rect& operator-=(dd::rect& r1, const dd::point& v2)
 {
     r1.x -= v2.x;
     r1.y -= v2.y;
     return r1;
 }
 
-dd::rectangle operator-(const dd::rectangle& r1, const dd::point& v2)
+dd::rect operator-(const dd::rect& r1, const dd::point& v2)
 {
     auto r = r1;
     r.x -= v2.x;

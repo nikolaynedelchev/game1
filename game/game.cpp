@@ -38,14 +38,14 @@ void Init()
     heroSprite = dd::gfx::load_sprite("test/hero.png", {}, heroTr);
     heroSprite.position.x = 250.0f;
     heroSprite.position.y = 800.0f;
-    heroBound.rects.push_back(heroTr * dd::rectangle{-50.0f, -40.0f, 100, 120});
-    heroBound.rects.push_back(heroTr * dd::rectangle{-100.0f, 6.0f,   80,   70});
-    heroBound.rects.push_back(heroTr * dd::rectangle{+20.0f, 6.0f,  80, 70});
-    heroBound.rects.push_back(heroTr * dd::rectangle{-20.0f  , -80.0f, 40,  40});
+    heroBound.rects.push_back(heroTr * dd::rect{-50.0f, -40.0f, 100, 120});
+    heroBound.rects.push_back(heroTr * dd::rect{-100.0f, 6.0f,   80,   70});
+    heroBound.rects.push_back(heroTr * dd::rect{+20.0f, 6.0f,  80, 70});
+    heroBound.rects.push_back(heroTr * dd::rect{-20.0f  , -80.0f, 40,  40});
 
     leftMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroLeftMissilesTr);
-    rightMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroTr * heroRightMissilesTr);
-    bulletSprite = dd::gfx::load_sprite("test/bullet.png", {}, heroTr * bulletTr);
+    rightMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroRightMissilesTr);
+    bulletSprite = dd::gfx::load_sprite("test/bullet.png", {}, bulletTr);
 
 
     shotSound = dd::audio::load_sound("../resources/sounds/tests/shot.wav");

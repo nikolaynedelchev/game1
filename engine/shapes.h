@@ -22,10 +22,10 @@ dd::circle operator/(const dd::circle& c1, const float& v2);
 
 namespace dd
 {
-    namespace gfx
-    {
-        void draw(const dd::circle&, color, bool filled = false);
-        void draw(const dd::rectangle&, color, bool filled = false);
-        void draw(const dd::point&, color, bool bold = false);
-    }
+namespace gfx
+{
+    void draw(const dd::circle&, color, bool filled = false);
+    void draw(const dd::rect&, color, bool filled = false);
+    void draw(const dd::point&, color, bool bold = false);
+}
 }

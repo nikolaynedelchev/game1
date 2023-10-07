@@ -7,7 +7,7 @@ namespace dd
 
 #define CAST_TYPES_LIST(do_macro)                                        \
     do_macro(   Vector2                 ,   ::dd::point                 )\
-    do_macro(   Rectangle               ,   ::dd::rectangle             )\
+    do_macro(   Rectangle               ,   ::dd::rect                  )\
     do_macro(   Color                   ,   ::dd::color                 )\
     do_macro(   Image                   ,   ::dd::image                 )\
     do_macro(   Texture2D               ,   ::dd::texture               )\

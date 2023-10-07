@@ -16,7 +16,7 @@ struct point
 using vec = point;
 
 // Rectangle, 4 components
-struct rectangle
+struct rect
 {
     float x = 0;                // Rectangle top-left corner position x
     float y = 0;                // Rectangle top-left corner position y

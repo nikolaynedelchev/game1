@@ -28,7 +28,7 @@ dd::point operator*(float v1, dd::point& v2);
 dd::point& operator/=(float v1, dd::point& v2);
 dd::point operator/(float v1, dd::point& v2);
 //
-dd::rectangle& operator+=(dd::rectangle& r1, const dd::point& v2);
-dd::rectangle operator+(const dd::rectangle& r1, const dd::point& v2);
-dd::rectangle& operator-=(dd::rectangle& r1, const dd::point& v2);
-dd::rectangle operator-(const dd::rectangle& r1, const dd::point& v2);
+dd::rect& operator+=(dd::rect& r1, const dd::point& v2);
+dd::rect operator+(const dd::rect& r1, const dd::point& v2);
+dd::rect& operator-=(dd::rect& r1, const dd::point& v2);
+dd::rect operator-(const dd::rect& r1, const dd::point& v2);
