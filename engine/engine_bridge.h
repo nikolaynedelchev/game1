@@ -84,7 +84,7 @@ struct text
 {
     string symbols;
     point position;
-    int size = 20;
+    float size = 0;
     color color = colors::white;
 };
 
@@ -116,6 +116,24 @@ struct music
     void *ctx_data;              // Audio context data, depends on type
 };
 
+struct glyph_info
+{
+    int value;              // Character value (Unicode)
+    int offsetX;            // Character offset X when drawing
+    int offsetY;            // Character offset Y when drawing
+    int advanceX;           // Character advance position X
+    image image;            // Character image data
+};
+
+struct font 
+{
+    int default_size;       // Base size (default chars height)
+    int glyphs_count;       // Number of glyph characters
+    int glyph_padding;      // Padding around the glyph characters
+    texture texture;        // Texture atlas containing the glyphs
+    rect* recs;             // Rectangles in texture for the glyphs
+    glyph_info *glyphs;     // Glyphs info data
+};
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -125,6 +143,7 @@ namespace window
     bool should_close();                               // Check if KEY_ESCAPE pressed or Close icon pressed
     void close();
     void set_fullscreen_flag();
+    void set_antialiasing_flag();
     void toggle_fullscreen();
 }
 
@@ -149,6 +168,8 @@ namespace gfx
     void end();
     void clear(color);
     void write(const text&);
+    void set_font(const std::string& font);
+    void set_font_default();
 }
 
 namespace kbd
@@ -182,3 +203,9 @@ namespace mouse
 }
 
 }
+
+
+// include fmt formatters
+#define DD_UNLOCK_FORMATTER_INCLUDE
+#include "formatters.hpp"
+#undef DD_UNLOCK_FORMATTER_INCLUDE

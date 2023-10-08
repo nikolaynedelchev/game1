@@ -2,14 +2,17 @@
 #include <raylib.h>
 #include <raygui.h>
 #include "casts.h"
-
+#include <map>
+#include "libs.h"
 
 namespace dd
 {
     namespace window
     {
+        static unsigned s_window_config_flags = 0;
         void init(int width, int height, const string& title)
         {
+            SetConfigFlags(s_window_config_flags);
             InitWindow(width, height, title.c_str());
         }
 
@@ -25,7 +28,12 @@ namespace dd
 
         void set_fullscreen_flag()
         {
-            SetConfigFlags(FLAG_FULLSCREEN_MODE);
+            s_window_config_flags |= FLAG_FULLSCREEN_MODE;
+        }
+
+        void set_antialiasing_flag()
+        {
+            s_window_config_flags |= FLAG_MSAA_4X_HINT;
         }
 
         void toggle_fullscreen()
@@ -92,13 +100,72 @@ namespace dd
             ClearBackground(cast(c));
         }
 
+        static map<string, font> s_fonts;
+        static bool has_default_font = false;
+        static font default_font;
+
         void write(const ::dd::text& txt)
         {
-            DrawText(txt.symbols.c_str(), 
-                    int(txt.position.x),
-                    int(txt.position.y),
-                    txt.size,
-                    cast(txt.color));
+            if (has_default_font)
+            {
+                float font_sz = float(default_font.default_size);
+                if (txt.size != 0.0f)
+                {
+                    font_sz = txt.size;
+                }
+                DrawTextEx(cast(default_font),
+                           txt.symbols.c_str(),
+                           cast(txt.position),
+                           font_sz,
+                           1.0f,
+                           cast(txt.color)
+                           );
+            }
+            else
+            {
+                float font_sz = float(GetFontDefault().baseSize);
+                if (txt.size != 0.0f)
+                {
+                    font_sz = txt.size;
+                }
+                DrawText(txt.symbols.c_str(), 
+                        int(txt.position.x),
+                        int(txt.position.y),
+                        int(font_sz),
+                        cast(txt.color));
+            }
+        }
+
+        void set_font(const std::string& font)
+        {
+            auto it = s_fonts.find(font);
+            if (it == s_fonts.end())
+            {
+                string file = "../resources/fonts/" + font;
+                auto new_font = cast(LoadFont(file.c_str()));
+                if (new_font.default_size == 0 ||
+                    new_font.glyphs_count == 0 ||
+                    new_font.glyphs == nullptr)
+                {
+                    PrintLn("Error: font not loaded correctly: {}", font);
+                }
+                else
+                {
+                    s_fonts[font] = new_font;
+                    it = s_fonts.find(font);
+                }
+            }
+            if (it == s_fonts.end())
+            {
+                PrintLn("Error: font not found: {}", font);
+            }
+            default_font = it->second;
+            has_default_font = true;
+        }
+
+        void set_font_default()
+        {
+            has_default_font = false;
         }
     }
 

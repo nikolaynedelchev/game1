@@ -13,9 +13,9 @@ struct bound
 
 namespace gfx
 {
-    bool collision(const dd::sprite& s1, const dd::bound& b1,
-                const dd::sprite& s2, const dd::bound& b2);
+    bool collision(const dd::bound& b1, const dd::sprite& s1,
+                   const dd::bound& b2, const dd::sprite& s2);
 
-    void draw(const dd::sprite& s, const dd::bound& b);
+    void draw(const dd::bound& b, const dd::sprite& s);
 }
 }

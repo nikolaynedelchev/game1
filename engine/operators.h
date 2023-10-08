@@ -32,3 +32,4 @@ dd::rect& operator+=(dd::rect& r1, const dd::point& v2);
 dd::rect operator+(const dd::rect& r1, const dd::point& v2);
 dd::rect& operator-=(dd::rect& r1, const dd::point& v2);
 dd::rect operator-(const dd::rect& r1, const dd::point& v2);
+

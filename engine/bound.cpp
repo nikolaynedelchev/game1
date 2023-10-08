@@ -6,7 +6,7 @@ namespace dd
 {
 namespace gfx
 {
-    bool collision(const sprite &s1, const bound &b1, const sprite &s2, const bound &b2)
+    bool collision(const bound &b1, const sprite &s1, const bound &b2, const sprite &s2)
     {
         for(const auto& r1 : b1.rects)
         {
@@ -46,7 +46,7 @@ namespace gfx
         return false;
     }
 
-    void draw(const sprite &s, const bound &b)
+    void draw(const bound &b, const sprite &s)
     {
         for(const auto& r : b.rects)
         {

@@ -14,6 +14,8 @@ struct sprite
     rect source  = {0.0f, 0.0f, 0.0f, 0.0f};
     float rotate = 0.0f;
     uint32_t textureId = 0;
+    bool flip_x = false;
+    bool flip_y = false;
 };
 
 namespace gfx

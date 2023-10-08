@@ -64,6 +64,11 @@ namespace gfx
             sprite.source.width = float(texture.width);
             sprite.source.height = float(texture.height);
         }
+
+        // TODO: experimental flip
+        //sprite.source.x = sprite.source.width; // not correct
+        //sprite.source.width = -sprite.source.width;
+
         sprite.target = targetTransform;
         sprite.position = {0.0f, 0.0f};
         sprite.enabled = true;
@@ -99,14 +104,16 @@ namespace gfx
             return;
         }
 
+        auto src = sprite.source;
+        if (sprite.flip_x) src.width = -src.width;
+        if (sprite.flip_y) src.height = -src.height;
+
         DrawTexturePro(cast(s_textures[ sprite.textureId ]), 
-                       cast(sprite.source),
+                       cast(src),
                        cast(get_dest_rect(sprite)),
                        cast(get_origin(sprite)),
                        0.0f,
                        WHITE);
-
-        draw(global_rect(sprite), colors::white);
     }
 
     point global_pos(const sprite& sprite)

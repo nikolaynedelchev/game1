@@ -5,7 +5,7 @@
 namespace dd
 {
 
-#define CAST_TYPES_LIST(do_macro)                                        \
+#define DD_CAST_TYPES_LIST(do_macro)                                     \
     do_macro(   Vector2                 ,   ::dd::point                 )\
     do_macro(   Rectangle               ,   ::dd::rect                  )\
     do_macro(   Color                   ,   ::dd::color                 )\
@@ -15,13 +15,14 @@ namespace dd
     do_macro(   Sound                   ,   ::dd::sound                 )\
     do_macro(   Music                   ,   ::dd::music                 )\
     do_macro(   KeyboardKey             ,   ::dd::keys::kbd_key         )\
-
+    do_macro(   GlyphInfo               ,   ::dd::glyph_info            )\
+    do_macro(   Font                    ,   ::dd::font                  )\
 
 //
 #define DD_TYPE_CAST(ray_, dd_) \
 static inline ray_ cast(const dd_ & val) { return reinterpret_cast< const ray_ & >(val); } \
 static inline dd_  cast(const ray_ & val) { return reinterpret_cast< const dd_ & >(val); } \
 
-CAST_TYPES_LIST( DD_TYPE_CAST )
+DD_CAST_TYPES_LIST( DD_TYPE_CAST )
 
 }
