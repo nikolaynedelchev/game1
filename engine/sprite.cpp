@@ -55,8 +55,8 @@ namespace gfx
             }
         }
         sprite sprite;
-        sprite.textureId = id_it->second;
-        texture texture = s_textures[sprite.textureId];
+        sprite.texture_id = id_it->second;
+        texture texture = s_textures[sprite.texture_id];
         sprite.rotate = 0.0f;
         sprite.source = source;
         if (sprite.source.width == 0.0f && sprite.source.height == 0.0f)
@@ -71,8 +71,8 @@ namespace gfx
 
         sprite.target = targetTransform;
         sprite.position = {0.0f, 0.0f};
-        sprite.enabled = true;
-        sprite.isLoaded = true;
+        sprite.visible = true;
+        sprite.loaded = true;
         return sprite;
     }
 
@@ -98,8 +98,8 @@ namespace gfx
 
     void draw(const sprite& sprite)
     {
-        if (sprite.isLoaded == false ||
-            sprite.enabled == false)
+        if (sprite.loaded == false ||
+            sprite.visible == false)
         {
             return;
         }
@@ -108,7 +108,7 @@ namespace gfx
         if (sprite.flip_x) src.width = -src.width;
         if (sprite.flip_y) src.height = -src.height;
 
-        DrawTexturePro(cast(s_textures[ sprite.textureId ]), 
+        DrawTexturePro(cast(s_textures[ sprite.texture_id ]), 
                        cast(src),
                        cast(get_dest_rect(sprite)),
                        cast(get_origin(sprite)),

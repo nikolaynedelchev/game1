@@ -8,12 +8,14 @@ namespace dd
 {
 struct anim
 {
-    bool loop = false;
+    bool visible = false;
     point position = {0.0f, 0.0f};
     transform target = {0.0f, 0.0f, 1.0f, 1.0f};
     float rotate = 0.0f;
     bool flip_x = false;
     bool flip_y = false;
+
+    bool loop = false;
 
     struct
     {

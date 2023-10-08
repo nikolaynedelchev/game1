@@ -7,15 +7,15 @@ namespace dd
 {
 struct sprite
 {
-    bool enabled = false;
-    bool isLoaded = false;
+    bool visible = false;
     point position = {0.0f, 0.0f};
     transform target = {0.0f, 0.0f, 1.0f, 1.0f};
     rect source  = {0.0f, 0.0f, 0.0f, 0.0f};
     float rotate = 0.0f;
-    uint32_t textureId = 0;
+    uint32_t texture_id = 0;
     bool flip_x = false;
     bool flip_y = false;
+    bool loaded = false;
 };
 
 namespace gfx

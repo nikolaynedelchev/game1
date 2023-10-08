@@ -144,6 +144,7 @@ namespace window
     void close();
     void set_fullscreen_flag();
     void set_antialiasing_flag();
+    void set_vsync_flag();
     void toggle_fullscreen();
 }
 

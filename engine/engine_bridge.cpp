@@ -36,6 +36,12 @@ namespace dd
             s_window_config_flags |= FLAG_MSAA_4X_HINT;
         }
 
+        void set_vsync_flag()
+        {
+            s_window_config_flags |= FLAG_VSYNC_HINT;
+        }
+
+
         void toggle_fullscreen()
         {
             ToggleFullscreen();

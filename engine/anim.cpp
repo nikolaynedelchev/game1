@@ -114,14 +114,15 @@ namespace gfx
 
     void draw(const anim& a)
     {
-        if (a.privates.paused)
+        if (a.visible == false ||
+            a.privates.frames.empty())
         {
             return;
         }
         size_t f = size_t( progress(a) * float(a.privates.frames.size()) );
         if (f >= a.privates.frames.size())
         {
-            return;
+            f = a.privates.frames.size() - 1;
         }
 
         auto frame_sprite = a.privates.frames[f];

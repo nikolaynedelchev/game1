@@ -28,10 +28,11 @@ void LoadTestAnim()
         auto frame = dd::gfx::load_sprite("test/test_animation.png", src, {});
         dd::gfx::add_frame(runningAnim, frame);
     }
-    dd::gfx::fps(runningAnim, 10.0f);
-    runningAnim.loop = false;
+    dd::gfx::fps(runningAnim, 6.0f);
+    runningAnim.loop = true;
     runningAnim.flip_x = true;
     runningAnim.position = {300, 300};
+    runningAnim.visible = true;
     dd::gfx::pause(runningAnim, false);
 }
 
@@ -42,6 +43,7 @@ void Init()
 
     //dd::window::set_antialiasing_flag();
     //dd::window::set_fullscreen_flag();
+    dd::window::set_vsync_flag();
     dd::window::init(screenWidth, screenHeight, "Raylib Force Exit Example");
     dd::audio::init();
     //dd::kbd::set_exitkey(dd::keys::NONE);
@@ -174,7 +176,7 @@ void MainLoop()
         }
         for(const auto& b : bullets) dd::gfx::draw(b);
 
-        runningAnim.position.x += 3.0;
+        runningAnim.position.x += 2.0;
         if (runningAnim.position.x > 1440 + 72) runningAnim.position.x = -72;
         dd::gfx::update(runningAnim);
 
