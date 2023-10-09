@@ -76,6 +76,21 @@ namespace gfx
         return a.privates.elapsed;
     }
 
+    int frame(const anim& a)
+    {
+        if (a.visible == false ||
+            a.privates.frames.empty())
+        {
+            return -1;
+        }
+        int f = size_t( progress(a) * float(a.privates.frames.size()) );
+        if (f >= int(a.privates.frames.size()))
+        {
+            f = a.privates.frames.size() - 1;
+        }
+        return f;
+    }
+
     void update(anim& a)
     {
         if (a.privates.paused ||
@@ -114,18 +129,13 @@ namespace gfx
 
     void draw(const anim& a)
     {
-        if (a.visible == false ||
-            a.privates.frames.empty())
+        auto frame = gfx::frame(a);
+        if (frame < 0)
         {
             return;
         }
-        size_t f = size_t( progress(a) * float(a.privates.frames.size()) );
-        if (f >= a.privates.frames.size())
-        {
-            f = a.privates.frames.size() - 1;
-        }
 
-        auto frame_sprite = a.privates.frames[f];
+        auto frame_sprite = a.privates.frames[size_t(frame)];
 
         frame_sprite.position = a.position;
         frame_sprite.target = a.target;
@@ -134,5 +144,33 @@ namespace gfx
         frame_sprite.flip_y = a.flip_y;
         draw(frame_sprite);
     }
+
+    bool collision(const dd::anim& a1, const dd::anim& a2)
+    {
+        auto f1 = frame(a1);
+        if (f1 < 0)
+        {
+            return false;
+        }
+        auto f2 = frame(a2);
+        if (f2 < 0)
+        {
+            return false;
+        }
+        return collision(a1.privates.frames[f1].bound, a1.privates.frames[f1].position + a1.position,
+                         a2.privates.frames[f2].bound, a2.privates.frames[f2].position + a2.position);
+    }
+
+    bool collision(const dd::anim& a1, const dd::sprite& s2)
+    {
+        auto f1 = frame(a1);
+        if (f1 < 0)
+        {
+            return false;
+        }
+        return collision(a1.privates.frames[f1].bound, a1.privates.frames[f1].position + a1.position,
+                         s2.bound, s2.position);
+    }
+
 }
 }

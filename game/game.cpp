@@ -26,6 +26,7 @@ void LoadTestAnim()
         src.width = 144;
         src.height = 144;
         auto frame = dd::gfx::load_sprite("test/test_animation.png", src, {});
+        frame.bound.rects.push_back( dd::gfx::origin_rect(frame)  );
         dd::gfx::add_frame(runningAnim, frame);
     }
     dd::gfx::fps(runningAnim, 6.0f);
@@ -71,6 +72,7 @@ void Init()
     leftMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroLeftMissilesTr);
     rightMissileSprite = dd::gfx::load_sprite("test/hero_missile.png", {}, heroRightMissilesTr);
     bulletSprite = dd::gfx::load_sprite("test/bullet.png", {}, bulletTr);
+    bulletSprite.bound.rects.push_back( dd::gfx::origin_rect(bulletSprite) );
 
 
     shotSound = dd::audio::load_sound( DD_RSS_FOLDER"/sounds/tests/shot.wav");
@@ -93,6 +95,7 @@ void MainLoop()
     std::vector<dd::sprite> bullets;
 
     dd::gfx::set_font("OpenSans-Regular.ttf");
+    int hits = 0;
     while ( !dd::window::should_close() )
     {
         game.frameNumber++;
@@ -171,7 +174,14 @@ void MainLoop()
             if (b.position.y > 0)
             {
                 b.position.y -= 30;
-                bullets.push_back(b);
+                if (dd::gfx::collision(runningAnim, b))
+                {
+                    hits++;
+                }
+                else
+                {
+                    bullets.push_back(b);
+                }
             }
         }
         for(const auto& b : bullets) dd::gfx::draw(b);
@@ -194,11 +204,13 @@ void MainLoop()
         dd::gfx::draw(dd::gfx::global_pos(leftMissileSprite), dd::colors::blue, true);
         //dd::gfx::draw(dd::gfx::global_pos(rightMissileSprite), dd::colors::green, true);
 
-        dd::gfx::write({  fmt::format("{}", dd::gfx::global_pos(leftMissileSprite)), {100, 100}, 40.0f, dd::colors::red});
+        dd::gfx::write({  fmt::format("{}", dd::gfx::global_pos(leftMissileSprite)), {100, 100}, 40.0f, dd::colors::red });
         dd::gfx::write({  fmt::format("{}", leftMissileSprite.position), {100, 150}, 40.0f, dd::colors::red});
-        dd::gfx::write({  fmt::format("{}", dd::gfx::global_rect(leftMissileSprite)), {100, 190}, 40.0f, dd::colors::red});
+        dd::gfx::write({  fmt::format("{}", dd::gfx::global_rect(leftMissileSprite)), {100, 190}, 40.0f, dd::colors::red });
+        dd::gfx::write({  fmt::format("Hits: {}", hits), {100, 240}, 40.0f, dd::colors::red });
 
-        //dd::gfx::draw(heroBound, heroSprite);
+
+        dd::gfx::draw(heroBound, heroSprite.position);
 
         dd::gfx::draw(runningAnim);
         dd::gfx::end();

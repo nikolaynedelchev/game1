@@ -2,6 +2,7 @@
 #include "libs.h"
 #include "transform.h"
 #include "engine_bridge.h"
+#include "bound.h"
 
 namespace dd
 {
@@ -16,6 +17,7 @@ struct sprite
     bool flip_x = false;
     bool flip_y = false;
     bool loaded = false;
+    dd::bound bound;
 };
 
 namespace gfx
@@ -30,6 +32,9 @@ namespace gfx
 
     point global_pos(const sprite&);
     rect global_rect(const sprite&);
+    rect origin_rect(const sprite&);
+
+    bool collision(const dd::sprite& s1, const dd::sprite& s2);
 
 }
 }

@@ -12,7 +12,7 @@ static bool create(const string& imageFile)
     {
         return true;
     }
-    uint32_t textureId = s_textures.size();
+
     string fullFileName = DD_RSS_FOLDER"/images/" + imageFile;
     Image image = LoadImage(fullFileName.c_str());
     if (image.data == nullptr)
@@ -128,6 +128,21 @@ namespace gfx
         dest_rect.x -= origin.x;
         dest_rect.y -= origin.y;
         return dest_rect;
+    }
+
+    rect origin_rect(const sprite& sprite)
+    {
+        auto g_rect = global_rect(sprite);
+        auto g_pos = global_pos(sprite);
+        g_rect.x -= g_pos.x;
+        g_rect.y -= g_pos.y;
+        return g_rect;
+    }
+
+
+    bool collision(const dd::sprite& s1, const dd::sprite& s2)
+    {
+        return collision(s1.bound, global_pos(s1), s2.bound, global_pos(s2));
     }
 
 }

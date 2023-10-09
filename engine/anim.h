@@ -3,6 +3,7 @@
 #include "transform.h"
 #include "engine_bridge.h"
 #include "sprite.h"
+#include "bound.h"
 
 namespace dd
 {
@@ -38,8 +39,13 @@ namespace gfx
     float duration(const anim&);
     float progress(const anim&);
     float elapsed(const anim&);
+    int frame(const anim& a);
+
     void update(anim&);
     void draw(const anim&);
+
+    bool collision(const dd::anim& a1, const dd::anim& a2);
+    bool collision(const dd::anim& a1, const dd::sprite& s2);                   
 }
 
 }

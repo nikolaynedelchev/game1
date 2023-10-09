@@ -1,6 +1,5 @@
 #pragma once
 #include "libs.h"
-#include "sprite.h"
 #include "shapes.h"
 
 namespace dd
@@ -13,9 +12,9 @@ struct bound
 
 namespace gfx
 {
-    bool collision(const dd::bound& b1, const dd::sprite& s1,
-                   const dd::bound& b2, const dd::sprite& s2);
+    bool collision(const dd::bound& b1, const dd::vec& v1,
+                   const dd::bound& b2, const dd::vec& v2);
 
-    void draw(const dd::bound& b, const dd::sprite& s);
+    void draw(const dd::bound& b, const dd::vec& v);
 }
 }
