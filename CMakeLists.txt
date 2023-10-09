@@ -21,6 +21,21 @@ file(GLOB_RECURSE SOURCE_FILES ${CMAKE_SOURCE_DIR}/engine/*.cpp
                                ${CMAKE_SOURCE_DIR}/game/*.cpp
                                ${CMAKE_SOURCE_DIR}/game/*.c)
 
+#
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(STATUS "GNU compiler detected...")
+    add_compile_options(-Wall -Wextra -Werror)
+    add_compile_options(-Werror) # all warinings as errors
+    add_definitions(-DDD_RSS_FOLDER="./resources")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/W4 /WX)
+    add_compile_options(/WX) # all warinings as errors
+    add_definitions(-DDD_RSS_FOLDER="../resources")
+    message(STATUS "Windows compiler")
+else()
+    message(FATAL_ERROR "Unknown compiler")
+endif()
+
 message(STATUS "Create executable terget...")
 add_executable(game1 ${SOURCE_FILES})
 
@@ -32,18 +47,9 @@ target_include_directories(game1 PRIVATE ${CMAKE_SOURCE_DIR})
 message(STATUS "Setup sanitizers...")
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "GNU compiler detected...")
-    add_definitions(-DDD_RSS_FOLDER="./resources")
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-        message(STATUS "GNU compiler debug build detected...")
-        target_compile_options(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
-        target_link_libraries(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
-    endif()
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    add_definitions(-DDD_RSS_FOLDER="../resources")
-    message(STATUS "Windows compiler")
-else()
-    message(FATAL_ERROR "Unknown compiler")
+    message(STATUS "GNU compiler debug build detected...")
+    target_compile_options(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
+    target_link_libraries(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
 endif()
 
 message(STATUS "Create target link libraries...")
