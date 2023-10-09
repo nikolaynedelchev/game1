@@ -147,7 +147,7 @@ namespace dd
             auto it = s_fonts.find(font);
             if (it == s_fonts.end())
             {
-                string file = "../resources/fonts/" + font;
+                string file = DD_RSS_FOLDER"/fonts/" + font;
                 auto new_font = cast(LoadFont(file.c_str()));
                 if (new_font.default_size == 0 ||
                     new_font.glyphs_count == 0 ||

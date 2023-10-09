@@ -4,6 +4,11 @@ set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.c
 
 project(Game1 VERSION 1.0)
 
+message(STATUS "Setup c++ standard...")
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS ON)
+
 message(STATUS "Finding required packages...")
 find_package(raylib CONFIG REQUIRED)
 find_package(Threads REQUIRED)
@@ -25,9 +30,20 @@ target_include_directories(game1 PRIVATE ${RAYLIB_INCLUDE_DIRS})
 target_include_directories(game1 PRIVATE ${CMAKE_SOURCE_DIR})
 
 message(STATUS "Setup sanitizers...")
+
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
-    target_compile_options(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
-    target_link_libraries(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
+    message(STATUS "GNU compiler detected...")
+    add_definitions(-DDD_RSS_FOLDER="./resources")
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        message(STATUS "GNU compiler debug build detected...")
+        target_compile_options(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
+        target_link_libraries(game1 PRIVATE -fsanitize=address -fsanitize=undefined)
+    endif()
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_definitions(-DDD_RSS_FOLDER="../resources")
+    message(STATUS "Windows compiler")
+else()
+    message(FATAL_ERROR "Unknown compiler")
 endif()
 
 message(STATUS "Create target link libraries...")

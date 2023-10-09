@@ -13,7 +13,7 @@ static bool create(const string& imageFile)
         return true;
     }
     uint32_t textureId = s_textures.size();
-    string fullFileName = "../resources/images/" + imageFile;
+    string fullFileName = DD_RSS_FOLDER"/images/" + imageFile;
     Image image = LoadImage(fullFileName.c_str());
     if (image.data == nullptr)
     {

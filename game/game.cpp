@@ -73,7 +73,7 @@ void Init()
     bulletSprite = dd::gfx::load_sprite("test/bullet.png", {}, bulletTr);
 
 
-    shotSound = dd::audio::load_sound("../resources/sounds/tests/shot.wav");
+    shotSound = dd::audio::load_sound( DD_RSS_FOLDER"/sounds/tests/shot.wav");
 
     LoadTestAnim();
 
@@ -191,7 +191,7 @@ void MainLoop()
             dd::gfx::draw(rightMissileSprite);
         }
 
-        //dd::gfx::draw(dd::gfx::global_pos(leftMissileSprite), dd::colors::blue, true);
+        dd::gfx::draw(dd::gfx::global_pos(leftMissileSprite), dd::colors::blue, true);
         //dd::gfx::draw(dd::gfx::global_pos(rightMissileSprite), dd::colors::green, true);
 
         dd::gfx::write({  fmt::format("{}", dd::gfx::global_pos(leftMissileSprite)), {100, 100}, 40.0f, dd::colors::red});

@@ -11,6 +11,9 @@ struct point
 {
     float x = 0.0f;
     float y = 0.0f;
+    constexpr point() = default;
+    constexpr point(float x, float y) : x(x),y(y){}
+
 };
 
 using vec = point;
@@ -22,6 +25,9 @@ struct rect
     float y = 0;                // Rectangle top-left corner position y
     float width = 0;            // Rectangle width
     float height = 0;           // Rectangle height
+    constexpr rect() = default;
+    constexpr rect(float x, float y, float w, float h) : x(x),y(y),width(w),height(h){}
+
 };
 
 struct image
@@ -44,17 +50,20 @@ struct texture
 
 struct color
 {
-    unsigned char r = 0;        // Color red value
-    unsigned char g = 0;        // Color green value
-    unsigned char b = 0;        // Color blue value
-    unsigned char a = 0;        // Color alpha value
+    uint8_t r = 0;        // Color red value
+    uint8_t g = 0;        // Color green value
+    uint8_t b = 0;        // Color blue value
+    uint8_t a = 0;        // Color alpha value
+
+    constexpr color() = default;
+    constexpr color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r),g(g),b(b),a(a){}
 };
 
 namespace colors
 {
-    constexpr color  light_gray  { 200, 200, 200, 255 }   ;// Light Gray
-    constexpr color  gray        { 130, 130, 130, 255 }   ;// Gray
-    constexpr color  darkgray    { 80, 80, 80, 255 }      ;// Dark Gray
+    static constexpr color  light_gray{ uint8_t(200), uint8_t(200), uint8_t(200), uint8_t(255) }   ;// Light Gray
+    static constexpr color  gray{ 130, 130, 130, 255 }   ;// Gray
+    static constexpr color  darkgray{ 80, 80, 80, 255 }      ;// Dark Gray
     constexpr color  yellow      { 253, 249, 0, 255 }     ;// Yellow
     constexpr color  gold        { 255, 203, 0, 255 }     ;// Gold
     constexpr color  orange      { 255, 161, 0, 255 }     ;// Orange
@@ -85,7 +94,9 @@ struct text
     string symbols;
     point position;
     float size = 0;
-    color color = colors::white;
+    dd::color color = colors::white;
+    text() = default;
+    text(string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), size(sz), color(c){}
 };
 
 struct audio_stream
@@ -122,7 +133,7 @@ struct glyph_info
     int offsetX;            // Character offset X when drawing
     int offsetY;            // Character offset Y when drawing
     int advanceX;           // Character advance position X
-    image image;            // Character image data
+    dd::image image;            // Character image data
 };
 
 struct font 
@@ -130,9 +141,9 @@ struct font
     int default_size;       // Base size (default chars height)
     int glyphs_count;       // Number of glyph characters
     int glyph_padding;      // Padding around the glyph characters
-    texture texture;        // Texture atlas containing the glyphs
-    rect* recs;             // Rectangles in texture for the glyphs
-    glyph_info *glyphs;     // Glyphs info data
+    dd::texture texture;        // Texture atlas containing the glyphs
+    dd::rect* recs;             // Rectangles in texture for the glyphs
+    dd::glyph_info *glyphs;     // Glyphs info data
 };
 
 /////////////////////////////////////////////////////////////////////////////////////
