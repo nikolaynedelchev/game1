@@ -31,18 +31,17 @@ void LoadTestAnim()
         src.height = 144;
         auto frame = dd::gfx::load_sprite("test/test_animation.png", src, {});
         frame.bound.rects.push_back( dd::gfx::origin_rect(frame)  );
-        dd::gfx::add_frame(runningAnim, frame);
+        runningAnim.add_frame(frame);
     }
-    dd::gfx::fps(runningAnim, 18.0f);
+    runningAnim.fps(18.0f);
     runningAnim.loop = true;
     runningAnim.flip_x = true;
     runningAnim.position = {300, 300};
     runningAnim.visible = true;
-    dd::gfx::pause(runningAnim, false);
-
+    runningAnim.pause(false);
 
     runningAnim2 = runningAnim;
-    dd::gfx::fps(runningAnim2, 3.0f);
+    runningAnim2.fps(3.0f);
     runningAnim2.flip_x = false;
     runningAnim.position.y += 160;
 
@@ -56,16 +55,14 @@ void LoadTestAnim()
         src.height = 144;
         auto frame = dd::gfx::load_sprite("test/test_animation.png", src, {});
         frame.bound.rects.push_back( dd::gfx::origin_rect(frame)  );
-        dd::gfx::add_frame(runningAnim3, frame);
+        runningAnim3.add_frame(frame);
     }
-    dd::gfx::fps(runningAnim3, 5);
+    runningAnim3.fps(5.0f);
     runningAnim3.loop = true;
     runningAnim3.flip_x = false;
     runningAnim3.position = {300, 650};
     runningAnim3.visible = true;
-    dd::gfx::pause(runningAnim3, false);
-
-
+    runningAnim3.pause(false);
 }
 
 void Init()
@@ -133,8 +130,7 @@ void MainLoop()
 
         if (1)
         {
-            if (dd::kbd::key_down(dd::keys::P))     { dd::gfx::pause(runningAnim,
-                                                     !dd::gfx::paused(runningAnim)); }
+            if (dd::kbd::key_down(dd::keys::P))     { runningAnim.pause(!runningAnim.paused()); }
 
             if (dd::kbd::key_down(dd::keys::UP))    {  heroSprite.position.y -= 3.0f;}
             if (dd::kbd::key_down(dd::keys::DOWN))  {  heroSprite.position.y += 3.0f;}
@@ -206,8 +202,8 @@ void MainLoop()
             if (b.position.y > 0)
             {
                 b.position.y -= 5;
-                if (dd::gfx::collision(runningAnim, b) ||
-                    dd::gfx::collision(runningAnim2, b))
+                if (runningAnim.collision(b) ||
+                    runningAnim2.collision(b))
                 {
                     hits++;
                 }
@@ -224,16 +220,16 @@ void MainLoop()
         if (runningAnim.position.x > 1440 + 72) runningAnim.position.x = -72;
         if (runningAnim2.position.x < -72) runningAnim2.position.x = 1440 + 72;
 
-        dd::gfx::update(runningAnim);
-        dd::gfx::update(runningAnim2);
-        dd::gfx::update(runningAnim3);
+        runningAnim.update();
+        runningAnim2.update();
+        runningAnim3.update();
 
         dd::gfx::begin();
         dd::gfx::clear(dd::colors::black);
 
-        dd::gfx::draw(runningAnim);
-        dd::gfx::draw(runningAnim2);
-        dd::gfx::draw(runningAnim3);
+        runningAnim.draw();
+        runningAnim2.draw();
+        runningAnim3.draw();
 
         dd::gfx::draw(heroSprite);
 

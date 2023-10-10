@@ -2,175 +2,172 @@
 
 namespace dd
 {
-namespace gfx
-{
-    void fps(anim& a, float fps)
+
+    void anim::fps(float fps)
     {
-        if (a.privates.fps == 0.0f)
+        if (p_.fps == 0.0f)
         {
-            a.privates.fps = fps;
-            restart(a);
+            p_.fps = fps;
+            restart();
             return;
         }
-        auto current_progress = progress(a);
-        a.privates.fps = fps;
-        a.privates.elapsed = duration(a) * current_progress;
+        auto current_progress = progress();
+        p_.fps = fps;
+        p_.elapsed = duration() * current_progress;
     }
 
-    float fps(const anim& a)
+    float anim::fps() const
     {
-        return a.privates.fps;
+        return p_.fps;
     }
 
-    void add_frame(anim& a, sprite s)
+    void anim::add_frame(sprite s)
     {
-        a.privates.frames.push_back(std::move(s));
+        p_.frames.push_back(std::move(s));
     }
 
-    void play(anim& a)
+    void anim::play()
     {
-        restart(a);
-        pause(a, false);
+        restart();
+        pause(false);
     }
 
-    void pause(anim& a, bool paused)
+    void anim::pause(bool paused)
     {
-        a.privates.paused = paused;
+        p_.paused = paused;
     }
 
-    void restart(anim& a)
+    void anim::restart()
     {
-        a.privates.elapsed = -1.0f;
+        p_.elapsed = -1.0f;
     }
 
-    bool paused(const anim& a)
+    bool anim::paused() const
     {
-        return a.privates.paused;
+        return p_.paused;
     }
 
-    bool finished(const anim& a)
+    bool anim::finished() const
     {
-        if (a.loop)
+        if (loop)
         {
             return false;
         }
-        return a.privates.elapsed >= duration(a);
+        return p_.elapsed >= duration();
     }
 
-    float duration(const anim& a)
+    float anim::duration() const
     {
-        if (a.privates.fps == 0.0f)
+        if (p_.fps == 0.0f)
         {
             return 0.0f;
         }
-        return float(a.privates.frames.size()) / a.privates.fps;
+        return float(p_.frames.size()) / p_.fps;
     }
 
-    float progress(const anim& a)
+    float anim::progress() const
     {
-        return a.privates.elapsed / duration(a);
+        return p_.elapsed / duration();
     }
 
-    float elapsed(const anim& a)
+    float anim::elapsed() const
     {
-        return a.privates.elapsed;
+        return p_.elapsed;
     }
 
-    int frame(const anim& a)
+    int anim::frame() const
     {
-        if (a.visible == false ||
-            a.privates.frames.empty())
+        if (visible == false ||
+            p_.frames.empty())
         {
             return -1;
         }
-        int f = size_t( progress(a) * float(a.privates.frames.size()) );
-        if (f >= int(a.privates.frames.size()))
+        int f = size_t( progress() * float(p_.frames.size()) );
+        if (f >= int(p_.frames.size()))
         {
-            f = a.privates.frames.size() - 1;
+            f = p_.frames.size() - 1;
         }
         return f;
     }
 
-    void update(anim& a)
+    void anim::update()
     {
-        if (a.privates.paused ||
-            a.privates.fps == 0 || 
-            a.privates.frames.empty())
+        if (p_.paused ||
+            p_.fps == 0 || 
+            p_.frames.empty())
         {
             return;
         }
 
-        auto duration = gfx::duration(a);
-        if (a.privates.elapsed < 0.0f)
+        auto dur = duration();
+        if (p_.elapsed < 0.0f)
         {
-            a.privates.elapsed = 0.0f;
+            p_.elapsed = 0.0f;
         }
         else
         {
-            if (a.loop || a.privates.elapsed <= duration)
+            if (loop || p_.elapsed <= dur)
             {
-                a.privates.elapsed += time::frame_time();
+                p_.elapsed += time::frame_time();
             }
         }
 
-        if (a.loop)
+        if (loop)
         {
-            while(a.privates.elapsed >= duration)
+            while(p_.elapsed >= dur)
             {
-                a.privates.elapsed -= duration;
+                p_.elapsed -= dur;
             }
-            if (a.privates.elapsed < 0.0f)
+            if (p_.elapsed < 0.0f)
             {
-                a.privates.elapsed = 0.0f;
+                p_.elapsed = 0.0f;
             }
         }
 
     }
 
-    void draw(const anim& a)
+    void anim::draw() const
     {
-        auto frame = gfx::frame(a);
-        if (frame < 0)
+        auto fr = frame();
+        if (fr < 0)
         {
             return;
         }
 
-        auto frame_sprite = a.privates.frames[size_t(frame)];
+        auto frame_sprite = p_.frames[size_t(fr)];
 
-        frame_sprite.position = a.position;
-        frame_sprite.target = a.target;
-        frame_sprite.rotate = a.rotate;
-        frame_sprite.flip_x = a.flip_x;
-        frame_sprite.flip_y = a.flip_y;
-        draw(frame_sprite);
+        frame_sprite.position = position;
+        frame_sprite.target = target;
+        frame_sprite.rotate = rotate;
+        frame_sprite.flip_x = flip_x;
+        frame_sprite.flip_y = flip_y;
+        gfx::draw(frame_sprite);
     }
 
-    bool collision(const dd::anim& a1, const dd::anim& a2)
+    bool anim::collision(const dd::anim& a2) const
     {
-        auto f1 = frame(a1);
+        auto f1 = frame();
         if (f1 < 0)
         {
             return false;
         }
-        auto f2 = frame(a2);
+        auto f2 = a2.frame();
         if (f2 < 0)
         {
             return false;
         }
-        return collision(a1.privates.frames[f1].bound, a1.privates.frames[f1].position + a1.position,
-                         a2.privates.frames[f2].bound, a2.privates.frames[f2].position + a2.position);
+        return gfx::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
+                              a2.p_.frames[f2].bound, a2.p_.frames[f2].position + a2.position);
     }
 
-    bool collision(const dd::anim& a1, const dd::sprite& s2)
+    bool anim::collision(const dd::sprite& s2) const
     {
-        auto f1 = frame(a1);
+        auto f1 = frame();
         if (f1 < 0)
         {
             return false;
         }
-        return collision(a1.privates.frames[f1].bound, a1.privates.frames[f1].position + a1.position,
-                         s2.bound, s2.position);
+        return gfx::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
+                              s2.bound, s2.position);
     }
-
-}
 }

@@ -15,37 +15,35 @@ struct anim
     float rotate = 0.0f;
     bool flip_x = false;
     bool flip_y = false;
-
     bool loop = false;
+
+
+    void fps(float);
+    float fps() const;
+    void add_frame(sprite);
+    void play();
+    void pause(bool paused = true);
+    void restart();
+    bool paused() const;
+    bool finished() const;
+    float duration() const;
+    float progress() const;
+    float elapsed() const;
+    int frame() const;
+
+    void update();
+    void draw() const;
+
+    bool collision(const dd::anim& a2) const;
+    bool collision(const dd::sprite& s2) const;
 
     struct
     {
         float fps = 8.0f;
         bool paused = true;
-        float elapsed = 0.0f;
+        float elapsed = -1.0f;
         std::vector<sprite> frames;
-    } privates;
+    }p_;
 };
-namespace gfx
-{
-    void fps(anim&, float);
-    float fps(const anim&);
-    void add_frame(anim&, sprite);
-    void play(anim&);
-    void pause(anim&, bool paused = true);
-    void restart(anim&);
-    bool paused(const anim&);
-    bool finished(const anim&);
-    float duration(const anim&);
-    float progress(const anim&);
-    float elapsed(const anim&);
-    int frame(const anim& a);
-
-    void update(anim&);
-    void draw(const anim&);
-
-    bool collision(const dd::anim& a1, const dd::anim& a2);
-    bool collision(const dd::anim& a1, const dd::sprite& s2);                   
-}
 
 }
