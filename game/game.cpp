@@ -15,6 +15,10 @@ dd::bound heroBound;
 dd::sound shotSound;
 
 dd::anim runningAnim;
+dd::anim runningAnim2;
+
+dd::anim runningAnim3;
+
 
 void LoadTestAnim()
 {
@@ -29,12 +33,39 @@ void LoadTestAnim()
         frame.bound.rects.push_back( dd::gfx::origin_rect(frame)  );
         dd::gfx::add_frame(runningAnim, frame);
     }
-    dd::gfx::fps(runningAnim, 6.0f);
+    dd::gfx::fps(runningAnim, 18.0f);
     runningAnim.loop = true;
     runningAnim.flip_x = true;
     runningAnim.position = {300, 300};
     runningAnim.visible = true;
     dd::gfx::pause(runningAnim, false);
+
+
+    runningAnim2 = runningAnim;
+    dd::gfx::fps(runningAnim2, 3.0f);
+    runningAnim2.flip_x = false;
+    runningAnim.position.y += 160;
+
+
+    for (int i = 0; i < 5; i++)
+    {
+        dd::rect src;
+        src.x = float(i * 144);
+        src.y = float(0);
+        src.width = 144;
+        src.height = 144;
+        auto frame = dd::gfx::load_sprite("test/test_animation.png", src, {});
+        frame.bound.rects.push_back( dd::gfx::origin_rect(frame)  );
+        dd::gfx::add_frame(runningAnim3, frame);
+    }
+    dd::gfx::fps(runningAnim3, 5);
+    runningAnim3.loop = true;
+    runningAnim3.flip_x = false;
+    runningAnim3.position = {300, 650};
+    runningAnim3.visible = true;
+    dd::gfx::pause(runningAnim3, false);
+
+
 }
 
 void Init()
@@ -149,7 +180,8 @@ void MainLoop()
         {
             if ( dd::kbd::key_down(dd::keys::SPACE) || dd::mouse::btn_down(0))
             {  
-                bulletsCooldown = 15;
+                runningAnim3.flip_x = !runningAnim3.flip_x;
+                bulletsCooldown = 25;
 
                 bullets.push_back(bulletSprite);
                 bullets.back().position = heroSprite.position;
@@ -173,8 +205,9 @@ void MainLoop()
         {
             if (b.position.y > 0)
             {
-                b.position.y -= 30;
-                if (dd::gfx::collision(runningAnim, b))
+                b.position.y -= 5;
+                if (dd::gfx::collision(runningAnim, b) ||
+                    dd::gfx::collision(runningAnim2, b))
                 {
                     hits++;
                 }
@@ -186,12 +219,21 @@ void MainLoop()
         }
         for(const auto& b : bullets) dd::gfx::draw(b);
 
-        runningAnim.position.x += 2.0;
+        runningAnim.position.x += 6.0;
+        runningAnim2.position.x -= 1.0;
         if (runningAnim.position.x > 1440 + 72) runningAnim.position.x = -72;
+        if (runningAnim2.position.x < -72) runningAnim2.position.x = 1440 + 72;
+
         dd::gfx::update(runningAnim);
+        dd::gfx::update(runningAnim2);
+        dd::gfx::update(runningAnim3);
 
         dd::gfx::begin();
         dd::gfx::clear(dd::colors::black);
+
+        dd::gfx::draw(runningAnim);
+        dd::gfx::draw(runningAnim2);
+        dd::gfx::draw(runningAnim3);
 
         dd::gfx::draw(heroSprite);
 
@@ -201,7 +243,7 @@ void MainLoop()
             dd::gfx::draw(rightMissileSprite);
         }
 
-        dd::gfx::draw(dd::gfx::global_pos(leftMissileSprite), dd::colors::blue, true);
+        //dd::gfx::draw(dd::gfx::global_pos(leftMissileSprite), dd::colors::blue, true);
         //dd::gfx::draw(dd::gfx::global_pos(rightMissileSprite), dd::colors::green, true);
 
         dd::gfx::write({  fmt::format("{}", dd::gfx::global_pos(leftMissileSprite)), {100, 100}, 40.0f, dd::colors::red });
@@ -210,9 +252,10 @@ void MainLoop()
         dd::gfx::write({  fmt::format("Hits: {}", hits), {100, 240}, 40.0f, dd::colors::red });
 
 
-        dd::gfx::draw(heroBound, heroSprite.position);
+        //dd::gfx::draw(heroBound, heroSprite.position);
 
-        dd::gfx::draw(runningAnim);
+
+
         dd::gfx::end();
     }
 }

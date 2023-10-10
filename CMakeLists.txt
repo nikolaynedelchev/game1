@@ -28,8 +28,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     add_compile_options(-Werror) # all warinings as errors
     add_definitions(-DDD_RSS_FOLDER="./resources")
 elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    add_compile_options(/W4 /WX)
-    add_compile_options(/WX) # all warinings as errors
+    #add_compile_options(/W4 /WX)
+    #add_compile_options(/WX) # all warinings as errors
     add_definitions(-DDD_RSS_FOLDER="../resources")
     message(STATUS "Windows compiler")
 else()
