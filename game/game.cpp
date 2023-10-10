@@ -248,7 +248,7 @@ void MainLoop()
         dd::gfx::write({  fmt::format("Hits: {}", hits), {100, 240}, 40.0f, dd::colors::red });
 
 
-        //dd::gfx::draw(heroBound, heroSprite.position);
+        heroBound.draw(heroSprite.position);
 
 
 

@@ -156,8 +156,8 @@ namespace dd
         {
             return false;
         }
-        return gfx::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
-                              a2.p_.frames[f2].bound, a2.p_.frames[f2].position + a2.position);
+        return bound::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
+                                a2.p_.frames[f2].bound, a2.p_.frames[f2].position + a2.position);
     }
 
     bool anim::collision(const dd::sprite& s2) const
@@ -167,7 +167,7 @@ namespace dd
         {
             return false;
         }
-        return gfx::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
-                              s2.bound, s2.position);
+        return bound::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
+                                s2.bound, s2.position);
     }
 }

@@ -1,19 +1,31 @@
 #pragma once
 //#include "libs.h"
 #include <string>
+#include <vector>
 #include "kbd_bridge.h"
-using namespace std;
 
 namespace dd
 {
+struct color
+{
+    uint8_t r = 0;        // Color red value
+    uint8_t g = 0;        // Color green value
+    uint8_t b = 0;        // Color blue value
+    uint8_t a = 0;        // Color alpha value
+
+    constexpr color() = default;
+    constexpr color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r),g(g),b(b),a(a){}
+};
     
 struct point
 {
     float x = 0.0f;
     float y = 0.0f;
+
     constexpr point() = default;
     constexpr point(float x, float y) : x(x),y(y){}
 
+    void draw(color c, bool bold) const;
 };
 
 using vec = point;
@@ -25,9 +37,42 @@ struct rect
     float y = 0;                // Rectangle top-left corner position y
     float width = 0;            // Rectangle width
     float height = 0;           // Rectangle height
+
     constexpr rect() = default;
     constexpr rect(float x, float y, float w, float h) : x(x),y(y),width(w),height(h){}
 
+    void draw(color c, bool filled) const;
+};
+
+struct circle
+{
+    point center;
+    float radius = 0.0f;
+
+    constexpr circle() = default;
+    constexpr circle(point c, float r) : center(c), radius(r){}
+    constexpr circle(float x, float y, float r) : center({x, y}), radius(r){}
+
+    void draw(color, bool filled = false) const;
+};
+
+struct transform
+{
+    vec offset = {0.0f, 0.0f};
+    vec scale = {1.0f, 1.0f};
+    constexpr transform() = default;
+    constexpr transform(dd::vec offset, dd::vec scale) : offset(offset), scale(scale) {}
+    constexpr transform(float offset_x, float offset_y, float scale_x, float scale_y) : offset({offset_x, offset_y}), scale({scale_x, scale_y}) {}
+};
+
+struct bound
+{
+    std::vector<rect> rects;
+    std::vector<circle> circles;
+
+    void draw(const dd::vec& v) const;
+    static bool collision(const dd::bound& b1, const dd::vec& v1,
+                          const dd::bound& b2, const dd::vec& v2);
 };
 
 struct image
@@ -46,17 +91,6 @@ struct texture
     int height = 0;             // Texture base height
     int mipmaps = 0;            // Mipmap levels, 1 by default
     int format = 0;             // Data format (PixelFormat type)
-};
-
-struct color
-{
-    uint8_t r = 0;        // Color red value
-    uint8_t g = 0;        // Color green value
-    uint8_t b = 0;        // Color blue value
-    uint8_t a = 0;        // Color alpha value
-
-    constexpr color() = default;
-    constexpr color(uint8_t r, uint8_t g, uint8_t b, uint8_t a) : r(r),g(g),b(b),a(a){}
 };
 
 namespace colors
@@ -91,12 +125,12 @@ namespace colors
 
 struct text
 {
-    string symbols;
+    std::string symbols;
     point position;
     float size = 0;
     dd::color color = colors::white;
     text() = default;
-    text(string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), size(sz), color(c){}
+    text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), size(sz), color(c){}
 };
 
 struct audio_stream
@@ -150,7 +184,7 @@ struct font
 
 namespace window
 {
-    void init(int width, int height, const string&);  // Initialize window and OpenGL context
+    void init(int width, int height, const std::string&);  // Initialize window and OpenGL context
     bool should_close();                               // Check if KEY_ESCAPE pressed or Close icon pressed
     void close();
     void set_fullscreen_flag();

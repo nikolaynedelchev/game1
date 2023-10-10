@@ -1,6 +1,6 @@
 #include "sprite.h"
 #include "casts.h"
-#include "shapes.h"
+
 namespace dd
 {
 static map<string, uint32_t> s_ids;
@@ -142,7 +142,7 @@ namespace gfx
 
     bool collision(const dd::sprite& s1, const dd::sprite& s2)
     {
-        return collision(s1.bound, global_pos(s1), s2.bound, global_pos(s2));
+        return bound::collision(s1.bound, global_pos(s1), s2.bound, global_pos(s2));
     }
 
 }

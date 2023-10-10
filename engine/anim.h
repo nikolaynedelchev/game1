@@ -1,9 +1,7 @@
 #pragma once
 #include "libs.h"
-#include "transform.h"
 #include "engine_bridge.h"
 #include "sprite.h"
-#include "bound.h"
 
 namespace dd
 {

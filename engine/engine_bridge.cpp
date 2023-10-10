@@ -7,6 +7,98 @@
 
 namespace dd
 {
+    void point::draw(color c, bool bold) const
+    {
+        if (bold)
+        {
+            circle{*this, 3.0f}.draw(c, true);
+        }
+        else
+        {
+            DrawPixel(int(x), int(y), cast(c));
+        }
+    }
+
+    void rect::draw(color c, bool filled) const
+    {
+        if (filled)
+        {
+            DrawRectangle(int(x), int(y), int(width), int(height), cast(c));
+        }
+        else
+        {
+            DrawRectangleLines(int(x), int(y), int(width), int(height), cast(c));
+        }
+    }
+
+    void circle::draw(color color, bool filled) const
+    {
+        if (filled)
+        {
+            DrawCircle(int(center.x),
+                    int(center.y),
+                    radius, cast(color));
+        }
+        else
+        {
+            DrawCircleLines(int(center.x),
+                            int(center.y),
+                            radius, cast(color));
+        }
+    }
+
+    bool bound::collision(const bound &b1, const vec &v1, const bound &b2, const vec &v2)
+    {
+        for(const auto& r1 : b1.rects)
+        {
+            for(const auto& r2 : b2.rects)
+            {
+                if (CheckCollisionRecs(cast(r1 + v1), cast(r2 + v2)))
+                {
+                    return true;
+                }
+            }
+            for(const auto& c2 : b2.circles)
+            {
+                if (CheckCollisionCircleRec(cast(c2.center + v2), c2.radius, cast(r1 + v1)))
+                {
+                    return true;
+                }
+            }
+        }
+        for(const auto& c1 : b1.circles)
+        {
+            for(const auto& r2 : b2.rects)
+            {
+                if (CheckCollisionCircleRec(cast(c1.center + v1), c1.radius, cast(r2 + v2)))
+                {
+                    return true;
+                }
+            }
+            for(const auto& c2 : b2.circles)
+            {
+                if (CheckCollisionCircles(cast(c1.center + v1), c1.radius,
+                                        cast(c2.center + v2), c2.radius))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void bound::draw(const vec &v) const
+    {
+        for(const auto& r : rects)
+        {
+            (r+v).draw(colors::white, false);
+        }
+        for(auto c : circles)
+        {
+            (c+v).draw(colors::white, false);
+        }
+    }
+
     namespace window
     {
         static unsigned s_window_config_flags = 0;
