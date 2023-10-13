@@ -1,5 +1,5 @@
 #pragma once
-//#include "libs.h"
+
 #include <string>
 #include <vector>
 #include "kbd_bridge.h"
@@ -42,37 +42,6 @@ struct rect
     constexpr rect(float x, float y, float w, float h) : x(x),y(y),width(w),height(h){}
 
     void draw(color c, bool filled) const;
-};
-
-struct circle
-{
-    point center;
-    float radius = 0.0f;
-
-    constexpr circle() = default;
-    constexpr circle(point c, float r) : center(c), radius(r){}
-    constexpr circle(float x, float y, float r) : center({x, y}), radius(r){}
-
-    void draw(color, bool filled = false) const;
-};
-
-struct transform
-{
-    vec offset = {0.0f, 0.0f};
-    vec scale = {1.0f, 1.0f};
-    constexpr transform() = default;
-    constexpr transform(dd::vec offset, dd::vec scale) : offset(offset), scale(scale) {}
-    constexpr transform(float offset_x, float offset_y, float scale_x, float scale_y) : offset({offset_x, offset_y}), scale({scale_x, scale_y}) {}
-};
-
-struct bound
-{
-    std::vector<rect> rects;
-    std::vector<circle> circles;
-
-    void draw(const dd::vec& v) const;
-    static bool collision(const dd::bound& b1, const dd::vec& v1,
-                          const dd::bound& b2, const dd::vec& v2);
 };
 
 struct image
@@ -249,9 +218,3 @@ namespace mouse
 }
 
 }
-
-
-// include fmt formatters
-#define DD_UNLOCK_FORMATTER_INCLUDE
-#include "formatters.hpp"
-#undef DD_UNLOCK_FORMATTER_INCLUDE

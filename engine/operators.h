@@ -1,5 +1,6 @@
 #pragma once
 #include "engine_bridge.h"
+#include "engine_ex.h"
 
 // Points
 dd::point& operator+=(dd::point& v1, const dd::point& v2);
