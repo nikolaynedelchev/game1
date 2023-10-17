@@ -7,7 +7,6 @@
 namespace dd
 {
 
-
 void circle::draw(color color, bool filled) const
 {
     if (filled)
@@ -77,28 +76,28 @@ void bound::draw(const vec &v) const
 }
 
 
-static map<string, uint32_t> s_ids;
-static vector<texture> s_textures;
+static std::map<std::string, uint32_t> s_ids;
+static std::vector<texture> s_textures;
 
-static bool create(const string& imageFile)
+static bool create(const std::string& imageFile)
 {
     if (s_ids.find(imageFile) != s_ids.end())
     {
         return true;
     }
 
-    string fullFileName = DD_RSS_FOLDER"/images/" + imageFile;
+    std::string fullFileName = DD_RSS_FOLDER"/images/" + imageFile;
     Image image = LoadImage(fullFileName.c_str());
     if (image.data == nullptr)
     {
-        PrintLn("Error: Empty image: key: {} , full: {}", imageFile, fullFileName);
+        println("Error: Empty image: key: {} , full: {}", imageFile, fullFileName);
         return false;
     }
     Texture2D texture = LoadTextureFromImage(image);
     if (texture.id == 0)
     {
         UnloadImage(image);
-        PrintLn("Error: Texture construct failed: key: {} , full: {}", imageFile, fullFileName);
+        println("Error: Texture construct failed: key: {} , full: {}", imageFile, fullFileName);
         return false;
     }
     s_ids[imageFile] = s_textures.size();
@@ -107,7 +106,7 @@ static bool create(const string& imageFile)
     return true;
 }
 
-sprite sprite::load(const string& imageFile, 
+sprite sprite::load(const std::string& imageFile, 
                     rect source,
                     transform targetTransform)
 {
@@ -116,13 +115,13 @@ sprite sprite::load(const string& imageFile,
     {
         if (create(imageFile) == false)
         {
-            FatalError("Faild to create texture: {}", imageFile);
+            fatal_error("Faild to create texture: {}", imageFile);
             return sprite();
         }
         id_it = s_ids.find(imageFile);
         if (id_it == s_ids.end())
         {
-            FatalError("Error: CreateTexture unknown failier: {}", imageFile);
+            fatal_error("Error: CreateTexture unknown failier: {}", imageFile);
             return sprite();
         }
     }
@@ -136,10 +135,6 @@ sprite sprite::load(const string& imageFile,
         sprite.source.width = float(texture.width);
         sprite.source.height = float(texture.height);
     }
-
-    // TODO: experimental flip
-    //sprite.source.x = sprite.source.width; // not correct
-    //sprite.source.width = -sprite.source.width;
 
     sprite.target = targetTransform;
     sprite.position = {0.0f, 0.0f};

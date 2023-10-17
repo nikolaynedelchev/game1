@@ -40,7 +40,7 @@ namespace dd
     namespace window
     {
         static unsigned s_window_config_flags = 0;
-        void init(int width, int height, const string& title)
+        void init(int width, int height, const std::string& title)
         {
             SetConfigFlags(s_window_config_flags);
             InitWindow(width, height, title.c_str());
@@ -136,7 +136,7 @@ namespace dd
             ClearBackground(cast(c));
         }
 
-        static map<string, font> s_fonts;
+        static std::map<std::string, font> s_fonts;
         static bool has_default_font = false;
         static font default_font;
 
@@ -177,13 +177,13 @@ namespace dd
             auto it = s_fonts.find(font);
             if (it == s_fonts.end())
             {
-                string file = DD_RSS_FOLDER"/fonts/" + font;
+                std::string file = DD_RSS_FOLDER"/fonts/" + font;
                 auto new_font = cast(LoadFont(file.c_str()));
                 if (new_font.default_size == 0 ||
                     new_font.glyphs_count == 0 ||
                     new_font.glyphs == nullptr)
                 {
-                    PrintLn("Error: font not loaded correctly: {}", font);
+                    println("Error: font not loaded correctly: {}", font);
                 }
                 else
                 {
@@ -193,7 +193,7 @@ namespace dd
             }
             if (it == s_fonts.end())
             {
-                PrintLn("Error: font not found: {}", font);
+                println("Error: font not found: {}", font);
             }
             default_font = it->second;
             has_default_font = true;

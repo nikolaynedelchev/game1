@@ -1,4 +1,4 @@
-#include <engine/engine.h>
+#include <engine.h>
 
 struct Game
 {
@@ -80,7 +80,7 @@ void Init()
     dd::time::target_fps(60);
     dd::mouse::cursor_hide();
 
-    PrintLn("Loading resources...");
+    dd::println("Loading resources...");
     //
     dd::transform heroTr = {{}, {0.30f, 0.35f}};
     dd::transform heroLeftMissilesTr = dd::transform{-80.0f, -80.0f, 1.0f, 0.8f} * heroTr;
@@ -107,7 +107,7 @@ void Init()
 
     LoadTestAnim();
 
-    PrintLn("Resource loaded!");
+    dd::println("Resource loaded!");
 }
 
 void Deinit()

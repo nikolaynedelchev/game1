@@ -22,7 +22,7 @@ struct transform
     vec offset = {0.0f, 0.0f};
     vec scale = {1.0f, 1.0f};
     constexpr transform() = default;
-    constexpr transform(dd::vec offset, dd::vec scale) : offset(offset), scale(scale) {}
+    constexpr transform(vec offset, vec scale) : offset(offset), scale(scale) {}
     constexpr transform(float offset_x, float offset_y, float scale_x, float scale_y) : offset({offset_x, offset_y}), scale({scale_x, scale_y}) {}
 };
 
@@ -31,9 +31,9 @@ struct bound
     std::vector<rect> rects;
     std::vector<circle> circles;
 
-    void draw(const dd::vec& v) const;
-    static bool collision(const dd::bound& b1, const dd::vec& v1,
-                          const dd::bound& b2, const dd::vec& v2);
+    void draw(const vec& v) const;
+    static bool collision(const bound& b1, const vec& v1,
+                          const bound& b2, const vec& v2);
 };
 
 struct sprite
@@ -46,7 +46,7 @@ struct sprite
 
     bool flip_x = false;
     bool flip_y = false;
-    dd::bound bound;
+    bound bound;
 
     uint32_t texture_id = 0;
     bool loaded = false;
@@ -55,16 +55,16 @@ struct sprite
 
     void draw() const;
     //
-    static ::dd::sprite load(const string& imageFile, 
-                            rect sourceRectangle,
-                            transform targetTransform);
+    static sprite load(const std::string& imageFile, 
+                       rect sourceRectangle,
+                       transform targetTransform);
     //
     static void release_spritres();
 
     point global_pos() const;
     rect global_rect() const;
     rect origin_rect() const;
-    bool collision(const dd::sprite& s2) const;
+    bool collision(const sprite& s2) const;
 };
 
 
@@ -95,8 +95,8 @@ struct anim
     void update();
     void draw() const;
 
-    bool collision(const dd::anim& a2) const;
-    bool collision(const dd::sprite& s2) const;
+    bool collision(const anim& a2) const;
+    bool collision(const sprite& s2) const;
 
 private: struct
     {
