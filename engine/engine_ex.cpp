@@ -86,7 +86,7 @@ static bool create(const std::string& imageFile)
         return true;
     }
 
-    std::string fullFileName = DD_RSS_FOLDER"/images/" + imageFile;
+    std::string fullFileName = rss_folder() + "/images/" + imageFile;
     Image image = LoadImage(fullFileName.c_str());
     if (image.data == nullptr)
     {

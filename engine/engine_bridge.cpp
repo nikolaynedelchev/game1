@@ -13,6 +13,16 @@
 
 namespace dd
 {
+    static std::string rss_folder_;
+    void rss_folder(std::string folder)
+    {
+        rss_folder_ = std::move(folder);
+    }
+    const std::string& rss_folder()
+    {
+        return rss_folder_;
+    }
+
     void point::draw(color c, bool bold) const
     {
         if (bold)
@@ -177,7 +187,7 @@ namespace dd
             auto it = s_fonts.find(font);
             if (it == s_fonts.end())
             {
-                std::string file = DD_RSS_FOLDER"/fonts/" + font;
+                std::string file = rss_folder() + "/fonts/" + font;
                 auto new_font = cast(LoadFont(file.c_str()));
                 if (new_font.default_size == 0 ||
                     new_font.glyphs_count == 0 ||

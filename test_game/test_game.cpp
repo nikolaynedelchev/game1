@@ -67,6 +67,7 @@ void LoadTestAnim()
 
 void Init()
 {
+    dd::rss_folder(DD_RSS_FOLDER);
     int screenWidth = 1440;
     int screenHeight = 900;
 

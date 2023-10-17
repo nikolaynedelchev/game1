@@ -6,6 +6,8 @@
 
 namespace dd
 {
+    void rss_folder(std::string folder);
+    const std::string& rss_folder();
 struct color
 {
     uint8_t r = 0;        // Color red value
