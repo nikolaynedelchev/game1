@@ -25,25 +25,38 @@ namespace dd
 
     void point::draw(color c, bool bold) const
     {
+        auto scaled = point(x, y) * engine::global_transform();
         if (bold)
         {
-            DrawCircle(int(x), int(y), 3.0f, cast(c));
+            DrawCircle(int(scaled.x), int(scaled.y), 3.0f, cast(c));
         }
         else
         {
-            DrawPixel(int(x), int(y), cast(c));
+            DrawPixel(int(scaled.x), int(scaled.y), cast(c));
         }
+    }
+
+    point rect::position() const
+    {
+        return {x, y};
+    }
+
+    vec rect::size() const
+    {
+        return {width, height};
     }
 
     void rect::draw(color c, bool filled) const
     {
+        auto scaled = engine::global_transform() * (*this);
+
         if (filled)
         {
-            DrawRectangle(int(x), int(y), int(width), int(height), cast(c));
+            DrawRectangle(int(scaled.x), int(scaled.y), int(scaled.width), int(scaled.height), cast(c));
         }
         else
         {
-            DrawRectangleLines(int(x), int(y), int(width), int(height), cast(c));
+            DrawRectangleLines(int(scaled.x), int(scaled.y), int(scaled.width), int(scaled.height), cast(c));
         }
     }
 
@@ -126,6 +139,17 @@ namespace dd
         void engine::clear_frame(color c)
         {
             ClearBackground(cast(c));
+        }
+
+        static transform s_global_transform;
+        void engine::global_transform(transform t)
+        {
+            s_global_transform = t;
+        }
+
+        transform engine::global_transform()
+        {
+            return s_global_transform;
         }
 
         bool engine::key_up(keys::kbd_key k)

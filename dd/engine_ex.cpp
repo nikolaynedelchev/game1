@@ -9,16 +9,17 @@ namespace dd
 
 void circle::draw(color color, bool filled) const
 {
+    auto scaled = center * engine::global_transform();
     if (filled)
     {
-        DrawCircle(int(center.x),
-                int(center.y),
+        DrawCircle(int(scaled.x),
+                int(scaled.y),
                 radius, cast(color));
     }
     else
     {
-        DrawCircleLines(int(center.x),
-                        int(center.y),
+        DrawCircleLines(int(scaled.x),
+                        int(scaled.y),
                         radius, cast(color));
     }
 }
@@ -175,10 +176,13 @@ void sprite::draw() const
     if (flip_x) src.width = -src.width;
     if (flip_y) src.height = -src.height;
 
+    auto scaledDest = get_dest_rect(*this) * engine::global_transform();
+    auto scaledOrigin = get_origin(*this);// * engine::global_transform();
+
     DrawTexturePro(cast(s_textures[ texture_id ]), 
                    cast(src),
-                   cast(get_dest_rect(*this)),
-                   cast(get_origin(*this)),
+                   cast(scaledDest),
+                   cast(scaledOrigin),
                    0.0f,
                    WHITE);
 }

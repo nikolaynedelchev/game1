@@ -17,15 +17,6 @@ struct circle
     void draw(color, bool filled = false) const;
 };
 
-struct transform
-{
-    vec offset = {0.0f, 0.0f};
-    vec scale = {1.0f, 1.0f};
-    constexpr transform() = default;
-    constexpr transform(vec offset, vec scale) : offset(offset), scale(scale) {}
-    constexpr transform(float offset_x, float offset_y, float scale_x, float scale_y) : offset({offset_x, offset_y}), scale({scale_x, scale_y}) {}
-};
-
 struct bound
 {
     std::vector<rect> rects;

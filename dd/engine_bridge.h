@@ -8,6 +8,7 @@ namespace dd
 {
     void rss_folder(std::string folder);
     const std::string& rss_folder();
+
 struct color
 {
     uint8_t r = 0;        // Color red value
@@ -32,6 +33,15 @@ struct point
 
 using vec = point;
 
+struct transform
+{
+    vec offset = {0.0f, 0.0f};
+    vec scale = {1.0f, 1.0f};
+    constexpr transform() = default;
+    constexpr transform(vec offset, vec scale) : offset(offset), scale(scale) {}
+    constexpr transform(float offset_x, float offset_y, float scale_x, float scale_y) : offset({offset_x, offset_y}), scale({scale_x, scale_y}) {}
+};
+
 // Rectangle, 4 components
 struct rect
 {
@@ -42,7 +52,8 @@ struct rect
 
     constexpr rect() = default;
     constexpr rect(float x, float y, float w, float h) : x(x),y(y),width(w),height(h){}
-
+    point position() const;
+    vec size() const;
     void draw(color c, bool filled) const;
 };
 
@@ -165,6 +176,8 @@ public:
     void begin_frame();
     void end_frame();
     void clear_frame(color);
+    static void global_transform(transform);
+    static transform global_transform();
 
     // keyboard
     bool key_up(keys::kbd_key k);

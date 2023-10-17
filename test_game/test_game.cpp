@@ -21,6 +21,8 @@ dd::anim runningAnim2;
 dd::anim runningAnim3;
 
 dd::text hitsMsg;
+dd::text hitsMsg2;
+dd::text hitsMsg3;
 
 
 void LoadTestAnim()
@@ -37,7 +39,7 @@ void LoadTestAnim()
         frame.bound.rects.push_back( frame.origin_rect()  );
         runningAnim.add_frame(frame);
     }
-    runningAnim.fps(18.0f);
+    runningAnim.fps(12.0f);
     runningAnim.loop = true;
     runningAnim.flip_x = true;
     runningAnim.position = {300, 300};
@@ -45,7 +47,7 @@ void LoadTestAnim()
     runningAnim.pause(false);
 
     runningAnim2 = runningAnim;
-    runningAnim2.fps(3.0f);
+    runningAnim2.fps(4.0f);
     runningAnim2.flip_x = false;
     runningAnim.position.y += 160;
 
@@ -71,9 +73,16 @@ void LoadTestAnim()
 
     //
     hitsMsg.color = dd::colors::red;
-    hitsMsg.position = {100, 240};
+    hitsMsg.position = {100, 40};
     hitsMsg.size = 40.0f;
+    hitsMsg2 = hitsMsg;
+    hitsMsg3 = hitsMsg;
+
+    hitsMsg2.position = {100, 140};
+    hitsMsg3.position = {100, 240};
+
     hitsMsg.set_font("OpenSans-Regular.ttf");
+    hitsMsg3.set_font("OpenSans-Regular.ttf");
 }
 
 void Init()
@@ -248,6 +257,8 @@ void MainLoop()
             rightMissileSprite.draw();
         }
         hitsMsg.write( fmt::format("Hits: {}", hits) );
+        hitsMsg2.write("Test Text 1234 222");
+        hitsMsg3.write("Test Text 1234 333");
 
         heroBound.draw(heroSprite.position);
 
