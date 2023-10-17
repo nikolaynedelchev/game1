@@ -55,9 +55,9 @@ struct sprite
 
     void draw() const;
     //
-    static sprite load(const std::string& imageFile, 
-                       rect sourceRectangle,
-                       transform targetTransform);
+    void load(const std::string& imageFile, 
+              rect sourceRectangle,
+              transform targetTransform);
     //
     static void release_spritres();
 
@@ -104,6 +104,37 @@ private: struct
         bool paused = true;
         float elapsed = -1.0f;
         std::vector<sprite> frames;
+    }p_;
+};
+
+struct sound
+{
+    void load(const std::string& file);
+    void play();
+
+    private: struct
+    {
+        sound_impl sound_;
+    }p_;  
+};
+
+struct text
+{
+    std::string symbols;
+    point position;
+    float size = 0;
+    dd::color color = colors::white;
+    text() = default;
+    text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), size(sz), color(c){}
+    void write(std::string txt);
+    // text
+    void set_font(const std::string& font);
+    void set_font_default();
+
+    private: struct
+    {
+        font text_font;
+        bool has_default_font = false;
     }p_;
 };
 

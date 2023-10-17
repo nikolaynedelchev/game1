@@ -12,8 +12,8 @@ namespace dd
     do_macro(   Image                   ,   ::dd::image                 )\
     do_macro(   Texture2D               ,   ::dd::texture               )\
     do_macro(   AudioStream             ,   ::dd::audio_stream          )\
-    do_macro(   Sound                   ,   ::dd::sound                 )\
-    do_macro(   Music                   ,   ::dd::music                 )\
+    do_macro(   Sound                   ,   ::dd::sound_impl            )\
+    do_macro(   Music                   ,   ::dd::music_impl            )\
     do_macro(   KeyboardKey             ,   ::dd::keys::kbd_key         )\
     do_macro(   GlyphInfo               ,   ::dd::glyph_info            )\
     do_macro(   Font                    ,   ::dd::font                  )\

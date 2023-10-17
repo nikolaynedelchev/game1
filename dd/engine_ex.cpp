@@ -106,9 +106,9 @@ static bool create(const std::string& imageFile)
     return true;
 }
 
-sprite sprite::load(const std::string& imageFile, 
-                    rect source,
-                    transform targetTransform)
+void sprite::load(const std::string& imageFile, 
+                  rect src,
+                  transform targetTransform)
 {
     auto id_it = s_ids.find(imageFile);
     if (id_it == s_ids.end())
@@ -116,31 +116,31 @@ sprite sprite::load(const std::string& imageFile,
         if (create(imageFile) == false)
         {
             fatal_error("Faild to create texture: {}", imageFile);
-            return sprite();
+            *this = sprite();
+            return;
         }
         id_it = s_ids.find(imageFile);
         if (id_it == s_ids.end())
         {
             fatal_error("Error: CreateTexture unknown failier: {}", imageFile);
-            return sprite();
+            *this = sprite();
+            return;
         }
     }
-    sprite sprite;
-    sprite.texture_id = id_it->second;
-    texture texture = s_textures[sprite.texture_id];
-    sprite.rotate = 0.0f;
-    sprite.source = source;
-    if (sprite.source.width == 0.0f && sprite.source.height == 0.0f)
+    texture_id = id_it->second;
+    texture texture = s_textures[texture_id];
+    rotate = 0.0f;
+    this->source = src;
+    if (source.width == 0.0f && source.height == 0.0f)
     {
-        sprite.source.width = float(texture.width);
-        sprite.source.height = float(texture.height);
+        source.width = float(texture.width);
+        source.height = float(texture.height);
     }
 
-    sprite.target = targetTransform;
-    sprite.position = {0.0f, 0.0f};
-    sprite.visible = true;
-    sprite.loaded = true;
-    return sprite;
+    target = targetTransform;
+    position = {0.0f, 0.0f};
+    visible = true;
+    loaded = true;
 }
 
 void sprite::release_spritres()
@@ -319,7 +319,7 @@ bool sprite::collision(const dd::sprite& s2) const
         {
             if (loop || p_.elapsed <= dur)
             {
-                p_.elapsed += time::frame_time();
+                p_.elapsed += GetFrameTime();
             }
         }
 
@@ -380,5 +380,83 @@ bool sprite::collision(const dd::sprite& s2) const
         }
         return bound::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
                                 s2.bound, s2.position);
+    }
+
+    void sound::load(const std::string& file)
+    {
+        std::string full_name = rss_folder() + "/sounds/" + file;
+        p_.sound_ = cast(LoadSound(full_name.c_str()));
+    }
+
+    void sound::play()
+    {
+        PlaySound(cast(p_.sound_));
+    }
+
+
+    static std::map<std::string, font> s_fonts;
+    void text::write(std::string txt)
+    {
+        symbols = std::move(txt);
+        if (p_.has_default_font)
+        {
+            float font_sz = float(p_.text_font.default_size);
+            if (size != 0.0f)
+            {
+                font_sz = size;
+            }
+            DrawTextEx(cast(p_.text_font),
+                        symbols.c_str(),
+                        cast(position),
+                        font_sz,
+                        1.0f,
+                        cast(color)
+                        );
+        }
+        else
+        {
+            float font_sz = float(GetFontDefault().baseSize);
+            if (size != 0.0f)
+            {
+                font_sz = size;
+            }
+            DrawText(symbols.c_str(), 
+                    int(position.x),
+                    int(position.y),
+                    int(font_sz),
+                    cast(color));
+        }
+    }
+
+    void text::set_font(const std::string& font)
+    {
+        auto it = s_fonts.find(font);
+        if (it == s_fonts.end())
+        {
+            std::string file = rss_folder() + "/fonts/" + font;
+            auto new_font = cast(LoadFont(file.c_str()));
+            if (new_font.default_size == 0 ||
+                new_font.glyphs_count == 0 ||
+                new_font.glyphs == nullptr)
+            {
+                println("Error: font not loaded correctly: {}", font);
+            }
+            else
+            {
+                s_fonts[font] = new_font;
+                it = s_fonts.find(font);
+            }
+        }
+        if (it == s_fonts.end())
+        {
+            println("Error: font not found: {}", font);
+        }
+        p_.text_font = it->second;
+        p_.has_default_font = true;
+    }
+
+    void text::set_font_default()
+    {
+        p_.has_default_font = false;
     }
 }

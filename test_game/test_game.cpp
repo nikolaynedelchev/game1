@@ -6,7 +6,7 @@ struct Game
     uint64_t frameNumber = 0;
 };
 Game game;
-
+dd::engine engine;
 dd::sprite heroSprite;
 dd::sprite leftMissileSprite;
 dd::sprite rightMissileSprite;
@@ -20,6 +20,8 @@ dd::anim runningAnim2;
 
 dd::anim runningAnim3;
 
+dd::text hitsMsg;
+
 
 void LoadTestAnim()
 {
@@ -30,7 +32,8 @@ void LoadTestAnim()
         src.y = float(2 * 144);
         src.width = 144;
         src.height = 144;
-        auto frame = dd::sprite::load("test/test_animation.png", src, {});
+        dd::sprite frame;
+        frame.load("test/test_animation.png", src, {});
         frame.bound.rects.push_back( frame.origin_rect()  );
         runningAnim.add_frame(frame);
     }
@@ -54,7 +57,8 @@ void LoadTestAnim()
         src.y = float(0);
         src.width = 144;
         src.height = 144;
-        auto frame = dd::sprite::load("test/test_animation.png", src, {});
+        dd::sprite frame;
+        frame.load("test/test_animation.png", src, {});
         frame.bound.rects.push_back( frame.origin_rect()  );
         runningAnim3.add_frame(frame);
     }
@@ -64,23 +68,26 @@ void LoadTestAnim()
     runningAnim3.position = {300, 650};
     runningAnim3.visible = true;
     runningAnim3.pause(false);
+
+    //
+    hitsMsg.color = dd::colors::red;
+    hitsMsg.position = {100, 240};
+    hitsMsg.size = 40.0f;
+    hitsMsg.set_font("OpenSans-Regular.ttf");
 }
 
 void Init()
 {
-    dd::rss_folder(DD_RSS_FOLDER);
     int screenWidth = 1440;
     int screenHeight = 900;
 
     //dd::window::set_antialiasing_flag();
     //dd::window::set_fullscreen_flag();
-    dd::window::set_vsync_flag();
-    dd::window::init(screenWidth, screenHeight, "Raylib Force Exit Example");
-    dd::audio::init();
+    engine.init(DD_RSS_FOLDER, screenWidth, screenHeight, "Raylib Force Exit Example");
     //dd::kbd::set_exitkey(dd::keys::NONE);
     //
-    dd::time::target_fps(60);
-    dd::mouse::cursor_hide();
+    engine.target_fps(60);
+    engine.mouse_cursor_hide();
 
     dd::println("Loading resources...");
     //
@@ -89,7 +96,7 @@ void Init()
     dd::transform heroRightMissilesTr = dd::transform{+80.0f, -80.0f, 1.0f, 0.8f} * heroTr;
     dd::transform bulletTr = dd::transform{{}, {0.3f, 0.5f}} * heroTr;
 
-    heroSprite = dd::sprite::load("test/hero.png", {}, heroTr);
+    heroSprite.load("test/hero.png", {}, heroTr);
     //heroSprite.flip_x = true;
     //heroSprite.flip_y = true;
     heroSprite.position.x = 250.0f;
@@ -99,13 +106,13 @@ void Init()
     heroBound.rects.push_back(heroTr * dd::rect{+20.0f, 6.0f,  80, 70});
     heroBound.rects.push_back(heroTr * dd::rect{-20.0f  , -80.0f, 40,  40});
 
-    leftMissileSprite = dd::sprite::load("test/hero_missile.png", {}, heroLeftMissilesTr);
-    rightMissileSprite = dd::sprite::load("test/hero_missile.png", {}, heroRightMissilesTr);
-    bulletSprite = dd::sprite::load("test/bullet.png", {}, bulletTr);
+    leftMissileSprite.load("test/hero_missile.png", {}, heroLeftMissilesTr);
+    rightMissileSprite.load("test/hero_missile.png", {}, heroRightMissilesTr);
+    bulletSprite.load("test/bullet.png", {}, bulletTr);
     bulletSprite.bound.rects.push_back( bulletSprite.origin_rect() );
 
 
-    shotSound = dd::audio::load_sound( DD_RSS_FOLDER"/sounds/tests/shot.wav");
+    shotSound.load("tests/shot.wav");
 
     LoadTestAnim();
 
@@ -114,7 +121,7 @@ void Init()
 
 void Deinit()
 {
-    dd::window::close();
+    engine.close();
 }
 
 void MainLoop()
@@ -124,34 +131,34 @@ void MainLoop()
     int equipCooldown = 0;
     std::vector<dd::sprite> bullets;
 
-    dd::gfx::set_font("OpenSans-Regular.ttf");
+    //engine.set_font("OpenSans-Regular.ttf");
     int hits = 0;
-    while ( !dd::window::should_close() )
+    while ( !engine.should_close() )
     {
         game.frameNumber++;
 
         if (1)
         {
-            if (dd::kbd::key_down(dd::keys::P))     { runningAnim.pause(!runningAnim.paused()); }
+            if (engine.key_down(dd::keys::P))     { runningAnim.pause(!runningAnim.paused()); }
 
-            if (dd::kbd::key_down(dd::keys::UP))    {  heroSprite.position.y -= 3.0f;}
-            if (dd::kbd::key_down(dd::keys::DOWN))  {  heroSprite.position.y += 3.0f;}
-            if (dd::kbd::key_down(dd::keys::LEFT))  {  heroSprite.position.x -= 3.0f;}
-            if (dd::kbd::key_down(dd::keys::RIGHT)) {  heroSprite.position.x += 3.0f;}
-            if (dd::kbd::key_down(dd::keys::F))     {  dd::window::toggle_fullscreen(); }
+            if (engine.key_down(dd::keys::UP))    {  heroSprite.position.y -= 3.0f;}
+            if (engine.key_down(dd::keys::DOWN))  {  heroSprite.position.y += 3.0f;}
+            if (engine.key_down(dd::keys::LEFT))  {  heroSprite.position.x -= 3.0f;}
+            if (engine.key_down(dd::keys::RIGHT)) {  heroSprite.position.x += 3.0f;}
+            if (engine.key_down(dd::keys::F))     {  engine.toggle_fullscreen_win(); }
             if (equipCooldown <= 0)
             {
-                if (dd::kbd::key_down(dd::keys::LEFT_CONTROL)) 
+                if (engine.key_down(dd::keys::LEFT_CONTROL)) 
                 {
                     equipCooldown = 10;
                     showMissilies = !showMissilies; 
                 }
             }
-            else if (dd::kbd::key_up(dd::keys::LEFT_CONTROL))
+            else if (engine.key_up(dd::keys::LEFT_CONTROL))
             {
                 equipCooldown = 0;
             }
-            heroSprite.position += dd::mouse::delta();
+            heroSprite.position += engine.mouse_delta();
         }
 
         if (heroSprite.position.y < 650.0f)
@@ -176,7 +183,7 @@ void MainLoop()
 
         if (bulletsCooldown <= 0)
         {
-            if ( dd::kbd::key_down(dd::keys::SPACE) || dd::mouse::btn_down(0))
+            if ( engine.key_down(dd::keys::SPACE) || engine.mouse_btn_down(0))
             {  
                 runningAnim3.flip_x = !runningAnim3.flip_x;
                 bulletsCooldown = 25;
@@ -190,7 +197,7 @@ void MainLoop()
                     bullets.push_back(bulletSprite);
                     bullets.back().position = rightMissileSprite.global_pos();
                 } 
-                dd::audio::play(shotSound);
+                shotSound.play();
             }
         }
         else
@@ -226,8 +233,8 @@ void MainLoop()
         runningAnim2.update();
         runningAnim3.update();
 
-        dd::gfx::begin();
-        dd::gfx::clear(dd::colors::black);
+        engine.begin_frame();
+        engine.clear_frame(dd::colors::black);
 
         runningAnim.draw();
         runningAnim2.draw();
@@ -240,21 +247,11 @@ void MainLoop()
             leftMissileSprite.draw();
             rightMissileSprite.draw();
         }
-
-        //dd::gfx::draw(dd::gfx::global_pos(leftMissileSprite), dd::colors::blue, true);
-        //dd::gfx::draw(dd::gfx::global_pos(rightMissileSprite), dd::colors::green, true);
-
-        dd::gfx::write({  fmt::format("{}", leftMissileSprite.global_pos()), {100, 100}, 40.0f, dd::colors::red });
-        dd::gfx::write({  fmt::format("{}", leftMissileSprite.position), {100, 150}, 40.0f, dd::colors::red});
-        dd::gfx::write({  fmt::format("{}", leftMissileSprite.global_rect()), {100, 190}, 40.0f, dd::colors::red });
-        dd::gfx::write({  fmt::format("Hits: {}", hits), {100, 240}, 40.0f, dd::colors::red });
-
+        hitsMsg.write( fmt::format("Hits: {}", hits) );
 
         heroBound.draw(heroSprite.position);
 
-
-
-        dd::gfx::end();
+        engine.end_frame();
     }
 }
 

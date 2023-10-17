@@ -94,16 +94,6 @@ namespace colors
     constexpr color  ray_white   { 245, 245, 245, 255 }   ;// My own White (raylib logo)
 }
 
-struct text
-{
-    std::string symbols;
-    point position;
-    float size = 0;
-    dd::color color = colors::white;
-    text() = default;
-    text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), size(sz), color(c){}
-};
-
 struct audio_stream
 {
     void *buffer;       // Pointer to internal data used by the audio system
@@ -115,14 +105,14 @@ struct audio_stream
 };
 
 // Sound
-struct sound
+struct sound_impl
 {
     audio_stream stream;         // Audio stream
     unsigned int frame_count;    // Total number of frames (considering channels)
 };
 
 // Music, audio stream, anything longer than ~10 seconds should be streamed
-struct music
+struct music_impl
 {
     audio_stream stream;         // Audio stream
     unsigned int frame_count;    // Total number of frames (considering channels)
@@ -153,44 +143,30 @@ struct font
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-namespace window
+class engine
 {
-    void init(int width, int height, const std::string&);  // Initialize window and OpenGL context
+public:
+    // window
+    void init(std::string game_folder, 
+              int width, int height, 
+              const std::string& window_title = "",
+              bool fullscreen = false);  // Initialize window and OpenGL context
     bool should_close();                               // Check if KEY_ESCAPE pressed or Close icon pressed
     void close();
-    void set_fullscreen_flag();
-    void set_antialiasing_flag();
-    void set_vsync_flag();
-    void toggle_fullscreen();
-}
+    void toggle_fullscreen_win();
 
-namespace time
-{
+    // time
     void target_fps(int);
     int target_fps();
     float frame_time();
     double global_time();
-}
 
-namespace audio
-{
-    void init();
-    sound load_sound(const std::string& file);
-    void play(const sound&);
-}
+    // frame
+    void begin_frame();
+    void end_frame();
+    void clear_frame(color);
 
-namespace gfx
-{
-    void begin();
-    void end();
-    void clear(color);
-    void write(const text&);
-    void set_font(const std::string& font);
-    void set_font_default();
-}
-
-namespace kbd
-{
+    // keyboard
     bool key_up(keys::kbd_key k);
     bool key_down(keys::kbd_key k);
     bool key_pressed(keys::kbd_key k);
@@ -198,25 +174,23 @@ namespace kbd
     void set_exitkey(keys::kbd_key k);
     keys::kbd_key key_pressed();
     int char_pressed();
-}
 
-namespace mouse
-{
-    bool btn_pressed(int button);               // Check if a mouse button has been pressed once
-    bool btn_down(int button);                  // Check if a mouse button is being pressed
-    bool btn_released(int button);              // Check if a mouse button has been released once
-    bool btn_up(int button);                    // Check if a mouse button is NOT being pressed
-    int get_x(void);                            // Get mouse position X
-    int get_y(void);                            // Get mouse position Y
-    point position(void);                       // Get mouse position XY
-    vec delta(void);                            // Get mouse delta between frames
-    void position(int x, int y);                // Set mouse position XY
-    void offset(int offsetX, int offsetY);      // Set mouse offset
-    void scale(float scaleX, float scaleY);     // Set mouse scaling
-    float wheel_move(void);                     // Get mouse wheel movement for X or Y, whichever is larger
-    vec wheel_move_v(void);                     // Get mouse wheel movement for both X and Y
-    void cursor_set(int cursor);                // Set mouse cursor
-    void cursor_hide();
-}
+    // mouse
+    bool mouse_btn_pressed(int button);               // Check if a mouse button has been pressed once
+    bool mouse_btn_down(int button);                  // Check if a mouse button is being pressed
+    bool mouse_btn_released(int button);              // Check if a mouse button has been released once
+    bool mouse_btn_up(int button);                    // Check if a mouse button is NOT being pressed
+    int mouse_x(void);                            // Get mouse position X
+    int mouse_y(void);                            // Get mouse position Y
+    point mouse_position(void);                       // Get mouse position XY
+    vec mouse_delta(void);                            // Get mouse delta between frames
+    void mouse_position(int x, int y);                // Set mouse position XY
+    void mouse_offset(int offsetX, int offsetY);      // Set mouse offset
+    void mouse_scale(float scaleX, float scaleY);     // Set mouse scaling
+    float mouse_wheel_move(void);                     // Get mouse wheel movement for X or Y, whichever is larger
+    vec mouse_wheel_move_v(void);                     // Get mouse wheel movement for both X and Y
+    void mouse_cursor_set(int cursor);                // Set mouse cursor
+    void mouse_cursor_hide();
+};
 
 }
