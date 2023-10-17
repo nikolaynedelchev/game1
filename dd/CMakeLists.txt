@@ -24,19 +24,19 @@ else()
 endif()
 
 message(STATUS "Find all cpp files...")
-file(GLOB_RECURSE ENGINE_SOURCE_FILES ${CMAKE_SOURCE_DIR}/engine/*.cpp
-                                      ${CMAKE_SOURCE_DIR}/engine/*.c)
+file(GLOB_RECURSE ENGINE_SOURCE_FILES ${CMAKE_SOURCE_DIR}/dd/*.cpp
+                                      ${CMAKE_SOURCE_DIR}/dd/*.c)
 
-add_library(engine STATIC ${ENGINE_SOURCE_FILES})
-target_include_directories(engine PRIVATE ${RAYGUI_INCLUDE_DIRS} ${RAYLIB_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}  ${CMAKE_SOURCE_DIR})
+add_library(dd STATIC ${ENGINE_SOURCE_FILES})
+target_include_directories(dd PRIVATE ${RAYGUI_INCLUDE_DIRS} ${RAYLIB_INCLUDE_DIRS} ${CMAKE_SOURCE_DIR}  ${CMAKE_SOURCE_DIR})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "GNU compiler debug build detected...")
-    target_compile_options(engine PRIVATE -fsanitize=address -fsanitize=undefined)
-    target_link_libraries(engine PRIVATE -fsanitize=address -fsanitize=undefined)
+    target_compile_options(dd PRIVATE -fsanitize=address -fsanitize=undefined)
+    target_link_libraries(dd PRIVATE -fsanitize=address -fsanitize=undefined)
 endif()
 
-target_link_libraries(engine PRIVATE Threads::Threads raylib fmt::fmt)
+target_link_libraries(dd PRIVATE Threads::Threads raylib fmt::fmt)
 
 
 

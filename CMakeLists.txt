@@ -22,15 +22,15 @@ function(add_game GAME_NAME)
                                           ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.c)
 
     add_executable(${GAME_NAME} ${GAME1_SOURCE_FILES})
-    target_link_libraries(${GAME_NAME} PRIVATE engine fmt::fmt)
-    target_include_directories(${GAME_NAME} PRIVATE engine)
+    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt)
+    target_include_directories(${GAME_NAME} PRIVATE dd)
 
     message(STATUS "Copy resource files...")
 endfunction()
 
 file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
-add_subdirectory(engine)
+add_subdirectory(dd)
 add_game(test_game)
 
 message(STATUS "User CMake config done!")
