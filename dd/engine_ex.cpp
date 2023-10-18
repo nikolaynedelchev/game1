@@ -1,4 +1,4 @@
-#include "engine_ex.h"
+﻿#include "engine_ex.h"
 #include <raylib.h>
 #include "casts.h"
 #include "operators.h"
@@ -380,39 +380,55 @@ bool sprite::collision(const dd::sprite& s2) const
         PlaySound(cast(p_.sound_));
     }
 
-
-    static std::map<std::string, font> s_fonts;
-    void text::write(std::string txt)
+    dd::vec text::size() const
     {
-        symbols = std::move(txt);
         if (p_.has_default_font)
         {
-            float font_sz = float(p_.text_font.default_size);
-            if (size != 0.0f)
-            {
-                font_sz = size;
-            }
-            DrawTextEx(cast(p_.text_font),
-                        symbols.c_str(),
-                        cast(position),
-                        font_sz,
-                        1.0f,
-                        cast(color)
-                        );
+            return
+            cast
+            (
+                MeasureTextEx(cast(p_.text_font),
+                              symbols.c_str(),
+                              font_size==0.0f?p_.text_font.default_size:int(font_size),
+                              1.0f)
+            );
         }
         else
         {
-            float font_sz = float(GetFontDefault().baseSize);
-            if (size != 0.0f)
-            {
-                font_sz = size;
-            }
+            return {0, 0};
+//            cast
+//            (
+//                MeasureText(symbols.c_str(),
+//                            font_size==0.0f?GetFontDefault().baseSize:int(font_size))
+//            );
+        }
+    }
+
+    static std::map<std::string, font> s_fonts;
+    void text::draw() const
+    {
+        if (p_.has_default_font)
+        {
+            DrawTextEx(cast(p_.text_font),
+                       symbols.c_str(),
+                       cast(position),
+                       font_size==0.0f?p_.text_font.default_size:int(font_size),
+                       1.0f,
+                       cast(color));
+        }
+        else
+        {
             DrawText(symbols.c_str(), 
-                    int(position.x),
-                    int(position.y),
-                    int(font_sz),
+                     int(position.x),
+                     int(position.y),
+                      font_size==0.0f?GetFontDefault().baseSize:int(font_size),
                     cast(color));
         }
+    }
+
+    void text::clear_background(dd::color color) const
+    {
+        dd::rect(this->position, this->size()).bounding_rect().draw(color, true);
     }
 
     void text::set_font(const std::string& font)

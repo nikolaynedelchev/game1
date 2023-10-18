@@ -1,10 +1,20 @@
-#include <dd.h>
+﻿#include <dd.h>
+
+extern dd::sprite froggerUp[2];
+extern dd::sprite froggerDn[2];
+extern dd::sprite froggerLf[2];
+extern dd::sprite froggerRg[2];
+
+void LoadFroggerResources();
+std::vector<std::pair<std::string, dd::sprite>> GetAllGameSprites();
 
 dd::engine engine;
 dd::rect sampleRect = {50, 100, 120, 150};
 dd::vec scale = {1, 1};
 dd::vec offset = {0, 0};
 dd::text sampleText;
+dd::text rssText;
+
 void Init()
 {
     int screenWidth = 1440;
@@ -17,10 +27,17 @@ void Init()
     dd::println("Loading resources...");
     //
 
-    sampleText.color = dd::colors::red;
+    sampleText.color = dd::colors::yellow;
     sampleText.position = {10, 10};
-    sampleText.size = 40.0f;
+    sampleText.font_size = 50.0f;
     sampleText.set_font("OpenSans-Regular.ttf");
+
+    rssText.color = dd::colors::red;
+    rssText.position = {10, 70};
+    rssText.font_size = 50.0f;
+    rssText.set_font("OpenSans-Regular.ttf");
+
+    LoadFroggerResources();
 
     dd::println("Resource loaded!");
 }
@@ -68,6 +85,8 @@ void choose_position( const dd::sprite& srcSprite, dd::point sampleAnchor, dd::s
 
 void MainLoop()
 {
+    size_t rssIdx = 0;
+    auto allRss = GetAllGameSprites();
     while ( !engine.should_close() )
     {
         if (engine.key_down(dd::keys::LEFT_CONTROL) && false == engine.key_down(dd::keys::LEFT_SHIFT))
@@ -111,6 +130,16 @@ void MainLoop()
         }
         if (engine.key_down(dd::keys::PAGE_UP)) {scale += {0.02f, 0.02f}; }
         if (engine.key_down(dd::keys::PAGE_DOWN)) {scale -= {0.02f, 0.02f}; }
+        if (engine.key_pressed(dd::keys::HOME))
+        {
+            if (rssIdx == 0) rssIdx = allRss.size();
+            rssIdx--;
+        }
+        if (engine.key_pressed(dd::keys::END))
+        {
+            rssIdx++;
+            if (rssIdx == allRss.size()) rssIdx = 0;
+        }
 
         engine.begin_frame();
         engine.clear_frame(dd::colors::dark_purple);
@@ -128,6 +157,7 @@ void MainLoop()
         boundRect.position( boundRect.position() * scale );
         boundRect += allSprites.rect().position();
         boundRect.size( boundRect.size() * scale );
+        boundRect = boundRect.bounding_rect();
         boundRect.draw(dd::colors::red, false);
 
         dd::sprite sampleSprite;
@@ -138,23 +168,27 @@ void MainLoop()
 
         //sampleSprite.change_anchor(dd::anchors::up_right);
         //sampleSprite.position = allSprites.rect().anchor(dd::anchors::up_left) - dd::vec(20, 0);
-        sampleSprite.draw();
+        //sampleSprite.draw();
 
-        dd::rect allBound = allSprites.rect();
-        allBound.x--;
-        allBound.y--;
-        allBound.width += 2;
-        allBound.height += 2;
-        allBound.draw(dd::colors::red, false);
 
-        dd::rect sampleBound = sampleSprite.rect();
-        sampleBound.x--;
-        sampleBound.y--;
-        sampleBound.width += 2;
-        sampleBound.height += 2;
-        sampleBound.draw(dd::colors::red, false);
+        allSprites.rect().bounding_rect().draw(dd::colors::red, false);
+        //BoundBox(sampleSprite).draw(dd::colors::red, false);
 
-        sampleText.write(fmt::format("Sample: {}", sampleRect));
+        sampleText.symbols = (fmt::format("Sample: {}", sampleRect));
+        sampleText.clear_background(dd::colors::magenta);
+        sampleText.draw();
+
+        auto rss = allRss[rssIdx];
+
+        rssText.symbols = (rss.first);
+        rssText.clear_background(dd::colors::black);
+        rssText.draw();
+
+        rss.second.change_anchor(dd::anchors::up_left);
+        rss.second.size *= scale * 2.0f;
+        rss.second.position = {30, 140};
+        rss.second.rect().bounding_rect().draw(dd::colors::red, false);
+        rss.second.draw();
         
         engine.end_frame();
     }

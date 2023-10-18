@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include <vector>
@@ -70,6 +70,7 @@ struct rect
     vec size() const;
     void position(dd::point);
     void size(dd::vec);
+    dd::rect bounding_rect(int spacing = 1) const;
 
     void draw(color c, bool filled) const;
     dd::point anchor(anchors) const;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+﻿cmake_minimum_required(VERSION 3.10)
 
 set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
@@ -19,7 +19,7 @@ function(add_game GAME_NAME)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         target_compile_definitions(${GAME_NAME} PRIVATE DD_RSS_FOLDER="./resources/${GAME_NAME}")
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        target_compile_definitions(${GAME_NAME} PRIVATE DD_RSS_FOLDER="../resources/${GAME_NAME}")
+        target_compile_definitions(${GAME_NAME} PRIVATE DD_RSS_FOLDER="./resources/${GAME_NAME}")
     else()
         message(FATAL_ERROR "Unknown compiler")
     endif()

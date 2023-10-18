@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "libs.h"
 #include "engine_bridge.h"
 
@@ -116,11 +116,13 @@ struct text
 {
     std::string symbols;
     point position;
-    float size = 0;
+    float font_size = 0;
     dd::color color = colors::white;
     text() = default;
-    text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), size(sz), color(c){}
-    void write(std::string txt);
+    text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), font_size(sz), color(c){}
+    void draw() const;
+    void clear_background(dd::color color) const;
+    dd::vec size() const;
     // text
     void set_font(const std::string& font);
     void set_font_default();

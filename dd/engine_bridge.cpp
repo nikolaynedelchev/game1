@@ -1,4 +1,4 @@
-#include "engine_bridge.h"
+﻿#include "engine_bridge.h"
 #include "casts.h"
 #include <map>
 #include "libs.h"
@@ -57,6 +57,16 @@ namespace dd
         this->height = s.y;
     }
 
+    dd::rect rect::bounding_rect(int spacing) const
+    {
+        dd::rect b = *this;
+        b.x -= spacing;
+        b.y -= spacing;
+        b.width += 2*spacing;
+        b.height += 2*spacing;
+        return b;
+    }
+
     void rect::draw(color c, bool filled) const
     {
         if (filled)
@@ -104,7 +114,10 @@ namespace dd
             if (fullscreen)
             {
                 s_window_config_flags |= FLAG_FULLSCREEN_MODE;
-
+            }
+            else
+            {
+                s_window_config_flags |= FLAG_WINDOW_RESIZABLE;
             }
             SetConfigFlags(s_window_config_flags);
             auto title = window_title;
