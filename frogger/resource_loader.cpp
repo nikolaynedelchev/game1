@@ -1,5 +1,7 @@
-﻿#include <dd.h>
+﻿#include "resource_loader.h"
 
+namespace Rss
+{
 dd::sprite froggerUp[2];
 dd::sprite froggerDn[2];
 dd::sprite froggerLf[2];
@@ -203,4 +205,6 @@ std::vector<std::pair<std::string, dd::sprite>> GetAllGameSprites()
     sprites.push_back({"frogger_loggo", froggerLogo});
 
     return sprites;
+}
+
 }

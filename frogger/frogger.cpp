@@ -1,12 +1,5 @@
 ﻿#include <dd.h>
-
-extern dd::sprite froggerUp[2];
-extern dd::sprite froggerDn[2];
-extern dd::sprite froggerLf[2];
-extern dd::sprite froggerRg[2];
-
-void LoadFroggerResources();
-std::vector<std::pair<std::string, dd::sprite>> GetAllGameSprites();
+#include "resource_loader.h"
 
 dd::engine engine;
 dd::rect sampleRect = {50, 100, 120, 150};
@@ -37,7 +30,7 @@ void Init()
     rssText.font_size = 50.0f;
     rssText.set_font("OpenSans-Regular.ttf");
 
-    LoadFroggerResources();
+    Rss::LoadFroggerResources();
 
     dd::println("Resource loaded!");
 }
@@ -86,7 +79,7 @@ void choose_position( const dd::sprite& srcSprite, dd::point sampleAnchor, dd::s
 void MainLoop()
 {
     size_t rssIdx = 0;
-    auto allRss = GetAllGameSprites();
+    auto allRss = Rss::GetAllGameSprites();
     while ( !engine.should_close() )
     {
         if (engine.key_down(dd::keys::LEFT_CONTROL) && false == engine.key_down(dd::keys::LEFT_SHIFT))
