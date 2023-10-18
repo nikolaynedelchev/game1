@@ -184,6 +184,11 @@ dd::point operator/(float v1, dd::point& v2)
     return r;
 }
 
+bool operator==(const dd::point& v1, const dd::point v2)
+{
+    return v1.x == v2.x && v1.y == v2.y;
+}
+
 ///////////////////////
 // Rects
 dd::rect& operator+=(dd::rect& r1, const dd::point& v2)

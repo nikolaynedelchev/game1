@@ -10,18 +10,20 @@ set(CMAKE_CXX_EXTENSIONS ON)
 
 function(add_game GAME_NAME)
     find_package(fmt CONFIG REQUIRED)
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        add_definitions(-DDD_RSS_FOLDER="./resources/${GAME_NAME}")
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        add_definitions(-DDD_RSS_FOLDER="../resources/${GAME_NAME}")
-    else()
-        message(FATAL_ERROR "Unknown compiler")
-    endif()
 
     file(GLOB_RECURSE GAME1_SOURCE_FILES  ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.cpp
                                           ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.c)
 
     add_executable(${GAME_NAME} ${GAME1_SOURCE_FILES})
+
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        target_compile_definitions(${GAME_NAME} PRIVATE DD_RSS_FOLDER="./resources/${GAME_NAME}")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_definitions(${GAME_NAME} PRIVATE DD_RSS_FOLDER="../resources/${GAME_NAME}")
+    else()
+        message(FATAL_ERROR "Unknown compiler")
+    endif()
+
     target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt)
     target_include_directories(${GAME_NAME} PRIVATE dd)
 
@@ -31,7 +33,7 @@ endfunction()
 file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
 add_subdirectory(dd)
-add_game(test_game)
+#add_game(test_game)
 add_game(frogger)
 
 message(STATUS "User CMake config done!")

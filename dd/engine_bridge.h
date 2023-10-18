@@ -9,6 +9,19 @@ namespace dd
     void rss_folder(std::string folder);
     const std::string& rss_folder();
 
+enum class anchors
+{
+    up_left,
+    up_mid,
+    up_right,
+    mid_left,
+    centered,
+    mid_right,
+    down_left,
+    down_mid,
+    down_right
+};
+
 struct color
 {
     uint8_t r = 0;        // Color red value
@@ -52,9 +65,14 @@ struct rect
 
     constexpr rect() = default;
     constexpr rect(float x, float y, float w, float h) : x(x),y(y),width(w),height(h){}
+    constexpr rect(dd::point pos, dd::vec size) : x(pos.x),y(pos.y),width(size.x),height(size.y){}
     point position() const;
     vec size() const;
+    void position(dd::point);
+    void size(dd::vec);
+
     void draw(color c, bool filled) const;
+    dd::point anchor(anchors) const;
 };
 
 struct image
@@ -176,8 +194,6 @@ public:
     void begin_frame();
     void end_frame();
     void clear_frame(color);
-    static void global_transform(transform);
-    static transform global_transform();
 
     // keyboard
     bool key_up(keys::kbd_key k);

@@ -4,7 +4,9 @@
 
 namespace dd
 {
-    
+
+
+
 struct circle
 {
     point center;
@@ -30,14 +32,15 @@ struct bound
 struct sprite
 {
     bool visible = false;
-    point position = {0.0f, 0.0f};
-    transform target = {0.0f, 0.0f, 1.0f, 1.0f};
-    rect source  = {0.0f, 0.0f, 0.0f, 0.0f};
+    dd::point position;
+    dd::vec anchor;
+    dd::vec size;
+    dd::rect source;
     float rotate = 0.0f;
 
     bool flip_x = false;
     bool flip_y = false;
-    bound bound;
+    dd::bound bound;
 
     uint32_t texture_id = 0;
     bool loaded = false;
@@ -47,14 +50,12 @@ struct sprite
     void draw() const;
     //
     void load(const std::string& imageFile, 
-              rect sourceRectangle,
-              transform targetTransform);
+              dd::rect sourceRectangle,
+              dd::vec size);
     //
+    void change_anchor(dd::anchors);
+    dd::rect rect() const;
     static void release_spritres();
-
-    point global_pos() const;
-    rect global_rect() const;
-    rect origin_rect() const;
     bool collision(const sprite& s2) const;
 };
 
@@ -62,8 +63,9 @@ struct sprite
 struct anim
 {
     bool visible = false;
-    point position = {0.0f, 0.0f};
-    transform target = {0.0f, 0.0f, 1.0f, 1.0f};
+    dd::point position;
+    dd::vec anchor;
+    dd::vec size;
     float rotate = 0.0f;
     bool flip_x = false;
     bool flip_y = false;
@@ -85,6 +87,7 @@ struct anim
 
     void update();
     void draw() const;
+    void change_anchor(dd::anchors);
 
     bool collision(const anim& a2) const;
     bool collision(const sprite& s2) const;

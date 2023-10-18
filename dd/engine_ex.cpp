@@ -9,18 +9,17 @@ namespace dd
 
 void circle::draw(color color, bool filled) const
 {
-    auto scaled = center * engine::global_transform();
     if (filled)
     {
-        DrawCircle(int(scaled.x),
-                int(scaled.y),
-                radius, cast(color));
+        DrawCircle(int(this->center.x),
+                   int(this->center.y),
+                   this->radius, cast(color));
     }
     else
     {
-        DrawCircleLines(int(scaled.x),
-                        int(scaled.y),
-                        radius, cast(color));
+        DrawCircleLines(int(this->center.x),
+                        int(this->center.y),
+                        this->radius, cast(color));
     }
 }
 
@@ -108,8 +107,8 @@ static bool create(const std::string& imageFile)
 }
 
 void sprite::load(const std::string& imageFile, 
-                  rect src,
-                  transform targetTransform)
+                  dd::rect src,
+                  dd::vec sz)
 {
     auto id_it = s_ids.find(imageFile);
     if (id_it == s_ids.end())
@@ -128,21 +127,36 @@ void sprite::load(const std::string& imageFile,
             return;
         }
     }
-    texture_id = id_it->second;
-    texture texture = s_textures[texture_id];
-    rotate = 0.0f;
+    this->texture_id = id_it->second;
+    dd::texture texture = s_textures[texture_id];
+    this->rotate = 0.0f;
     this->source = src;
-    if (source.width == 0.0f && source.height == 0.0f)
+    if (this->source.size() == dd::vec(0, 0))
     {
-        source.width = float(texture.width);
-        source.height = float(texture.height);
+        this->source.width = float(texture.width);
+        this->source.height = float(texture.height);
     }
 
-    target = targetTransform;
-    position = {0.0f, 0.0f};
-    visible = true;
-    loaded = true;
+    this->size = sz;
+    if (this->size == dd::vec(0, 0))
+    {
+        this->size = this->source.size();
+    }
+    this->position = {0.0f, 0.0f};
+    this->visible = true;
+    this->loaded = true;
 }
+
+void sprite::change_anchor(dd::anchors a)
+{
+    this->anchor = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(a);
+}
+
+dd::rect sprite::rect() const
+{
+    return dd::rect(this->position - this->anchor, this->size);
+}
+
 
 void sprite::release_spritres()
 {
@@ -154,66 +168,29 @@ void sprite::release_spritres()
     s_ids.clear();
 }
 
-static inline rect get_dest_rect(const sprite& sprite)
-{
-    return (dd::rect{0.0f, 0.0f, sprite.source.width, sprite.source.height} * sprite.target) + sprite.position;
-}
-
-static inline point get_origin(const sprite& sprite)
-{
-    return (point{sprite.source.width, sprite.source.height} * sprite.target.scale) / 2.0f;
-}
-
 void sprite::draw() const
 {
-    if (loaded == false ||
-        visible == false)
+    if (this->loaded == false ||
+        this->visible == false)
     {
         return;
     }
 
-    auto src = source;
+    auto src = this->source;
     if (flip_x) src.width = -src.width;
     if (flip_y) src.height = -src.height;
 
-    auto scaledDest = get_dest_rect(*this) * engine::global_transform();
-    auto scaledOrigin = get_origin(*this);// * engine::global_transform();
-
-    DrawTexturePro(cast(s_textures[ texture_id ]), 
+    DrawTexturePro(cast(s_textures[ this->texture_id ]), 
                    cast(src),
-                   cast(scaledDest),
-                   cast(scaledOrigin),
-                   0.0f,
+                   cast(dd::rect(this->position, this->size)),
+                   cast(this->anchor),
+                   this->rotate,
                    WHITE);
 }
 
-point sprite::global_pos() const
-{
-    return (point{0.0f, 0.0f} * target) + position;
-}
-
-rect sprite::global_rect() const
-{
-    auto dest_rect = get_dest_rect(*this);
-    auto origin = get_origin(*this);
-    dest_rect.x -= origin.x;
-    dest_rect.y -= origin.y;
-    return dest_rect;
-}
-
-rect sprite::origin_rect() const
-{
-    auto g_rect = global_rect();
-    auto g_pos = global_pos();
-    g_rect.x -= g_pos.x;
-    g_rect.y -= g_pos.y;
-    return g_rect;
-}
-
-
 bool sprite::collision(const dd::sprite& s2) const
 {
-    return bound::collision(bound, global_pos(), s2.bound, s2.global_pos());
+    return bound::collision(this->bound, this->rect().position(), s2.bound, s2.rect().position());
 }
 
 
@@ -343,7 +320,7 @@ bool sprite::collision(const dd::sprite& s2) const
 
     void anim::draw() const
     {
-        auto fr = frame();
+        auto fr = this->frame();
         if (fr < 0)
         {
             return;
@@ -351,12 +328,18 @@ bool sprite::collision(const dd::sprite& s2) const
 
         auto frame_sprite = p_.frames[size_t(fr)];
 
-        frame_sprite.position = position;
-        frame_sprite.target = target;
-        frame_sprite.rotate = rotate;
-        frame_sprite.flip_x = flip_x;
-        frame_sprite.flip_y = flip_y;
+        frame_sprite.position = this->position;
+        frame_sprite.anchor = this->anchor;
+        frame_sprite.size = this->size;
+        frame_sprite.rotate = this->rotate;
+        frame_sprite.flip_x = this->flip_x;
+        frame_sprite.flip_y = this->flip_y;
         frame_sprite.draw();
+    }
+
+    void anim::change_anchor(dd::anchors a)
+    {
+        this->anchor = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(a);
     }
 
     bool anim::collision(const dd::anim& a2) const
