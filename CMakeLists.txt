@@ -35,6 +35,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 add_subdirectory(dd)
 #add_game(test_game)
 add_game(frogger)
+add_game(sprite_mgr)
 
 message(STATUS "User CMake config done!")
 

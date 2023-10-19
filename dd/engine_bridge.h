@@ -9,6 +9,18 @@ namespace dd
     void rss_folder(std::string folder);
     const std::string& rss_folder();
 
+enum class direction
+{
+    none,
+    up,
+    down,
+    left,
+    right,
+    up_left,
+    up_right,
+    down_left,
+    down_right
+};
 enum class anchors
 {
     up_left,
@@ -42,6 +54,7 @@ struct point
     constexpr point(float x, float y) : x(x),y(y){}
 
     void draw(color c, bool bold) const;
+    float distance(const point& p) const;
 };
 
 using vec = point;

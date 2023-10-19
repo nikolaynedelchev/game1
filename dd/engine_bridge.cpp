@@ -10,6 +10,7 @@
 
 #include "operators.h"
 #include "formatters.hpp"
+#include <cmath>
 
 namespace dd
 {
@@ -33,6 +34,11 @@ namespace dd
         {
             DrawPixel(int(this->x), int(this->y), cast(c));
         }
+    }
+
+    float point::distance(const point& p) const
+    {
+        return std::hypot(this->x - p.x, this->y - p.y);
     }
 
     point rect::position() const

@@ -1,6 +1,7 @@
-﻿#include "resource_loader.h"
+﻿#include "frogger_loader.h"
+#include <map>
 
-namespace Rss
+namespace Frogger
 {
 dd::sprite froggerUp[2];
 dd::sprite froggerDn[2];
@@ -44,17 +45,17 @@ dd::rect homeWalls[6];
 #define RIGHT_FAST 1
 #define LEFT_FAST 2
 
-void LoadFroggerResources()
+void LoadResources()
 {
     std::string f = "sprites.png";
 
     // Frogger
     dd::vec froggerSz = {25, 25};
-    froggerLf[GND].load(f, {{9, 333}, froggerSz}, {});  // Left Ground Frogger
-    froggerLf[AIR].load(f, {{43, 333}, froggerSz}, {}); // Left Air Frogger
+    froggerLf[GND].load(f, {{78, 334}, froggerSz}, {}); // Left Ground Frogger
+    froggerLf[AIR].load(f, {{112, 336}, froggerSz}, {});// Left Air Frogger
 
-    froggerRg[GND].load(f, {{78, 334}, froggerSz}, {}); // Right Ground Frogger
-    froggerRg[AIR].load(f, {{112, 336}, froggerSz}, {});// Right Air Frogger
+    froggerRg[GND].load(f, {{9, 333}, froggerSz}, {});  // Right Ground Frogger
+    froggerRg[AIR].load(f, {{43, 333}, froggerSz}, {}); // Right Air Frogger
 
     froggerUp[GND].load(f, {{11, 365}, froggerSz}, {}); // Up Ground Frogger
     froggerUp[AIR].load(f, {{44, 366}, froggerSz}, {}); // Up Air Frogger
@@ -145,32 +146,32 @@ void LoadFroggerResources()
 
 }
 
-std::vector<std::pair<std::string, dd::sprite>> GetAllGameSprites()
+std::vector<std::pair<std::string, dd::sprite>> GetSprites()
 {
     std::vector<std::pair<std::string, dd::sprite>> sprites;
 
     sprites.push_back({"frogger_up_ground", froggerUp[GND]});
     sprites.push_back({"frogger_up_air", froggerUp[AIR]});
-    sprites.push_back({"frogger_dn_ground", froggerDn[GND]});
-    sprites.push_back({"frogger_dn_air", froggerDn[AIR]});
-    sprites.push_back({"frogger_lf_ground", froggerLf[GND]});
-    sprites.push_back({"frogger_lf_air", froggerLf[AIR]});
-    sprites.push_back({"frogger_rg_ground", froggerRg[GND]});
-    sprites.push_back({"frogger_rg_air", froggerRg[AIR]});
+    sprites.push_back({"frogger_down_ground", froggerDn[GND]});
+    sprites.push_back({"frogger_down_air", froggerDn[AIR]});
+    sprites.push_back({"frogger_left_ground", froggerLf[GND]});
+    sprites.push_back({"frogger_left_air", froggerLf[AIR]});
+    sprites.push_back({"frogger_right_ground", froggerRg[GND]});
+    sprites.push_back({"frogger_right_air", froggerRg[AIR]});
 
-    sprites.push_back({"lady_lf_ground", ladyLf[GND]});
-    sprites.push_back({"lady_lf_air", ladyLf[AIR]});
-    sprites.push_back({"lady_rg_ground", ladyRg[GND]});
-    sprites.push_back({"lady_rg_air", ladyRg[AIR]});
+    sprites.push_back({"lady_left_ground", ladyLf[GND]});
+    sprites.push_back({"lady_left_air", ladyLf[AIR]});
+    sprites.push_back({"lady_right_ground", ladyRg[GND]});
+    sprites.push_back({"lady_right_air", ladyRg[AIR]});
 
     sprites.push_back({"snake_0", snake[0]});
     sprites.push_back({"snake_1", snake[1]});
     sprites.push_back({"snake_2", snake[2]});
     sprites.push_back({"snake_3", snake[3]});
 
-    sprites.push_back({"lf_sl_car", cars[LEFT_SLOW]});
-    sprites.push_back({"rg_ft_car", cars[RIGHT_FAST]});
-    sprites.push_back({"lf_ft_car", cars[LEFT_FAST]});
+    sprites.push_back({"slow_car_left", cars[LEFT_SLOW]});
+    sprites.push_back({"fast_car_right", cars[RIGHT_FAST]});
+    sprites.push_back({"fast_car_left", cars[LEFT_FAST]});
 
     sprites.push_back({"tractor_0", tractors[0]});
     sprites.push_back({"tractor_1", tractors[1]});
@@ -205,6 +206,49 @@ std::vector<std::pair<std::string, dd::sprite>> GetAllGameSprites()
     sprites.push_back({"frogger_loggo", froggerLogo});
 
     return sprites;
+}
+
+dd::sprite GetSprite(const std::string& name)
+{
+    static std::map<std::string, dd::sprite> s_allSprites;
+
+    if (s_allSprites.empty())
+    {
+        auto allSprites = GetSprites();
+        for(const auto& p : allSprites)
+        {
+            s_allSprites[p.first] = p.second;
+        }
+    }
+    return s_allSprites[name];
+}
+
+
+
+static std::map<std::string, dd::rect> s_allRects;
+static void PushRects()
+{
+    s_allRects["homes_0"] = homes[0];
+    s_allRects["homes_1"] = homes[1];
+    s_allRects["homes_2"] = homes[2];
+    s_allRects["homes_3"] = homes[3];
+    s_allRects["homes_4"] = homes[4];
+
+    s_allRects["home_walls_0"] = homeWalls[0];
+    s_allRects["home_walls_1"] = homeWalls[1];
+    s_allRects["home_walls_2"] = homeWalls[2];
+    s_allRects["home_walls_3"] = homeWalls[3];
+    s_allRects["home_walls_4"] = homeWalls[4];
+    s_allRects["home_walls_5"] = homeWalls[5];
+}
+
+dd::rect GetRect(const std::string& name)
+{
+    if (s_allRects.empty())
+    {
+        PushRects();
+    }
+    return s_allRects[name];
 }
 
 }

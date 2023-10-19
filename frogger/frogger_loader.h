@@ -2,11 +2,12 @@
 
 #include <dd.h>
 
-namespace Rss
+namespace Frogger
 {
-void LoadFroggerResources();
-std::vector<std::pair<std::string, dd::sprite>> GetAllGameSprites();
-
+void LoadResources();
+std::vector<std::pair<std::string, dd::sprite>> GetSprites();
+dd::sprite GetSprite(const std::string& name);
+dd::rect GetRect(const std::string& name);
 
 extern dd::sprite froggerUp[2];
 extern dd::sprite froggerDn[2];
