@@ -20,7 +20,7 @@ dd::point froggerDestination;
 float froggerSpeed = 2.0f; // pixels/frame
 float froggerJumpSize = 50.0f;
 
-void UpdateFrogger()
+void UpdateFroggerJumps()
 {
     if (isFroggerMoving)
     {
@@ -80,6 +80,10 @@ void UpdateFrogger()
     }
 }
 
+void UpdateFrogger()
+{
+    UpdateFroggerJumps();
+}
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////                            Homes
