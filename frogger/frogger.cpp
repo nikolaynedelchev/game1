@@ -8,12 +8,16 @@ namespace Frogger
 int screenWidth = 1440;
 int screenHeight = 900;
 
+
+int gameWidth = 784;
+int gameHeight = 900;
+
 ///////////////////////////////////////////////////////////////////////////////////////
 ////////////                            Frogger
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
-dd::point froggerPosition = {200, 200};
+dd::point froggerPosition = {screenWidth / 2.0f, screenHeight / 2.0f};
 dd::direction froggerDirection = dd::direction::up;
 bool isFroggerMoving = false;
 dd::point froggerDestination;
@@ -101,6 +105,11 @@ void DrawHomes()
     homesSprite.change_anchor(dd::anchors::up_mid);
     homesSprite.position = {screenWidth / 2.0f, 0};
     homesSprite.draw();
+
+    auto tree = GetSprite("tree_big");
+    tree.position = {0, 0};
+    tree.change_anchor(dd::anchors::centered);
+    tree.draw();
 }
 
 
@@ -168,12 +177,28 @@ void Deinit()
 
 void MainLoop()
 {
+    dd::camera camera;
     while ( !engine.should_close() )
     {
         UpdateFrogger();
         UpdateHomes();
+
+        if (engine.key_pressed(dd::keys::A)) camera.offset.x -= 30;
+        if (engine.key_pressed(dd::keys::D)) camera.offset.x += 30;
+        if (engine.key_pressed(dd::keys::W)) camera.offset.y -= 30;
+        if (engine.key_pressed(dd::keys::S)) camera.offset.y += 30;
+
+        if (engine.key_pressed(dd::keys::Q)) camera.scale -= 0.1f;
+        if (engine.key_pressed(dd::keys::E)) camera.scale += 0.1f;
+
         engine.begin_frame();
         engine.clear_frame(dd::colors::dark_purple);
+        engine.camera_on(camera);
+        engine.clipping_on(dd::rect({10, 10}, {screenWidth - 20, screenHeight - 20}));
+
+
+
+
         DrawFrogger();
         DrawHomes();
         engine.end_frame();

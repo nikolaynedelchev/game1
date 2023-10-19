@@ -175,6 +175,8 @@ namespace dd
         }
     // }
         static bool is_in_clipping = false;
+        static bool is_in_transform = false;
+
         void engine::begin_frame()
         {
             BeginDrawing();
@@ -183,6 +185,7 @@ namespace dd
         void engine::end_frame()
         {
             clipping_off();
+            camera_off();
             EndDrawing();
         }
 
@@ -191,7 +194,7 @@ namespace dd
             ClearBackground(cast(c));
         }
 
-        void engine::clipping(dd::rect r)
+        void engine::clipping_on(dd::rect r)
         {
             clipping_off();
             BeginScissorMode(int(r.x), int(r.y), int(r.width), int(r.height));
@@ -205,6 +208,31 @@ namespace dd
                 EndScissorMode();
             }
             is_in_clipping = false;
+        }
+
+        void engine::camera_on(camera c)
+        {
+            camera_on(c.offset, c.scale, c.rotation);
+        }
+
+        void engine::camera_on(dd::vec offset, float scale, float rotation)
+        {
+            camera_off();
+            Camera2D camera;
+            camera.offset = cast(offset);
+            camera.rotation = rotation;
+            camera.zoom = scale;
+            camera.target = cast(dd::vec{0, 0});
+            BeginMode2D(camera);
+            is_in_transform = true;
+        }
+        void engine::camera_off()
+        {
+            if (is_in_transform)
+            {
+                EndMode2D();
+            }
+            is_in_transform = false;
         }
 
         bool engine::key_up(keys::kbd_key k)

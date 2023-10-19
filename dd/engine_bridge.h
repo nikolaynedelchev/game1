@@ -184,6 +184,13 @@ struct font
     dd::glyph_info *glyphs;     // Glyphs info data
 };
 
+struct camera
+{
+    dd::vec offset;
+    float rotation = 0.0f;
+    float scale = 1.0f;
+};
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 class engine
@@ -208,8 +215,11 @@ public:
     void begin_frame();
     void end_frame();
     void clear_frame(color);
-    void clipping(dd::rect);
+    void clipping_on(dd::rect);
     void clipping_off();
+    void camera_on(camera c);
+    void camera_on(dd::vec offset, float scale = 1.0f, float rotation = 0.0f);
+    void camera_off();
 
     // keyboard
     bool key_up(keys::kbd_key k);
