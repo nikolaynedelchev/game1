@@ -208,6 +208,8 @@ public:
     void begin_frame();
     void end_frame();
     void clear_frame(color);
+    void clipping(dd::rect);
+    void clipping_off();
 
     // keyboard
     bool key_up(keys::kbd_key k);

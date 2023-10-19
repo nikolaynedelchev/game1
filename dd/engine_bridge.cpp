@@ -174,7 +174,7 @@ namespace dd
             return GetTime();
         }
     // }
-
+        static bool is_in_clipping = false;
         void engine::begin_frame()
         {
             BeginDrawing();
@@ -182,12 +182,29 @@ namespace dd
 
         void engine::end_frame()
         {
+            clipping_off();
             EndDrawing();
         }
 
         void engine::clear_frame(color c)
         {
             ClearBackground(cast(c));
+        }
+
+        void engine::clipping(dd::rect r)
+        {
+            clipping_off();
+            BeginScissorMode(int(r.x), int(r.y), int(r.width), int(r.height));
+            is_in_clipping = true;
+        }
+
+        void engine::clipping_off()
+        {
+            if (is_in_clipping)
+            {
+                EndScissorMode();
+            }
+            is_in_clipping = false;
         }
 
         bool engine::key_up(keys::kbd_key k)
