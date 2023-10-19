@@ -9,6 +9,7 @@ std::vector<std::pair<std::string, dd::sprite>> GetSprites();
 dd::sprite GetSprite(const std::string& name);
 dd::rect GetRect(const std::string& name);
 
+extern std::string spriteSheet;
 extern dd::sprite froggerUp[2];
 extern dd::sprite froggerDn[2];
 extern dd::sprite froggerLf[2];
@@ -39,5 +40,8 @@ extern dd::sprite froggerLogo;
 
 extern dd::rect homes[5];
 extern dd::rect homeWalls[6];
+
+extern dd::sprite skull_1;
+extern dd::sprite skull_2;
 
 }

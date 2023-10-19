@@ -40,4 +40,7 @@ extern dd::sprite froggerLogo;
 extern dd::rect homes[5];
 extern dd::rect homeWalls[6];
 
+extern dd::sprite skull_1;
+extern dd::sprite skull_2;
+
 }

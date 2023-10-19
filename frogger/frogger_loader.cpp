@@ -34,6 +34,9 @@ dd::sprite froggerLogo;
 dd::rect homes[5];
 dd::rect homeWalls[6];
 
+dd::sprite skull_1;
+dd::sprite skull_2;
+
 #define SMALL 0
 #define MID 1
 #define BIG 2
@@ -144,6 +147,9 @@ void LoadResources()
     // Frogger Loggo
     froggerLogo.load(f, {{13, 11}, {322, 35}}, {}); // Frogger Loggo
 
+    // Skulls
+    skull_1.load(f, {{273, 208}, {36, 40}}, {}); // Skull 1
+    skull_2.load(f, {{321, 206}, {36, 40}}, {}); // Skull 2
 }
 
 std::vector<std::pair<std::string, dd::sprite>> GetSprites()
@@ -205,6 +211,9 @@ std::vector<std::pair<std::string, dd::sprite>> GetSprites()
 
     sprites.push_back({"frogger_loggo", froggerLogo});
 
+    sprites.push_back({"skull_1", skull_1});
+    sprites.push_back({"skull_2", skull_2});
+    
     return sprites;
 }
 

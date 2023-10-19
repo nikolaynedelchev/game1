@@ -140,7 +140,7 @@ void MainLoop()
         engine.clear_frame(dd::colors::dark_purple);
 
         dd::sprite allSprites;
-        allSprites.load("sprites.png", {}, {});
+        allSprites.load(GameNamespace::spriteSheet, {}, {});
         allSprites.change_anchor(dd::anchors::centered);
 
         allSprites.position = {720, 450};
@@ -156,7 +156,7 @@ void MainLoop()
         boundRect.draw(dd::colors::red, false);
 
         dd::sprite sampleSprite;
-        sampleSprite.load("sprites.png", sampleRect, {});
+        sampleSprite.load(GameNamespace::spriteSheet, sampleRect, {});
 
         sampleSprite.size *= scale;
         choose_position(allSprites, boundRect.anchor(dd::anchors::centered), sampleSprite );
