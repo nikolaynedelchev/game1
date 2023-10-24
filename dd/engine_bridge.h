@@ -59,6 +59,17 @@ struct point
 
 using vec = point;
 
+struct line
+{
+    point p1;
+    point p2;
+    constexpr line() = default;
+    constexpr line(point a, point b) : p1(a), p2(b){}
+    constexpr line(float x1, float y1, float x2, float y2) : p1({x1, y1}), p2({x2, y2}){}
+    float length() const;
+    void draw(dd::color, float thick = 1.0f) const;
+};
+
 struct transform
 {
     vec offset = {0.0f, 0.0f};

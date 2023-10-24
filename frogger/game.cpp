@@ -5,7 +5,7 @@ namespace FroggerGame
 
 void GameModule::Init()
 {
-    engine.init(DD_RSS_FOLDER, screenWidth, screenHeight, "FROGGER", false);
+    engine.init(DD_RSS_FOLDER, screenWidth, screenHeight, "FROGGER", true);
     engine.target_fps(60);
     engine.mouse_cursor_hide();
 
@@ -21,7 +21,9 @@ void GameModule::Init()
     clippingRect.x = camera.offset.x;
     clippingRect.y = 0;
     clippingRect.width = gameScrW;
-    clippingRect.height = screenHeight;
+    clippingRect.height = screenHeight - 1;
+
+    dd::println("CLIPPING RECT: {}", clippingRect);
     frogger.Init();
 }
 
@@ -50,16 +52,32 @@ void GameModule::Update()
 void GameModule::Draw()
 {
     engine.begin_frame();
-    engine.clear_frame(dd::colors::dark_purple);
+    engine.clear_frame(dd::colors::light_gray);
+    dd::rect test = {0, 0, screenWidth, screenHeight};
+    //test.draw(dd::colors::red, false);
+
+    for (int i = 0; i < 40; i++)
+    {
+        dd::line l = {float(i) * (screenWidth / 20.0f), 0,
+                      float(i) * (screenWidth / 20.0f), screenHeight};
+        //l.draw(dd::colors::green);
+    }
+
     engine.camera_on(camera);
-    engine.clipping_on(clippingRect);
+    //engine.clipping_on(clippingRect);
 
-    DrawBackground();
-    DrawTime();
+    //DrawBackground();
+    //DrawTime();
 
-    homes.Draw();
+    //homes.Draw();
     frogger.Draw();
 
+    auto cr = clippingRect;
+    cr.width /= 2;
+    dd::println("PPP: {}", cr.x + cr.width);
+    cr.draw(dd::colors::red, false);
+    engine.clipping_off();
+    engine.camera_off();
     engine.end_frame();
 }
 

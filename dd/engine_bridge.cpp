@@ -345,4 +345,14 @@ namespace dd
             HideCursor();
         }
 
+        float line::length() const
+        {
+            return p1.distance(p2);
+        }
+
+        void line::draw(color c, float thick) const
+        {
+            DrawLineEx(cast(p1), cast(p2), thick, cast(c));
+        }
+
 }

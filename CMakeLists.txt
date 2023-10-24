@@ -36,6 +36,7 @@ add_subdirectory(dd)
 #add_game(test_game)
 add_game(frogger)
 add_game(sprite_mgr)
+add_game(hello_world)
 
 message(STATUS "User CMake config done!")
 
