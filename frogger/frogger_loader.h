@@ -2,7 +2,9 @@
 
 #include <dd.h>
 
-namespace Frogger
+namespace FroggerGame
+{
+namespace Rss
 {
 void LoadResources();
 std::vector<std::pair<std::string, dd::sprite>> GetSprites();
@@ -42,5 +44,5 @@ extern dd::rect homeWalls[6];
 
 extern dd::sprite skull_1;
 extern dd::sprite skull_2;
-
+}
 }

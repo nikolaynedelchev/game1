@@ -1,7 +1,8 @@
-﻿#include "frogger_loader.h"
-#include <map>
+﻿#include "all_headers.h"
 
-namespace Frogger
+namespace FroggerGame
+{
+namespace Rss
 {
 dd::sprite froggerUp[2];
 dd::sprite froggerDn[2];
@@ -124,10 +125,10 @@ void LoadResources()
     trees[BIG].load(f, {{7, 166}, {178, 21}}, {});      // Big Tree
 
     // Walkway
-    walkway.load(f, {{0, 119}, {399, 34}}, {}); // Walkway
+    walkway.load(f, {{0, 118}, {400, 36}}, {}); // Walkway
 
     // Homes Background
-    homesBackground.load(f, {{0, 55}, {399, 53}}, {}); // Homes Background
+    homesBackground.load(f, {{0, 55}, {400, 53}}, {}); // Homes Background
 
     // Homes
     homes[0] = dd::rect({3, 64}, {51, 39});     // Home 0
@@ -260,4 +261,5 @@ dd::rect GetRect(const std::string& name)
     return s_allRects[name];
 }
 
+}
 }

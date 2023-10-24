@@ -404,14 +404,34 @@ bool sprite::collision(const dd::sprite& s2) const
         }
     }
 
+    rect text::rect() const
+    {
+        auto pos = position;
+        auto sz = size();
+        if (anchor != anchors::up_left)
+        {
+            dd::rect r = {{0, 0}, sz};
+            dd::point p = r.anchor(anchor);
+            pos = pos - p;
+        }
+        return {pos, sz};
+    }
+
     static std::map<std::string, font> s_fonts;
     void text::draw() const
     {
         if (p_.has_default_font)
         {
+            auto pos = position;
+            if (anchor != anchors::up_left)
+            {
+                dd::rect r = {{0, 0}, size()};
+                dd::point p = r.anchor(anchor);
+                pos = pos - p;
+            }
             DrawTextEx(cast(p_.text_font),
                        symbols.c_str(),
-                       cast(position),
+                       cast(pos),
                        font_size==0.0f?p_.text_font.default_size:int(font_size),
                        1.0f,
                        cast(color));

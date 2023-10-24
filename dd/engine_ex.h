@@ -117,12 +117,14 @@ struct text
     std::string symbols;
     point position;
     float font_size = 0;
+    anchors anchor = anchors::up_left;
     dd::color color = colors::white;
     text() = default;
     text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), font_size(sz), color(c){}
     void draw() const;
     void clear_background(dd::color color) const;
     dd::vec size() const;
+    dd::rect rect() const;
     // text
     void set_font(const std::string& font);
     void set_font_default();
