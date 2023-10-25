@@ -55,6 +55,7 @@ void FroggerModule::Update()
             froggerRow++;
         }
         froggerDirection = dd::direction::up;
+        Rss::jump.play();
     }
     if (engine.key_pressed(dd::keys::DOWN))
     {
@@ -66,6 +67,7 @@ void FroggerModule::Update()
             froggerRow--;
         }
         froggerDirection = dd::direction::down;
+        Rss::jump.play();
     }
     if (engine.key_pressed(dd::keys::LEFT))
     {
@@ -77,6 +79,7 @@ void FroggerModule::Update()
             froggerColumn--;
         }
         froggerDirection = dd::direction::left;
+        Rss::jump.play();
     }
     if (engine.key_pressed(dd::keys::RIGHT))
     {
@@ -88,6 +91,7 @@ void FroggerModule::Update()
             froggerColumn++;
         }
         froggerDirection = dd::direction::right;
+        Rss::jump.play();
     }
     froggerDestination = FroggerTargetPos();
 }

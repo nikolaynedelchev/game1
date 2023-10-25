@@ -105,6 +105,8 @@ struct sound
 {
     void load(const std::string& file);
     void play();
+    bool is_playing() const;
+    void volume(float v);
 
     private: struct
     {

@@ -44,5 +44,14 @@ extern dd::rect homeWalls[6];
 
 extern dd::sprite skull_1;
 extern dd::sprite skull_2;
+
+extern dd::sound music;
+extern dd::sound music;
+extern dd::sound extraLife;
+extern dd::sound hit;
+extern dd::sound jump;
+extern dd::sound time;
+extern dd::sound drown;
+
 }
 }

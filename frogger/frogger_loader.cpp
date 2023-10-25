@@ -38,6 +38,13 @@ dd::rect homeWalls[6];
 dd::sprite skull_1;
 dd::sprite skull_2;
 
+dd::sound music;
+dd::sound extraLife;
+dd::sound hit;
+dd::sound jump;
+dd::sound time;
+dd::sound drown;
+
 #define SMALL 0
 #define MID 1
 #define BIG 2
@@ -151,6 +158,13 @@ void LoadResources()
     // Skulls
     skull_1.load(f, {{273, 208}, {36, 40}}, {}); // Skull 1
     skull_2.load(f, {{321, 206}, {36, 40}}, {}); // Skull 2
+
+    music.load("music.mp3");
+    extraLife.load("extra_life.wav");
+    hit.load("hit.wav");
+    jump.load("jump.wav");
+    time.load("time.wav");
+    drown.load("water_drown.wav");
 }
 
 std::vector<std::pair<std::string, dd::sprite>> GetSprites()

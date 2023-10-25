@@ -19,7 +19,7 @@ struct FroggerModule
     dd::direction froggerDirection = dd::direction::up;
     bool isFroggerMoving = false;
     dd::point froggerDestination;
-    float froggerSpeed = 9.0f; // pixels/frame
+    float froggerSpeed = 6.0f; // pixels/frame
     float froggerJumpSize = 36.0f;
     float froggerJumpFramesLeft = 0.0f;
 

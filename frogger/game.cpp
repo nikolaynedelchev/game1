@@ -46,6 +46,11 @@ void GameModule::Deinit()
 
 void GameModule::Update()
 {
+    if (!Rss::music.is_playing())
+    {
+        //Rss::music.volume(0.6f);
+        //Rss::music.play();
+    }
     UpdateCamera();
     remainingTime -= engine.frame_time();
     if (remainingTime < 0.0f) remainingTime = 0.0f;

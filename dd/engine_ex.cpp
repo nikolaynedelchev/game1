@@ -380,6 +380,16 @@ bool sprite::collision(const dd::sprite& s2) const
         PlaySound(cast(p_.sound_));
     }
 
+    bool sound::is_playing() const
+    {
+        return IsSoundPlaying(cast(p_.sound_));
+    }
+
+    void sound::volume(float v)
+    {
+        SetSoundVolume(cast(p_.sound_), v);
+    }
+
     dd::vec text::size() const
     {
         if (p_.has_default_font)
