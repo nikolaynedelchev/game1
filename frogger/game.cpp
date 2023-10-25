@@ -5,7 +5,10 @@ namespace FroggerGame
 
 void GameModule::Init()
 {
-    engine.init(DD_RSS_FOLDER, screenWidth, screenHeight, "FROGGER", true);
+    //engine.init(DD_RSS_FOLDER, screenWidth, screenHeight, "FROGGER", true);
+    auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
+    screenWidth = res.x;
+    screenHeight = res.y;
     engine.target_fps(60);
     engine.mouse_cursor_hide();
 
@@ -64,20 +67,17 @@ void GameModule::Draw()
     }
 
     engine.camera_on(camera);
-    //engine.clipping_on(clippingRect);
+    engine.clipping_on(clippingRect);
 
-    //DrawBackground();
-    //DrawTime();
+    DrawBackground();
+    DrawTime();
 
-    //homes.Draw();
+    homes.Draw();
     frogger.Draw();
 
-    auto cr = clippingRect;
-    cr.width /= 2;
-    dd::println("PPP: {}", cr.x + cr.width);
-    cr.draw(dd::colors::red, false);
     engine.clipping_off();
     engine.camera_off();
+    clippingRect.draw(dd::colors::red, false);
     engine.end_frame();
 }
 

@@ -212,6 +212,8 @@ public:
               int width, int height, 
               const std::string& window_title = "",
               bool fullscreen = false);  // Initialize window and OpenGL context
+    vec init_fs(std::string game_folder,
+                const std::string& window_title);  // Initialize window and OpenGL context
     bool should_close();                               // Check if KEY_ESCAPE pressed or Close icon pressed
     void close();
     void toggle_fullscreen_win();
@@ -257,6 +259,9 @@ public:
     vec mouse_wheel_move_v(void);                     // Get mouse wheel movement for both X and Y
     void mouse_cursor_set(int cursor);                // Set mouse cursor
     void mouse_cursor_hide();
+
+    // tools
+    void sleep(int milli);
 };
 
 }

@@ -11,6 +11,8 @@
 #include "operators.h"
 #include "formatters.hpp"
 #include <cmath>
+#include <thread>
+#include <chrono>
 
 namespace dd
 {
@@ -136,6 +138,15 @@ namespace dd
             InitAudioDevice();
         }
 
+        vec engine::init_fs(std::string game_folder, const std::string &window_title)
+        {
+            init(game_folder, 0, 0, window_title, false);
+            int w = GetScreenWidth();
+            int h = GetScreenHeight();
+            ToggleFullscreen();
+            return vec(w, h);
+        }
+
         bool engine::should_close()
         {
             return WindowShouldClose();
@@ -143,7 +154,8 @@ namespace dd
 
         void engine::close()
         {
-            return CloseWindow();
+            CloseAudioDevice();
+            CloseWindow();
         }
 
         void engine::toggle_fullscreen_win()
@@ -343,6 +355,11 @@ namespace dd
         void engine::mouse_cursor_hide()
         {
             HideCursor();
+        }
+
+        void engine::sleep(int milli)
+        {
+            std::this_thread::sleep_for( std::chrono::milliseconds(milli) );
         }
 
         float line::length() const
