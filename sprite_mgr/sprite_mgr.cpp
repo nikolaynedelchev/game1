@@ -24,12 +24,12 @@ void Init()
 
     sampleText.color = dd::colors::yellow;
     sampleText.position = {10, 10};
-    sampleText.font_size = 50.0f;
+    sampleText.font_size = 50;
     sampleText.set_font("OpenSans-Regular.ttf");
 
     rssText.color = dd::colors::red;
     rssText.position = {10, 70};
-    rssText.font_size = 50.0f;
+    rssText.font_size = 50;
     rssText.set_font("OpenSans-Regular.ttf");
 
     GameNamespace::LoadResources();

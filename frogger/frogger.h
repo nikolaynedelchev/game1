@@ -5,28 +5,41 @@
 namespace FroggerGame
 {
 
+enum class FroggerState
+{
+    Still,
+    Jumping,
+    AtHome,
+    Dead
+};
+
 struct FroggerModule
 {
     void Init();
     void Update();
     void Draw();
 
-    float FroggerY() const;
-    float FroggerX() const;
-    dd::point FroggerTargetPos() const;
+private:
+    void UpdateStill();
+    void UpdateJumping();
+    void UpdateAtHome();
+    void UpdateDead();
 
-    dd::point froggerPosition;/* = {screenWidth / 2.0f, screenHeight / 2.0f}*/;
-    dd::direction froggerDirection = dd::direction::up;
-    bool isFroggerMoving = false;
-    dd::point froggerDestination;
-    float froggerSpeed = 6.0f; // pixels/frame
-    float froggerJumpSize = 36.0f;
-    float froggerJumpFramesLeft = 0.0f;
+    void DrawStill();
+    void DrawJumping();
+    void DrawAtHome();
+    void DrawDead();
 
-    int froggerRow = 0;
-    int froggerColumn = 5;
-    int froggerMaxRow = 12;
-    int froggerMaxColumn = 10;
+    void StartJump(dd::direction);
+    void JumpDone();
+
+    dd::point position;
+    dd::point jumpTarget;
+    float jumpFramesRemaining = 0.0f;
+
+    dd::direction direction = dd::direction::up;
+    FroggerState state = FroggerState::Still;
+    bool firstStateFrame = true;
 };
 
 extern FroggerModule frogger;

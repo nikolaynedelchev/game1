@@ -100,7 +100,7 @@ static bool create(const std::string& imageFile)
         println("Error: Texture construct failed: key: {} , full: {}", imageFile, fullFileName);
         return false;
     }
-    s_ids[imageFile] = s_textures.size();
+    s_ids[imageFile] = uint32_t(s_textures.size());
     s_textures.push_back(cast(texture));
     UnloadImage(image);
     return true;
@@ -184,6 +184,27 @@ void sprite::draw() const
                    cast(src),
                    cast(dd::rect(this->position, this->size)),
                    cast(this->anchor),
+                   this->rotate,
+                   WHITE);
+}
+
+void sprite::draw_at(point pos, anchors anchor) const
+{
+    if (this->loaded == false ||
+        this->visible == false)
+    {
+        return;
+    }
+
+    auto src = this->source;
+    if (flip_x) src.width = -src.width;
+    if (flip_y) src.height = -src.height;
+    vec anchor_pos = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(anchor);
+
+    DrawTexturePro(cast(s_textures[ this->texture_id ]),
+                   cast(src),
+                   cast(dd::rect(pos, this->size)),
+                   cast(anchor_pos),
                    this->rotate,
                    WHITE);
 }
@@ -274,10 +295,10 @@ bool sprite::collision(const dd::sprite& s2) const
         {
             return -1;
         }
-        int f = size_t( progress() * float(p_.frames.size()) );
+        int f = int( progress() * float(p_.frames.size()) );
         if (f >= int(p_.frames.size()))
         {
-            f = p_.frames.size() - 1;
+            f = int(p_.frames.size()) - 1;
         }
         return f;
     }
@@ -399,7 +420,7 @@ bool sprite::collision(const dd::sprite& s2) const
             (
                 MeasureTextEx(cast(p_.text_font),
                               symbols.c_str(),
-                              font_size==0.0f?p_.text_font.default_size:int(font_size),
+                              font_size==0.0f?p_.text_font.default_size:font_size,
                               1.0f)
             );
         }
@@ -442,7 +463,7 @@ bool sprite::collision(const dd::sprite& s2) const
             DrawTextEx(cast(p_.text_font),
                        symbols.c_str(),
                        cast(pos),
-                       font_size==0.0f?p_.text_font.default_size:int(font_size),
+                       font_size==0.0f?p_.text_font.default_size:font_size,
                        1.0f,
                        cast(color));
         }
@@ -451,7 +472,7 @@ bool sprite::collision(const dd::sprite& s2) const
             DrawText(symbols.c_str(), 
                      int(position.x),
                      int(position.y),
-                      font_size==0.0f?GetFontDefault().baseSize:int(font_size),
+                     font_size==0.0f?GetFontDefault().baseSize:font_size,
                     cast(color));
         }
     }

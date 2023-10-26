@@ -48,6 +48,8 @@ struct sprite
 
 
     void draw() const;
+    void draw_at(point position,
+                 anchors anchor) const;
     //
     void load(const std::string& imageFile, 
               dd::rect sourceRectangle,
@@ -118,11 +120,11 @@ struct text
 {
     std::string symbols;
     point position;
-    float font_size = 0;
+    int font_size = 0;
     anchors anchor = anchors::up_left;
     dd::color color = colors::white;
     text() = default;
-    text(std::string txt, dd::point pos, float sz, dd::color c) : symbols(std::move(txt)), position(pos), font_size(sz), color(c){}
+    text(std::string txt, dd::point pos, int sz, dd::color c) : symbols(std::move(txt)), position(pos), font_size(sz), color(c){}
     void draw() const;
     void clear_background(dd::color color) const;
     dd::vec size() const;

@@ -5,156 +5,166 @@ namespace FroggerGame
 
 void FroggerModule::Init()
 {
-    froggerPosition = FroggerTargetPos();
+    position = {(rss.jumpingMinPos.x + rss.jumpingMaxPos.x) / 2.0f, rss.jumpingMaxPos.y};
+    direction = dd::direction::up;
 }
 
 void FroggerModule::Update()
 {
-    if (isFroggerMoving)
-    {
-        if (froggerJumpFramesLeft == 0.0f)
-        {
-            froggerPosition = froggerDestination;
-            isFroggerMoving = false;
-            return;
-        }
+    auto oldState = state;
 
-        if (froggerDirection == dd::direction::up)
-        {
-            if (froggerPosition.y > froggerDestination.y)
-                froggerPosition.y -= froggerSpeed;
-        }
-        if (froggerDirection == dd::direction::down)
-        {
-            if (froggerPosition.y < froggerDestination.y)
-                froggerPosition.y += froggerSpeed;
-        }
-        if (froggerDirection == dd::direction::left)
-        {
-            if (froggerPosition.x > froggerDestination.x)
-                froggerPosition.x -= froggerSpeed;
-        }
-        if (froggerDirection == dd::direction::right)
-        {
-            if (froggerPosition.x < froggerDestination.x)
-                froggerPosition.x += froggerSpeed;
-        }
+    if (state == FroggerState::Still)   UpdateStill();
+    if (state == FroggerState::Jumping) UpdateJumping();
+    if (state == FroggerState::AtHome)  UpdateAtHome();
+    if (state == FroggerState::Dead)    UpdateDead();
 
-        froggerJumpFramesLeft--;
-
-        return;
-    }
-
-    if (engine.key_pressed(dd::keys::UP))
+    // check if new state is triggered
+    if (oldState == state)
     {
-        isFroggerMoving = true;
-        froggerJumpFramesLeft = froggerJumpSize / froggerSpeed;
-        froggerDestination = froggerPosition;
-        if (froggerRow < froggerMaxRow)
-        {
-            froggerRow++;
-        }
-        froggerDirection = dd::direction::up;
-        Rss::jump.play();
+        firstStateFrame = false;
     }
-    if (engine.key_pressed(dd::keys::DOWN))
+    else
     {
-        isFroggerMoving = true;
-        froggerJumpFramesLeft = froggerJumpSize / froggerSpeed;
-        froggerDestination = froggerPosition;
-        if (froggerRow > 0)
-        {
-            froggerRow--;
-        }
-        froggerDirection = dd::direction::down;
-        Rss::jump.play();
+        firstStateFrame = true;
     }
-    if (engine.key_pressed(dd::keys::LEFT))
-    {
-        isFroggerMoving = true;
-        froggerJumpFramesLeft = froggerJumpSize / froggerSpeed;
-        froggerDestination = froggerPosition;
-        if (froggerColumn > 0)
-        {
-            froggerColumn--;
-        }
-        froggerDirection = dd::direction::left;
-        Rss::jump.play();
-    }
-    if (engine.key_pressed(dd::keys::RIGHT))
-    {
-        isFroggerMoving = true;
-        froggerJumpFramesLeft = froggerJumpSize / froggerSpeed;
-        froggerDestination = froggerPosition;
-        if (froggerColumn < froggerMaxColumn)
-        {
-            froggerColumn++;
-        }
-        froggerDirection = dd::direction::right;
-        Rss::jump.play();
-    }
-    froggerDestination = FroggerTargetPos();
 }
 
 void FroggerModule::Draw()
 {
-    dd::sprite s;
-    if (isFroggerMoving)
+    if (state == FroggerState::Still)   DrawStill();
+    if (state == FroggerState::Jumping) DrawJumping();
+    if (state == FroggerState::AtHome)  DrawAtHome();
+    if (state == FroggerState::Dead)    DrawDead();
+}
+
+void FroggerModule::UpdateStill()
+{
+    // update river object movements that affects frogger position
+    // TODO:
+
+    // update jump commands
+    if (engine.key_pressed(dd::keys::UP))
     {
-        if (froggerDirection == dd::direction::up)
-        {
-            s = Rss::GetSprite("frogger_up_air");
-        }
-        if (froggerDirection == dd::direction::down)
-        {
-            s = Rss::GetSprite("frogger_down_air");
-        }
-        if (froggerDirection == dd::direction::left)
-        {
-            s = Rss::GetSprite("frogger_left_air");
-        }
-        if (froggerDirection == dd::direction::right)
-        {
-            s = Rss::GetSprite("frogger_right_air");
-        }
+        StartJump(dd::direction::up);
     }
-    else
+    if (engine.key_pressed(dd::keys::DOWN))
     {
-        if (froggerDirection == dd::direction::up)
-        {
-            s = Rss::GetSprite("frogger_up_ground");
-        }
-        if (froggerDirection == dd::direction::down)
-        {
-            s = Rss::GetSprite("frogger_down_ground");
-        }
-        if (froggerDirection == dd::direction::left)
-        {
-            s = Rss::GetSprite("frogger_left_ground");
-        }
-        if (froggerDirection == dd::direction::right)
-        {
-            s = Rss::GetSprite("frogger_right_ground");
-        }
+        StartJump(dd::direction::down);
     }
-    s.change_anchor(dd::anchors::centered);
-    s.position = froggerPosition;
-    s.draw();
+    if (engine.key_pressed(dd::keys::LEFT))
+    {
+        StartJump(dd::direction::left);
+    }
+    if (engine.key_pressed(dd::keys::RIGHT))
+    {
+        StartJump(dd::direction::right);
+    }
 }
 
-float FroggerModule::FroggerY() const
+void FroggerModule::UpdateJumping()
 {
-    return LOW_LAND_Y + ROW_H / 2.0f - float(froggerRow) * ROW_H;
+    if (jumpFramesRemaining <= 0.0f)
+    {
+        JumpDone();
+        return;
+    }
+    position += (jumpTarget - position) / jumpFramesRemaining;
+    jumpFramesRemaining--;
 }
 
-float FroggerModule::FroggerX() const
+void FroggerModule::UpdateAtHome()
 {
-    return froggerColumn * froggerJumpSize + froggerJumpSize / 2.0f;
+
 }
 
-dd::point FroggerModule::FroggerTargetPos() const
+void FroggerModule::UpdateDead()
 {
-    return {FroggerX(), FroggerY()};
+
+}
+
+void FroggerModule::DrawStill()
+{
+    if (direction == dd::direction::up)
+    {
+        rss.froggerUp[GND].draw_at(position, dd::anchors::centered);
+    }
+    if (direction == dd::direction::down)
+    {
+        rss.froggerDn[GND].draw_at(position, dd::anchors::centered);
+    }
+    if (direction == dd::direction::left)
+    {
+        rss.froggerLf[GND].draw_at(position, dd::anchors::centered);
+    }
+    if (direction == dd::direction::right)
+    {
+        rss.froggerRg[GND].draw_at(position, dd::anchors::centered);
+    }
+}
+
+void FroggerModule::DrawJumping()
+{
+    if (direction == dd::direction::up)
+    {
+        rss.froggerUp[AIR].draw_at(position, dd::anchors::centered);
+    }
+    if (direction == dd::direction::down)
+    {
+        rss.froggerDn[AIR].draw_at(position, dd::anchors::centered);
+    }
+    if (direction == dd::direction::left)
+    {
+        rss.froggerLf[AIR].draw_at(position, dd::anchors::centered);
+    }
+    if (direction == dd::direction::right)
+    {
+        rss.froggerRg[AIR].draw_at(position, dd::anchors::centered);
+    }
+
+    if (firstStateFrame)
+    {
+        rss.jump.play();
+    }
+}
+
+void FroggerModule::DrawAtHome()
+{
+
+}
+
+void FroggerModule::DrawDead()
+{
+
+}
+
+void FroggerModule::StartJump(dd::direction jumpDir)
+{
+    if (jumpDir == dd::direction::up)   jumpTarget = position - rss.vJumpSize;
+    if (jumpDir == dd::direction::down) jumpTarget = position + rss.vJumpSize;
+    if (jumpDir == dd::direction::left) jumpTarget = position - rss.hJumpSize;
+    if (jumpDir == dd::direction::right)jumpTarget = position + rss.hJumpSize;
+
+    if (jumpTarget.x > rss.jumpingMaxPos.x ||
+        jumpTarget.x < rss.jumpingMinPos.x ||
+        jumpTarget.y > rss.jumpingMaxPos.y ||
+        jumpTarget.y < rss.jumpingMinPos.y)
+    {
+        jumpTarget = position;
+    }
+
+    direction = jumpDir;
+    jumpFramesRemaining = rss.jumpFrames;
+    state = FroggerState::Jumping;
+}
+
+void FroggerModule::JumpDone()
+{
+    position = jumpTarget;
+
+    // TODO: Check for river collision.
+    //       Kill the frog if so.
+
+    state = FroggerState::Still;
 }
 
 FroggerModule frogger;

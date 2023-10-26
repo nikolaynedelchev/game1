@@ -111,10 +111,10 @@ namespace dd
     // namespace window
     // {
         static unsigned s_window_config_flags = 0;
-        void engine::init(std::string game_folder, 
-                          int width, int height, 
-                          const std::string& window_title,
-                          bool fullscreen)
+        vec engine::init(std::string game_folder,
+                         int width, int height,
+                         const std::string& window_title,
+                         bool fullscreen)
         {
             rss_folder(game_folder);
             s_window_config_flags |= FLAG_MSAA_4X_HINT;
@@ -136,6 +136,7 @@ namespace dd
             InitWindow(width, height, window_title.c_str());
 
             InitAudioDevice();
+            return {float(width), float(height)};
         }
 
         vec engine::init_fs(std::string game_folder, const std::string &window_title)
@@ -144,7 +145,7 @@ namespace dd
             int w = GetScreenWidth();
             int h = GetScreenHeight();
             ToggleFullscreen();
-            return vec(w, h);
+            return vec(float(w), float(h));
         }
 
         bool engine::should_close()

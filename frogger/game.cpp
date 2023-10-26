@@ -5,26 +5,26 @@ namespace FroggerGame
 
 void GameModule::Init()
 {
-    //engine.init(DD_RSS_FOLDER, screenWidth, screenHeight, "FROGGER", true);
-    auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
-    screenWidth = res.x;
-    screenHeight = res.y;
+    auto res = engine.init(DD_RSS_FOLDER, 800, 600, "FROGGER", false);
+    //auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
+    systemWidth = res.x;
+    systemHeight = res.y;
     engine.target_fps(60);
     engine.mouse_cursor_hide();
 
     dd::println("Loading resources...");
-    Rss::LoadResources();
+    rss.Load();
 
-    float scaleFactor = screenHeight / height;
-    float gameScrW = width * scaleFactor; // 618.5567
+    float scaleFactor = systemHeight / rss.screen.height;
+    float gameScrW = rss.screen.width * scaleFactor; // 618.5567
 
     camera.scale = scaleFactor;
-    camera.offset.x = screenWidth / 2.0f - gameScrW / 2.0f;
+    camera.offset.x = systemWidth / 2.0f - gameScrW / 2.0f;
 
     clippingRect.x = camera.offset.x;
     clippingRect.y = 0;
     clippingRect.width = gameScrW;
-    clippingRect.height = screenHeight - 1;
+    clippingRect.height = systemHeight - 1;
 
     dd::println("CLIPPING RECT: {}", clippingRect);
     frogger.Init();
@@ -46,10 +46,10 @@ void GameModule::Deinit()
 
 void GameModule::Update()
 {
-    if (!Rss::music.is_playing())
+    if (false == rss.music.is_playing())
     {
-        //Rss::music.volume(0.6f);
-        //Rss::music.play();
+        rss.music.volume(0.2f);
+        rss.music.play();
     }
     UpdateCamera();
     remainingTime -= engine.frame_time();
@@ -61,13 +61,13 @@ void GameModule::Draw()
 {
     engine.begin_frame();
     engine.clear_frame(dd::colors::light_gray);
-    dd::rect test = {0, 0, screenWidth, screenHeight};
+    dd::rect test = {0, 0, systemWidth, systemHeight};
     //test.draw(dd::colors::red, false);
 
     for (int i = 0; i < 40; i++)
     {
-        dd::line l = {float(i) * (screenWidth / 20.0f), 0,
-                      float(i) * (screenWidth / 20.0f), screenHeight};
+        dd::line l = {float(i) * (systemWidth / 20.0f), 0,
+                      float(i) * (systemWidth / 20.0f), systemHeight};
         //l.draw(dd::colors::green);
     }
 
@@ -98,26 +98,18 @@ void GameModule::UpdateCamera()
 
 void GameModule::DrawBackground()
 {
-    dd::rect riverRect = {0, 0, width, HEADER_H + HOMES_H + 5.5f * ROW_H};
-    riverRect.draw(dd::colors::dark_blue, true);
+    rss.riverRect.draw(dd::colors::dark_blue, true);
 
-    dd::rect landRect = {0, HEADER_H + HOMES_H + 5.5 * ROW_H, width, 6.5 * ROW_H + FOOTER_H};
-    landRect.draw(dd::colors::black, true);
+    rss.landRect.draw(dd::colors::black, true);
 
-    auto homesSprite = Rss::GetSprite("homes_background");
-    homesSprite.change_anchor(dd::anchors::up_left);
-    homesSprite.position = {0, HEADER_H};
-    homesSprite.draw();
+    rss.homesBackground.draw_at({0, HEADER_H},
+                                dd::anchors::up_left);
 
-    auto riverLand = Rss::GetSprite("walkway");
-    riverLand.change_anchor(dd::anchors::up_left);
-    riverLand.position = {0, HEADER_H + HOMES_H + 5 * ROW_H};
-    riverLand.draw();
+    rss.walkway.draw_at({0, HEADER_H + HOMES_H + 5 * ROW_H},
+                        dd::anchors::up_left);
 
-    auto land = Rss::GetSprite("walkway");
-    land.change_anchor(dd::anchors::up_left);
-    land.position = {0, HEADER_H + HOMES_H + 11 * ROW_H};
-    land.draw();
+    rss.walkway.draw_at({0, HEADER_H + HOMES_H + 11 * ROW_H},
+                        dd::anchors::up_left);
 }
 
 void GameModule::DrawTime()
@@ -127,7 +119,7 @@ void GameModule::DrawTime()
     t.set_font("OpenSans-Regular.ttf");
     t.font_size = 30;
     t.color = dd::colors::yellow;
-    t.position = {width, height};
+    t.position = {rss.screen.width, rss.screen.height};
     t.anchor = dd::anchors::down_right;
     t.draw();
 
@@ -136,12 +128,12 @@ void GameModule::DrawTime()
     textRect.height -= 14;
 
     dd::rect timeRect;
-    timeRect.width = int((remainingTime / levelTime) * (width - textRect.width));
+    timeRect.width = std::floor((remainingTime / levelTime) * (rss.screen.width - textRect.width));
     timeRect.height = textRect.height;
     timeRect.position({0, 0});
 
-    timeRect.x = int(textRect.x - timeRect.size().x);
-    timeRect.y = int(textRect.y);
+    timeRect.x = std::floor(textRect.x - timeRect.size().x);
+    timeRect.y = std::floor(textRect.y);
     timeRect.draw(dd::colors::green, true);
 }
 

@@ -70,15 +70,6 @@ struct line
     void draw(dd::color, float thick = 1.0f) const;
 };
 
-struct transform
-{
-    vec offset = {0.0f, 0.0f};
-    vec scale = {1.0f, 1.0f};
-    constexpr transform() = default;
-    constexpr transform(vec offset, vec scale) : offset(offset), scale(scale) {}
-    constexpr transform(float offset_x, float offset_y, float scale_x, float scale_y) : offset({offset_x, offset_y}), scale({scale_x, scale_y}) {}
-};
-
 // Rectangle, 4 components
 struct rect
 {
@@ -208,10 +199,10 @@ class engine
 {
 public:
     // window
-    void init(std::string game_folder, 
-              int width, int height, 
-              const std::string& window_title = "",
-              bool fullscreen = false);  // Initialize window and OpenGL context
+    vec init(std::string game_folder,
+             int width, int height,
+             const std::string& window_title = "",
+             bool fullscreen = false);  // Initialize window and OpenGL context
     vec init_fs(std::string game_folder,
                 const std::string& window_title);  // Initialize window and OpenGL context
     bool should_close();                               // Check if KEY_ESCAPE pressed or Close icon pressed

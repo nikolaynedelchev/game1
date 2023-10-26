@@ -8,7 +8,9 @@
 //
 #include <dd.h>
 //
-#include "frogger_loader.h"
+#include "resources.h"
 #include "game.h"
 #include "frogger.h"
 #include "homes.h"
+#include "cars.h"
+#include "trees.h"
