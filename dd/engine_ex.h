@@ -5,8 +5,6 @@
 namespace dd
 {
 
-
-
 struct circle
 {
     point center;
@@ -40,7 +38,7 @@ struct sprite
 
     bool flip_x = false;
     bool flip_y = false;
-    dd::bound bound;
+    std::map<std::string, dd::bound> bounds;
 
     uint32_t texture_id = 0;
     bool loaded = false;
@@ -58,7 +56,11 @@ struct sprite
     void change_anchor(dd::anchors);
     dd::rect rect() const;
     static void release_spritres();
-    bool collision(const sprite& s2) const;
+
+    static bool collision(const sprite& s1, const sprite& s2);
+
+    static bool collision(const sprite& s1, const std::string& boundName1,
+                          const sprite& s2, const std::string& boundName2);
 };
 
 
@@ -90,9 +92,17 @@ struct anim
     void update();
     void draw() const;
     void change_anchor(dd::anchors);
+    dd::rect rect() const;
 
-    bool collision(const anim& a2) const;
-    bool collision(const sprite& s2) const;
+    static bool collision(const anim& a1, const anim& a2);
+
+    static bool collision(const anim& a1, const sprite& s2);
+
+    static bool collision(const anim& a1, const std::string& boundName1,
+                          const anim& a2, const std::string& boundName2);
+
+    static bool collision(const anim& a1, const std::string& boundName1,
+                          const sprite& s2, const std::string& boundName2);
 
 private: struct
     {

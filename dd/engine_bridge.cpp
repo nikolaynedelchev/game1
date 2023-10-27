@@ -106,6 +106,11 @@ namespace dd
         return dd::point();
     }
 
+    bool rect::collision(const rect &r1, const rect &r2)
+    {
+        return CheckCollisionRecs(cast(r1), cast(r2));
+    }
+
 
 
     // namespace window

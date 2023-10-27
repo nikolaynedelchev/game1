@@ -1,4 +1,4 @@
-﻿#include "all_headers.h"
+﻿#include "all_modules.h"
 
 namespace FroggerGame
 {
@@ -59,6 +59,11 @@ void FroggerModule::UpdateStill()
     {
         StartJump(dd::direction::right);
     }
+
+    if (CheckForCollision())
+    {
+        Die();
+    }
 }
 
 void FroggerModule::UpdateJumping()
@@ -70,6 +75,11 @@ void FroggerModule::UpdateJumping()
     }
     position += (jumpTarget - position) / jumpFramesRemaining;
     jumpFramesRemaining--;
+
+    if (CheckForCollision())
+    {
+        Die();
+    }
 }
 
 void FroggerModule::UpdateAtHome()
@@ -84,42 +94,12 @@ void FroggerModule::UpdateDead()
 
 void FroggerModule::DrawStill()
 {
-    if (direction == dd::direction::up)
-    {
-        rss.froggerUp[GND].draw_at(position, dd::anchors::centered);
-    }
-    if (direction == dd::direction::down)
-    {
-        rss.froggerDn[GND].draw_at(position, dd::anchors::centered);
-    }
-    if (direction == dd::direction::left)
-    {
-        rss.froggerLf[GND].draw_at(position, dd::anchors::centered);
-    }
-    if (direction == dd::direction::right)
-    {
-        rss.froggerRg[GND].draw_at(position, dd::anchors::centered);
-    }
+    GetCurrentSprite().draw();
 }
 
 void FroggerModule::DrawJumping()
 {
-    if (direction == dd::direction::up)
-    {
-        rss.froggerUp[AIR].draw_at(position, dd::anchors::centered);
-    }
-    if (direction == dd::direction::down)
-    {
-        rss.froggerDn[AIR].draw_at(position, dd::anchors::centered);
-    }
-    if (direction == dd::direction::left)
-    {
-        rss.froggerLf[AIR].draw_at(position, dd::anchors::centered);
-    }
-    if (direction == dd::direction::right)
-    {
-        rss.froggerRg[AIR].draw_at(position, dd::anchors::centered);
-    }
+    GetCurrentSprite().draw();
 
     if (firstStateFrame)
     {
@@ -135,6 +115,12 @@ void FroggerModule::DrawAtHome()
 void FroggerModule::DrawDead()
 {
 
+}
+
+void FroggerModule::Die()
+{
+    position = {(rss.jumpingMinPos.x + rss.jumpingMaxPos.x) / 2.0f, rss.jumpingMaxPos.y};
+    direction = dd::direction::up;
 }
 
 void FroggerModule::StartJump(dd::direction jumpDir)
@@ -165,6 +151,67 @@ void FroggerModule::JumpDone()
     //       Kill the frog if so.
 
     state = FroggerState::Still;
+}
+
+dd::sprite FroggerModule::GetCurrentSprite() const
+{
+    dd::sprite s;
+    if (state == FroggerState::Still)
+    {
+        if (direction == dd::direction::up)
+        {
+            s = rss.froggerUp[GND];
+        }
+        if (direction == dd::direction::down)
+        {
+            s = rss.froggerDn[GND];
+        }
+        if (direction == dd::direction::left)
+        {
+            s = rss.froggerLf[GND];
+        }
+        if (direction == dd::direction::right)
+        {
+            s = rss.froggerRg[GND];
+        }
+    }
+    else if (state == FroggerState::Jumping)
+    {
+        if (direction == dd::direction::up)
+        {
+            s = rss.froggerUp[AIR];
+        }
+        if (direction == dd::direction::down)
+        {
+            s = rss.froggerDn[AIR];
+        }
+        if (direction == dd::direction::left)
+        {
+            s = rss.froggerLf[AIR];
+        }
+        if (direction == dd::direction::right)
+        {
+            s = rss.froggerRg[AIR];
+        }
+    }
+    s.position = position;
+    s.change_anchor(dd::anchors::centered);
+    return s;
+}
+
+bool FroggerModule::CheckForCollision()
+{
+    auto froggerSprite = GetCurrentSprite();
+    for(auto& obj : cars.objects)
+    {
+        if (obj.isActive == false) continue;
+
+        if (dd::anim::collision(obj.animation, "hit", froggerSprite, "hit"))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 FroggerModule frogger;

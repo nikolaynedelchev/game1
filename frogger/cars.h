@@ -1,25 +1,22 @@
 ﻿#pragma once
 
-#include <dd.h>
+#include "all_types.h"
 
 namespace FroggerGame
 {
-
-enum class CarType
-{
-
-};
 
 struct CarsModule
 {
     void Init();
     void Update();
     void Draw();
-};
 
-struct CarLane
-{
+    void UpdateObjects();
+    void UpdateEmitters();
+    void EmitObject(ObjectEmitter& emitter);
 
+    LevelEmitters levelEmitters;
+    GameObject objects[64];
 };
 
 extern CarsModule cars;

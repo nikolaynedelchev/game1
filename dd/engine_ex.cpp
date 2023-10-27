@@ -209,308 +209,346 @@ void sprite::draw_at(point pos, anchors anchor) const
                    WHITE);
 }
 
-bool sprite::collision(const dd::sprite& s2) const
+bool sprite::collision(const sprite &s1, const sprite &s2)
 {
-    return bound::collision(this->bound, this->rect().position(), s2.bound, s2.rect().position());
+    return collision(s1, "", s2, "");
 }
 
+bool sprite::collision(const sprite& s1, const std::string& boundName1,
+                       const sprite& s2, const std::string& boundName2)
+{
+    auto it1 = s1.bounds.find(boundName1);
+    if (it1 == s1.bounds.end()) return false;
+    auto it2 = s2.bounds.find(boundName2);
+    if (it2 == s2.bounds.end()) return false;
 
+    return bound::collision(it1->second, s1.rect().position(),
+                            it2->second, s2.rect().position());
+}
 
-    void anim::fps(float fps)
+void anim::fps(float fps)
+{
+    if (p_.fps == 0.0f)
     {
-        if (p_.fps == 0.0f)
-        {
-            p_.fps = fps;
-            restart();
-            return;
-        }
-        auto current_progress = progress();
         p_.fps = fps;
-        p_.elapsed = duration() * current_progress;
-    }
-
-    float anim::fps() const
-    {
-        return p_.fps;
-    }
-
-    void anim::add_frame(sprite s)
-    {
-        p_.frames.push_back(std::move(s));
-    }
-
-    void anim::play()
-    {
         restart();
-        pause(false);
+        return;
+    }
+    auto current_progress = progress();
+    p_.fps = fps;
+    p_.elapsed = duration() * current_progress;
+}
+
+float anim::fps() const
+{
+    return p_.fps;
+}
+
+void anim::add_frame(sprite s)
+{
+    s.visible = true;
+    p_.frames.push_back(std::move(s));
+    if (s.size.x > this->size.x) this->size.x = s.size.x;
+    if (s.size.y > this->size.y) this->size.y = s.size.y;
+}
+
+void anim::play()
+{
+    restart();
+    pause(false);
+}
+
+void anim::pause(bool paused)
+{
+    p_.paused = paused;
+}
+
+void anim::restart()
+{
+    p_.elapsed = -1.0f;
+}
+
+bool anim::paused() const
+{
+    return p_.paused;
+}
+
+bool anim::finished() const
+{
+    if (loop)
+    {
+        return false;
+    }
+    return p_.elapsed >= duration();
+}
+
+float anim::duration() const
+{
+    if (p_.fps == 0.0f)
+    {
+        return 0.0f;
+    }
+    return float(p_.frames.size()) / p_.fps;
+}
+
+float anim::progress() const
+{
+    return p_.elapsed / duration();
+}
+
+float anim::elapsed() const
+{
+    return p_.elapsed;
+}
+
+int anim::frame() const
+{
+    if (visible == false ||
+        p_.frames.empty())
+    {
+        return -1;
+    }
+    int f = int( progress() * float(p_.frames.size()) );
+    if (f >= int(p_.frames.size()))
+    {
+        f = int(p_.frames.size()) - 1;
+    }
+    return f;
+}
+
+void anim::update()
+{
+    if (p_.paused ||
+        p_.fps == 0 ||
+        p_.frames.empty())
+    {
+        return;
     }
 
-    void anim::pause(bool paused)
+    auto dur = duration();
+    if (p_.elapsed < 0.0f)
     {
-        p_.paused = paused;
+        p_.elapsed = 0.0f;
     }
-
-    void anim::restart()
+    else
     {
-        p_.elapsed = -1.0f;
-    }
-
-    bool anim::paused() const
-    {
-        return p_.paused;
-    }
-
-    bool anim::finished() const
-    {
-        if (loop)
+        if (loop || p_.elapsed <= dur)
         {
-            return false;
+            p_.elapsed += GetFrameTime();
         }
-        return p_.elapsed >= duration();
     }
 
-    float anim::duration() const
+    if (loop)
     {
-        if (p_.fps == 0.0f)
+        while(p_.elapsed >= dur)
         {
-            return 0.0f;
+            p_.elapsed -= dur;
         }
-        return float(p_.frames.size()) / p_.fps;
-    }
-
-    float anim::progress() const
-    {
-        return p_.elapsed / duration();
-    }
-
-    float anim::elapsed() const
-    {
-        return p_.elapsed;
-    }
-
-    int anim::frame() const
-    {
-        if (visible == false ||
-            p_.frames.empty())
-        {
-            return -1;
-        }
-        int f = int( progress() * float(p_.frames.size()) );
-        if (f >= int(p_.frames.size()))
-        {
-            f = int(p_.frames.size()) - 1;
-        }
-        return f;
-    }
-
-    void anim::update()
-    {
-        if (p_.paused ||
-            p_.fps == 0 || 
-            p_.frames.empty())
-        {
-            return;
-        }
-
-        auto dur = duration();
         if (p_.elapsed < 0.0f)
         {
             p_.elapsed = 0.0f;
         }
-        else
-        {
-            if (loop || p_.elapsed <= dur)
-            {
-                p_.elapsed += GetFrameTime();
-            }
-        }
-
-        if (loop)
-        {
-            while(p_.elapsed >= dur)
-            {
-                p_.elapsed -= dur;
-            }
-            if (p_.elapsed < 0.0f)
-            {
-                p_.elapsed = 0.0f;
-            }
-        }
-
     }
 
-    void anim::draw() const
+}
+
+void anim::draw() const
+{
+    auto fr = this->frame();
+    if (fr < 0)
     {
-        auto fr = this->frame();
-        if (fr < 0)
-        {
-            return;
-        }
-
-        auto frame_sprite = p_.frames[size_t(fr)];
-
-        frame_sprite.position = this->position;
-        frame_sprite.anchor = this->anchor;
-        frame_sprite.size = this->size;
-        frame_sprite.rotate = this->rotate;
-        frame_sprite.flip_x = this->flip_x;
-        frame_sprite.flip_y = this->flip_y;
-        frame_sprite.draw();
+        return;
     }
 
-    void anim::change_anchor(dd::anchors a)
+    auto frame_sprite = p_.frames[size_t(fr)];
+
+    frame_sprite.position = this->position;
+    frame_sprite.anchor = this->anchor;
+    frame_sprite.size = this->size;
+    frame_sprite.rotate = this->rotate;
+    frame_sprite.flip_x = this->flip_x;
+    frame_sprite.flip_y = this->flip_y;
+    frame_sprite.draw();
+}
+
+void anim::change_anchor(dd::anchors a)
+{
+    this->anchor = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(a);
+}
+
+rect anim::rect() const
+{
+    auto f = this->frame();
+    if (f < 0)
     {
-        this->anchor = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(a);
+        return {0.0f, 0.0f, 0.0f, 0.0f};
+    }
+    return this->p_.frames[f].rect() + position;
+}
+
+bool anim::collision(const anim &a1, const anim &a2)
+{
+    return collision(a1, "", a2, "");
+}
+
+bool anim::collision(const anim &a1, const sprite &s2)
+{
+    return collision(a1, "", s2, "");
+}
+
+bool anim::collision(const anim& a1, const std::string& boundName1,
+                      const anim& a2, const std::string& boundName2)
+{
+    auto f1 = a1.frame();
+    if (f1 < 0)
+    {
+        return false;
+    }
+    auto f2 = a2.frame();
+    if (f2 < 0)
+    {
+        return false;
     }
 
-    bool anim::collision(const dd::anim& a2) const
+    return sprite::collision(a1.p_.frames[f1], boundName1,
+                             a2.p_.frames[f2], boundName2);
+}
+
+bool anim::collision(const anim& a1, const std::string& boundName1,
+                      const sprite& s2, const std::string& boundName2)
+{
+    auto f1 = a1.frame();
+    if (f1 < 0)
     {
-        auto f1 = frame();
-        if (f1 < 0)
-        {
-            return false;
-        }
-        auto f2 = a2.frame();
-        if (f2 < 0)
-        {
-            return false;
-        }
-        return bound::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
-                                a2.p_.frames[f2].bound, a2.p_.frames[f2].position + a2.position);
+        return false;
     }
 
-    bool anim::collision(const dd::sprite& s2) const
-    {
-        auto f1 = frame();
-        if (f1 < 0)
-        {
-            return false;
-        }
-        return bound::collision(p_.frames[f1].bound, p_.frames[f1].position + position,
-                                s2.bound, s2.position);
-    }
+    return sprite::collision(a1.p_.frames[f1], boundName1,
+                             s2, boundName2);
+}
 
-    void sound::load(const std::string& file)
-    {
-        std::string full_name = rss_folder() + "/sounds/" + file;
-        p_.sound_ = cast(LoadSound(full_name.c_str()));
-    }
+void sound::load(const std::string& file)
+{
+    std::string full_name = rss_folder() + "/sounds/" + file;
+    p_.sound_ = cast(LoadSound(full_name.c_str()));
+}
 
-    void sound::play()
-    {
-        PlaySound(cast(p_.sound_));
-    }
+void sound::play()
+{
+    PlaySound(cast(p_.sound_));
+}
 
-    bool sound::is_playing() const
-    {
-        return IsSoundPlaying(cast(p_.sound_));
-    }
+bool sound::is_playing() const
+{
+    return IsSoundPlaying(cast(p_.sound_));
+}
 
-    void sound::volume(float v)
-    {
-        SetSoundVolume(cast(p_.sound_), v);
-    }
+void sound::volume(float v)
+{
+    SetSoundVolume(cast(p_.sound_), v);
+}
 
-    dd::vec text::size() const
+dd::vec text::size() const
+{
+    if (p_.has_default_font)
     {
-        if (p_.has_default_font)
-        {
-            return
-            cast
-            (
-                MeasureTextEx(cast(p_.text_font),
-                              symbols.c_str(),
-                              font_size==0.0f?p_.text_font.default_size:font_size,
-                              1.0f)
-            );
-        }
-        else
-        {
-            return {0, 0};
+        return
+        cast
+        (
+            MeasureTextEx(cast(p_.text_font),
+                          symbols.c_str(),
+                          font_size==0.0f?p_.text_font.default_size:font_size,
+                          1.0f)
+        );
+    }
+    else
+    {
+        return {0, 0};
 //            cast
 //            (
 //                MeasureText(symbols.c_str(),
 //                            font_size==0.0f?GetFontDefault().baseSize:int(font_size))
 //            );
-        }
     }
+}
 
-    rect text::rect() const
+rect text::rect() const
+{
+    auto pos = position;
+    auto sz = size();
+    if (anchor != anchors::up_left)
+    {
+        dd::rect r = {{0, 0}, sz};
+        dd::point p = r.anchor(anchor);
+        pos = pos - p;
+    }
+    return {pos, sz};
+}
+
+static std::map<std::string, font> s_fonts;
+void text::draw() const
+{
+    if (p_.has_default_font)
     {
         auto pos = position;
-        auto sz = size();
         if (anchor != anchors::up_left)
         {
-            dd::rect r = {{0, 0}, sz};
+            dd::rect r = {{0, 0}, size()};
             dd::point p = r.anchor(anchor);
             pos = pos - p;
         }
-        return {pos, sz};
+        DrawTextEx(cast(p_.text_font),
+                   symbols.c_str(),
+                   cast(pos),
+                   font_size==0.0f?p_.text_font.default_size:font_size,
+                   1.0f,
+                   cast(color));
     }
-
-    static std::map<std::string, font> s_fonts;
-    void text::draw() const
+    else
     {
-        if (p_.has_default_font)
+        DrawText(symbols.c_str(),
+                 int(position.x),
+                 int(position.y),
+                 font_size==0.0f?GetFontDefault().baseSize:font_size,
+                cast(color));
+    }
+}
+
+void text::clear_background(dd::color color) const
+{
+    dd::rect(this->position, this->size()).bounding_rect().draw(color, true);
+}
+
+void text::set_font(const std::string& font)
+{
+    auto it = s_fonts.find(font);
+    if (it == s_fonts.end())
+    {
+        std::string file = rss_folder() + "/fonts/" + font;
+        auto new_font = cast(LoadFont(file.c_str()));
+        if (new_font.default_size == 0 ||
+            new_font.glyphs_count == 0 ||
+            new_font.glyphs == nullptr)
         {
-            auto pos = position;
-            if (anchor != anchors::up_left)
-            {
-                dd::rect r = {{0, 0}, size()};
-                dd::point p = r.anchor(anchor);
-                pos = pos - p;
-            }
-            DrawTextEx(cast(p_.text_font),
-                       symbols.c_str(),
-                       cast(pos),
-                       font_size==0.0f?p_.text_font.default_size:font_size,
-                       1.0f,
-                       cast(color));
+            println("Error: font not loaded correctly: {}", font);
         }
         else
         {
-            DrawText(symbols.c_str(), 
-                     int(position.x),
-                     int(position.y),
-                     font_size==0.0f?GetFontDefault().baseSize:font_size,
-                    cast(color));
+            s_fonts[font] = new_font;
+            it = s_fonts.find(font);
         }
     }
-
-    void text::clear_background(dd::color color) const
+    if (it == s_fonts.end())
     {
-        dd::rect(this->position, this->size()).bounding_rect().draw(color, true);
+        println("Error: font not found: {}", font);
     }
+    p_.text_font = it->second;
+    p_.has_default_font = true;
+}
 
-    void text::set_font(const std::string& font)
-    {
-        auto it = s_fonts.find(font);
-        if (it == s_fonts.end())
-        {
-            std::string file = rss_folder() + "/fonts/" + font;
-            auto new_font = cast(LoadFont(file.c_str()));
-            if (new_font.default_size == 0 ||
-                new_font.glyphs_count == 0 ||
-                new_font.glyphs == nullptr)
-            {
-                println("Error: font not loaded correctly: {}", font);
-            }
-            else
-            {
-                s_fonts[font] = new_font;
-                it = s_fonts.find(font);
-            }
-        }
-        if (it == s_fonts.end())
-        {
-            println("Error: font not found: {}", font);
-        }
-        p_.text_font = it->second;
-        p_.has_default_font = true;
-    }
+void text::set_font_default()
+{
+    p_.has_default_font = false;
+}
 
-    void text::set_font_default()
-    {
-        p_.has_default_font = false;
-    }
 }

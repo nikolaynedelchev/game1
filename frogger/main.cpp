@@ -1,5 +1,4 @@
-﻿#include <dd.h>
-#include "all_headers.h"
+﻿#include "all_modules.h"
 
 int main()
 {

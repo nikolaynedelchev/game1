@@ -1,4 +1,4 @@
-﻿#include "all_headers.h"
+﻿#include "all_modules.h"
 
 namespace FroggerGame
 {
@@ -10,16 +10,37 @@ void ResourcesModule::Load()
     // Frogger
     dd::vec froggerSz = {25, 25};
     rss.froggerLf[GND].load(f, {{78, 334}, froggerSz}, {}); // Left Ground Frogger
+    rss.froggerLf[GND].bounds["hit"].rects.push_back(rss.froggerLf[GND].rect());
+    rss.froggerLf[GND].bounds["step"].rects.push_back(rss.froggerLf[GND].rect());
+
     rss.froggerLf[AIR].load(f, {{112, 336}, froggerSz}, {});// Left Air Frogger
+    rss.froggerLf[AIR].bounds["hit"].rects.push_back(rss.froggerLf[AIR].rect());
+    rss.froggerLf[AIR].bounds["step"].rects.push_back(rss.froggerLf[AIR].rect());
 
     rss.froggerRg[GND].load(f, {{9, 333}, froggerSz}, {});  // Right Ground Frogger
+    rss.froggerRg[GND].bounds["hit"].rects.push_back(rss.froggerRg[GND].rect());
+    rss.froggerRg[GND].bounds["step"].rects.push_back(rss.froggerRg[GND].rect());
+
     rss.froggerRg[AIR].load(f, {{43, 333}, froggerSz}, {}); // Right Air Frogger
+    rss.froggerRg[AIR].bounds["hit"].rects.push_back(rss.froggerRg[AIR].rect());
+    rss.froggerRg[AIR].bounds["step"].rects.push_back(rss.froggerRg[AIR].rect());
 
     rss.froggerUp[GND].load(f, {{11, 365}, froggerSz}, {}); // Up Ground Frogger
+    rss.froggerUp[GND].bounds["hit"].rects.push_back(rss.froggerUp[GND].rect());
+    rss.froggerUp[GND].bounds["step"].rects.push_back(rss.froggerUp[GND].rect());
+
     rss.froggerUp[AIR].load(f, {{44, 366}, froggerSz}, {}); // Up Air Frogger
+    rss.froggerUp[AIR].bounds["hit"].rects.push_back(rss.froggerUp[AIR].rect());
+    rss.froggerUp[AIR].bounds["step"].rects.push_back(rss.froggerUp[AIR].rect());
 
     rss.froggerDn[GND].load(f, {{79, 365}, froggerSz}, {}); // Down Ground Frogger
+    rss.froggerDn[GND].bounds["hit"].rects.push_back(rss.froggerDn[GND].rect());
+    rss.froggerDn[GND].bounds["step"].rects.push_back(rss.froggerDn[GND].rect());
+
     rss.froggerDn[AIR].load(f, {{112, 366}, froggerSz}, {});// Down Air Frogger
+    rss.froggerDn[AIR].bounds["hit"].rects.push_back(rss.froggerDn[AIR].rect());
+    rss.froggerDn[AIR].bounds["step"].rects.push_back(rss.froggerDn[AIR].rect());
+
 
     // Lady
     dd::vec ladySz = {28, 28};
@@ -115,6 +136,65 @@ void ResourcesModule::Load()
     rss.jump.load("jump.wav");
     rss.time.load("time.wav");
     rss.drown.load("water_drown.wav");
+
+    // Yellow car (fast car left)
+    {
+        auto s = cars[LEFT_FAST];
+        s.change_anchor(dd::anchors::centered);
+        s.bounds["hit"].rects.push_back(s.rect());
+        fastLeftCarAnim.add_frame(s);
+        fastLeftCarAnim.change_anchor(dd::anchors::centered);
+        fastLeftCarAnim.visible = true;
+        fastLeftCarAnim.loop = true;
+        fastLeftCarAnim.position = {300, 200};
+    }
+
+    // Tractor
+    {
+        for(auto s : tractors)
+        {
+            s.bounds["hit"].rects.push_back(s.rect());
+            s.change_anchor(dd::anchors::centered);
+            tractorAnim.add_frame(s);
+        }
+        tractorAnim.fps(3.0f);
+        tractorAnim.change_anchor(dd::anchors::centered);
+        tractorAnim.visible = true;
+        tractorAnim.loop = true;
+    }
+
+    // Slow car left
+    {
+        auto s = cars[LEFT_SLOW];
+        s.change_anchor(dd::anchors::centered);
+        s.bounds["hit"].rects.push_back(s.rect());
+        slowCarAnim.add_frame(s);
+        slowCarAnim.change_anchor(dd::anchors::centered);
+        slowCarAnim.visible = true;
+        slowCarAnim.loop = true;
+    }
+
+    // White car (fast car right)
+    {
+        auto s = cars[RIGHT_FAST];
+        s.change_anchor(dd::anchors::centered);
+        s.bounds["hit"].rects.push_back(s.rect());
+        fastRightCarAnim.add_frame(s);
+        fastRightCarAnim.change_anchor(dd::anchors::centered);
+        fastRightCarAnim.visible = true;
+        fastRightCarAnim.loop = true;
+    }
+
+    // Truck
+    {
+        auto s = truck;
+        s.change_anchor(dd::anchors::centered);
+        s.bounds["hit"].rects.push_back(s.rect());
+        truckAnim.add_frame(s);
+        truckAnim.change_anchor(dd::anchors::centered);
+        truckAnim.visible = true;
+        truckAnim.loop = true;
+    }
 }
 
 ResourcesModule rss;

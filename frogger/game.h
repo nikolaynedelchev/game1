@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <dd.h>
+#include "all_types.h"
 
 namespace FroggerGame
 {

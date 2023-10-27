@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <dd.h>
+#include "all_types.h"
 
 #define SMALL 0
 #define MID 1
@@ -26,6 +26,12 @@
 #define LOWER_ROW_Y (MID_LAND_Y + 5.0f * ROW_H)
 #define LOW_LAND_Y (LOWER_ROW_Y + ROW_H)
 #define FOOTER_Y (LOW_LAND_Y + ROW_H)
+
+#define CARS_1_Y ( LOWER_ROW_Y + ROW_H / 2.0f)
+#define CARS_2_Y ( CARS_1_Y - ROW_H )
+#define CARS_3_Y ( CARS_2_Y - ROW_H )
+#define CARS_4_Y ( CARS_3_Y - ROW_H )
+#define CARS_5_Y ( CARS_4_Y - ROW_H )
 
 namespace FroggerGame
 {
@@ -61,6 +67,16 @@ struct ResourcesModule
 
     dd::sprite froggerLogo;
 
+    dd::sprite skull_1;
+    dd::sprite skull_2;
+
+    dd::anim tractorAnim;
+    dd::anim fastLeftCarAnim;
+    dd::anim fastRightCarAnim;
+    dd::anim slowCarAnim;
+    dd::anim truckAnim;
+
+
     dd::rect screen = {0.0f, 0.0f, SCREEN_WIDTH, (ROWS * ROW_H + HOMES_H + HEADER_H + FOOTER_H)}; // {0,0,400,582}
 
     dd::rect homes[5];
@@ -68,8 +84,7 @@ struct ResourcesModule
     dd::rect riverRect;
     dd::rect landRect;
 
-    dd::sprite skull_1;
-    dd::sprite skull_2;
+
 
     dd::sound music;
     dd::sound extraLife;

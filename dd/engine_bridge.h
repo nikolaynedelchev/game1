@@ -89,6 +89,8 @@ struct rect
 
     void draw(color c, bool filled) const;
     dd::point anchor(anchors) const;
+
+    static bool collision(const dd::rect& r1, const dd::rect& r2);
 };
 
 struct image

@@ -1,12 +1,12 @@
-﻿#include "all_headers.h"
+﻿#include "all_modules.h"
 
 namespace FroggerGame
 {
 
 void GameModule::Init()
 {
-    auto res = engine.init(DD_RSS_FOLDER, 800, 600, "FROGGER", false);
-    //auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
+    //auto res = engine.init(DD_RSS_FOLDER, 800, 600, "FROGGER", false);
+    auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
     systemWidth = res.x;
     systemHeight = res.y;
     engine.target_fps(60);
@@ -28,6 +28,7 @@ void GameModule::Init()
 
     dd::println("CLIPPING RECT: {}", clippingRect);
     frogger.Init();
+    cars.Init();
 }
 
 void GameModule::MainLoop()
@@ -55,6 +56,7 @@ void GameModule::Update()
     remainingTime -= engine.frame_time();
     if (remainingTime < 0.0f) remainingTime = 0.0f;
     frogger.Update();
+    cars.Update();
 }
 
 void GameModule::Draw()
@@ -79,6 +81,7 @@ void GameModule::Draw()
 
     homes.Draw();
     frogger.Draw();
+    cars.Draw();
 
     engine.clipping_off();
     engine.camera_off();

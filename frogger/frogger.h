@@ -1,17 +1,9 @@
 ﻿#pragma once
 
-#include <dd.h>
+#include "all_types.h"
 
 namespace FroggerGame
 {
-
-enum class FroggerState
-{
-    Still,
-    Jumping,
-    AtHome,
-    Dead
-};
 
 struct FroggerModule
 {
@@ -30,8 +22,12 @@ private:
     void DrawAtHome();
     void DrawDead();
 
+    void Die();
     void StartJump(dd::direction);
     void JumpDone();
+    dd::sprite GetCurrentSprite() const;
+
+    bool CheckForCollision();
 
     dd::point position;
     dd::point jumpTarget;
