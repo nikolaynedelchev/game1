@@ -54,25 +54,25 @@ void choose_position( const dd::sprite& srcSprite, dd::point sampleAnchor, dd::s
     if (toTop < toBottom && toTop < toLeft && toTop < toRight)
     {
         // top
-        target.change_anchor(dd::anchors::down_mid);
+        target.anchor = (dd::anchors::down_mid);
         target.position.y = src.y - 20;
     }
     else if(toBottom < toTop && toBottom < toRight && toBottom < toLeft)
     {
         // bottom
-        target.change_anchor(dd::anchors::up_mid);
+        target.anchor = (dd::anchors::up_mid);
         target.position.y = src.y + src.height + 20;
     }
     else if (toRight < toTop && toRight < toBottom && toRight < toLeft)
     {
         // right
-        target.change_anchor(dd::anchors::mid_left);
+        target.anchor = (dd::anchors::mid_left);
         target.position.x = src.x + src.width + 20;
     }
     else
     {
         // left
-        target.change_anchor(dd::anchors::mid_right);
+        target.anchor = (dd::anchors::mid_right);
         target.position.x = src.x - 20;
     }
 
@@ -141,7 +141,7 @@ void MainLoop()
 
         dd::sprite allSprites;
         allSprites.load(GameNamespace::spriteSheet, {}, {});
-        allSprites.change_anchor(dd::anchors::centered);
+        allSprites.anchor = (dd::anchors::centered);
 
         allSprites.position = {720, 450};
         allSprites.position += offset;
@@ -159,7 +159,7 @@ void MainLoop()
         sampleSprite.load(GameNamespace::spriteSheet, sampleRect, {});
 
         sampleSprite.size *= scale;
-        choose_position(allSprites, boundRect.anchor(dd::anchors::centered), sampleSprite );
+        choose_position(allSprites, boundRect.anchor_pos(dd::anchors::centered), sampleSprite );
 
         //sampleSprite.change_anchor(dd::anchors::up_right);
         //sampleSprite.position = allSprites.rect().anchor(dd::anchors::up_left) - dd::vec(20, 0);
@@ -179,7 +179,7 @@ void MainLoop()
         rssText.clear_background(dd::colors::black);
         rssText.draw();
 
-        rss.second.change_anchor(dd::anchors::up_left);
+        rss.second.anchor = (dd::anchors::up_left);
         rss.second.size *= scale * 2.0f;
         rss.second.position = {30, 140};
         rss.second.rect().bounding_rect().draw(dd::colors::red, false);

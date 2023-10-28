@@ -10,6 +10,8 @@ struct HomesModule
     void Init();
     void Update();
     void Draw();
+
+    FroggerHome homes[5];
 };
 
 extern HomesModule homes;

@@ -3,9 +3,31 @@
 namespace FroggerGame
 {
 
+void PrintDebugInfo()
+{
+    dd::println("Homes Start: {}", HOMES_Y);
+    dd::println("Homes Mid: {}", HOMES_Y + HOMES_H / 2.0f);
+    dd::println("Homes End: {}", UPPER_ROW_Y);
+    for(int i = 0; i < 5; i++)
+        dd::println("Water {}, Start: {}, Mid: {}, End: {}", 5.0f - i, UPPER_ROW_Y + i * ROW_H, UPPER_ROW_Y + i * ROW_H + ROW_H / 2.0f, UPPER_ROW_Y + i * ROW_H + ROW_H);
+
+    dd::println("Mid Land Start: {}", MID_LAND_Y);
+    dd::println("Mid Land Mid: {}", MID_LAND_Y + ROW_H / 2.0f);
+    dd::println("Mid Land End: {}", MID_LAND_Y + ROW_H);
+
+    for(int i = 0; i < 5; i++)
+        dd::println("Land {}, Start: {}, Mid: {}, End: {}", 5.0f - i, UPPER_LAND_ROW_Y + i * ROW_H, UPPER_LAND_ROW_Y + i * ROW_H + ROW_H / 2.0f, UPPER_LAND_ROW_Y + i * ROW_H + ROW_H);
+
+    dd::println("Low Land Start: {}", LOW_LAND_Y);
+    dd::println("Low Land Mid: {}", LOW_LAND_Y + ROW_H / 2.0f);
+    dd::println("Low Land End: {}", LOW_LAND_Y + ROW_H);
+
+}
+
 void GameModule::Init()
 {
-    //auto res = engine.init(DD_RSS_FOLDER, 800, 600, "FROGGER", false);
+    PrintDebugInfo();
+    //auto res = engine.init(DD_RSS_FOLDER, 1600, 1200, "FROGGER", false);
     auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
     systemWidth = res.x;
     systemHeight = res.y;
@@ -29,6 +51,7 @@ void GameModule::Init()
     dd::println("CLIPPING RECT: {}", clippingRect);
     frogger.Init();
     cars.Init();
+    homes.Init();
 }
 
 void GameModule::MainLoop()
@@ -47,7 +70,13 @@ void GameModule::Deinit()
 
 void GameModule::Update()
 {
-    if (false == rss.music.is_playing())
+    if (frogger.state != FroggerState::Still &&
+        frogger.state != FroggerState::Jumping)
+    {
+        if (rss.music.is_playing())
+            rss.music.stop();
+    }
+    else if (false == rss.music.is_playing())
     {
         rss.music.volume(0.2f);
         rss.music.play();
@@ -57,6 +86,7 @@ void GameModule::Update()
     if (remainingTime < 0.0f) remainingTime = 0.0f;
     frogger.Update();
     cars.Update();
+    homes.Update();
 }
 
 void GameModule::Draw()
@@ -80,8 +110,9 @@ void GameModule::Draw()
     DrawTime();
 
     homes.Draw();
-    frogger.Draw();
     cars.Draw();
+    frogger.Draw();
+    homes.Draw();
 
     engine.clipping_off();
     engine.camera_off();

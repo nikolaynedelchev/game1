@@ -88,7 +88,8 @@ struct rect
     dd::rect bounding_rect(int spacing = 1) const;
 
     void draw(color c, bool filled) const;
-    dd::point anchor(anchors) const;
+    dd::point anchor_pos(anchors) const;
+    dd::rect anchor_rect(anchors) const;
 
     static bool collision(const dd::rect& r1, const dd::rect& r2);
 };

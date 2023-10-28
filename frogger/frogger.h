@@ -11,7 +11,6 @@ struct FroggerModule
     void Update();
     void Draw();
 
-private:
     void UpdateStill();
     void UpdateJumping();
     void UpdateAtHome();
@@ -22,12 +21,19 @@ private:
     void DrawAtHome();
     void DrawDead();
 
-    void Die();
+    void Hit();
+    void Drown();
+
+    void AtHome();
     void StartJump(dd::direction);
     void JumpDone();
     dd::sprite GetCurrentSprite() const;
+    void RestartPosition();
 
     bool CheckForCollision();
+    bool CheckForWatter();
+
+    bool CheckAndUpdateStep();
 
     dd::point position;
     dd::point jumpTarget;

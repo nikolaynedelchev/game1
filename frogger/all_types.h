@@ -18,6 +18,7 @@ struct ObjectEmitter
     int emitDistribution[8]; // frames to count before sponing the next object;
     size_t distIdx = 0;
     int frameCounter = 0;
+    std::string name;
 };
 
 struct LevelEmitters
@@ -31,6 +32,12 @@ enum class FroggerState
     Jumping,
     AtHome,
     Dead
+};
+
+struct FroggerHome
+{
+    dd::rect homeRect;
+    bool isFull = false;
 };
 
 

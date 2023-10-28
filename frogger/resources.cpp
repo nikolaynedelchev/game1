@@ -7,39 +7,50 @@ void ResourcesModule::Load()
 {
     std::string f = "sprites.png";
 
+    rss.emptySprite.load(f, {{0, 0}, {1, 1}}, {});
     // Frogger
     dd::vec froggerSz = {25, 25};
+    dd::rect froggerHit = {8, 8, 9, 9};
+    dd::rect froggerStep = {11, 11, 3, 3};
     rss.froggerLf[GND].load(f, {{78, 334}, froggerSz}, {}); // Left Ground Frogger
-    rss.froggerLf[GND].bounds["hit"].rects.push_back(rss.froggerLf[GND].rect());
-    rss.froggerLf[GND].bounds["step"].rects.push_back(rss.froggerLf[GND].rect());
+    rss.froggerLf[GND].anchor = (dd::anchors::centered);
+    rss.froggerLf[GND].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerLf[GND].bounds["step"].rects.push_back(froggerStep);
 
     rss.froggerLf[AIR].load(f, {{112, 336}, froggerSz}, {});// Left Air Frogger
-    rss.froggerLf[AIR].bounds["hit"].rects.push_back(rss.froggerLf[AIR].rect());
-    rss.froggerLf[AIR].bounds["step"].rects.push_back(rss.froggerLf[AIR].rect());
+    rss.froggerLf[AIR].anchor = (dd::anchors::centered);
+    rss.froggerLf[AIR].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerLf[AIR].bounds["step"].rects.push_back(froggerHit);
 
     rss.froggerRg[GND].load(f, {{9, 333}, froggerSz}, {});  // Right Ground Frogger
-    rss.froggerRg[GND].bounds["hit"].rects.push_back(rss.froggerRg[GND].rect());
-    rss.froggerRg[GND].bounds["step"].rects.push_back(rss.froggerRg[GND].rect());
+    rss.froggerRg[GND].anchor = (dd::anchors::centered);
+    rss.froggerRg[GND].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerRg[GND].bounds["step"].rects.push_back(froggerHit);
 
     rss.froggerRg[AIR].load(f, {{43, 333}, froggerSz}, {}); // Right Air Frogger
-    rss.froggerRg[AIR].bounds["hit"].rects.push_back(rss.froggerRg[AIR].rect());
-    rss.froggerRg[AIR].bounds["step"].rects.push_back(rss.froggerRg[AIR].rect());
+    rss.froggerRg[AIR].anchor = (dd::anchors::centered);
+    rss.froggerRg[AIR].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerRg[AIR].bounds["step"].rects.push_back(froggerHit);
 
     rss.froggerUp[GND].load(f, {{11, 365}, froggerSz}, {}); // Up Ground Frogger
-    rss.froggerUp[GND].bounds["hit"].rects.push_back(rss.froggerUp[GND].rect());
-    rss.froggerUp[GND].bounds["step"].rects.push_back(rss.froggerUp[GND].rect());
+    rss.froggerUp[GND].anchor = (dd::anchors::centered);
+    rss.froggerUp[GND].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerUp[GND].bounds["step"].rects.push_back(froggerHit);
 
     rss.froggerUp[AIR].load(f, {{44, 366}, froggerSz}, {}); // Up Air Frogger
-    rss.froggerUp[AIR].bounds["hit"].rects.push_back(rss.froggerUp[AIR].rect());
-    rss.froggerUp[AIR].bounds["step"].rects.push_back(rss.froggerUp[AIR].rect());
+    rss.froggerUp[AIR].anchor = (dd::anchors::centered);
+    rss.froggerUp[AIR].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerUp[AIR].bounds["step"].rects.push_back(froggerHit);
 
     rss.froggerDn[GND].load(f, {{79, 365}, froggerSz}, {}); // Down Ground Frogger
-    rss.froggerDn[GND].bounds["hit"].rects.push_back(rss.froggerDn[GND].rect());
-    rss.froggerDn[GND].bounds["step"].rects.push_back(rss.froggerDn[GND].rect());
+    rss.froggerDn[GND].anchor = (dd::anchors::centered);
+    rss.froggerDn[GND].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerDn[GND].bounds["step"].rects.push_back(froggerHit);
 
     rss.froggerDn[AIR].load(f, {{112, 366}, froggerSz}, {});// Down Air Frogger
-    rss.froggerDn[AIR].bounds["hit"].rects.push_back(rss.froggerDn[AIR].rect());
-    rss.froggerDn[AIR].bounds["step"].rects.push_back(rss.froggerDn[AIR].rect());
+    rss.froggerDn[AIR].anchor = (dd::anchors::centered);
+    rss.froggerDn[AIR].bounds["hit"].rects.push_back(froggerHit);
+    rss.froggerDn[AIR].bounds["step"].rects.push_back(froggerHit);
 
 
     // Lady
@@ -106,11 +117,11 @@ void ResourcesModule::Load()
     rss.homesBackground.load(f, {{0, 55}, {400, 53}}, {}); // Homes Background
 
     // Homes
-    rss.homes[0] = dd::rect({3, 64}, {51, 39});     // Home 0
-    rss.homes[1] = dd::rect({87, 64}, {51, 39});    // Home 1
-    rss.homes[2] = dd::rect({172, 64}, {51, 39});   // Home 2
-    rss.homes[3] = dd::rect({256, 64}, {51, 39});   // Home 3
-    rss.homes[4] = dd::rect({340, 64}, {51, 39});   // Home 4
+    rss.homes[0] = dd::rect({24, 68}, {5, 39});     // Home 0
+    rss.homes[1] = dd::rect({110, 68}, {5, 39});    // Home 1
+    rss.homes[2] = dd::rect({195, 68}, {5, 39});   // Home 2
+    rss.homes[3] = dd::rect({279, 68}, {5, 39});   // Home 3
+    rss.homes[4] = dd::rect({364, 68}, {5, 39});   // Home 4
 
     rss.riverRect = {0, 0, SCREEN_WIDTH, HEADER_H + HOMES_H + 5.5f * ROW_H};
     rss.landRect = {0, HEADER_H + HOMES_H + 5.5 * ROW_H, SCREEN_WIDTH, 6.5 * ROW_H + FOOTER_H};
@@ -140,10 +151,10 @@ void ResourcesModule::Load()
     // Yellow car (fast car left)
     {
         auto s = cars[LEFT_FAST];
-        s.change_anchor(dd::anchors::centered);
-        s.bounds["hit"].rects.push_back(s.rect());
+        s.anchor = (dd::anchors::centered);
+        s.bounds["hit"].rects.push_back({{0, 0}, s.rect().size()});
         fastLeftCarAnim.add_frame(s);
-        fastLeftCarAnim.change_anchor(dd::anchors::centered);
+        fastLeftCarAnim.anchor = (dd::anchors::centered);
         fastLeftCarAnim.visible = true;
         fastLeftCarAnim.loop = true;
         fastLeftCarAnim.position = {300, 200};
@@ -153,12 +164,12 @@ void ResourcesModule::Load()
     {
         for(auto s : tractors)
         {
-            s.bounds["hit"].rects.push_back(s.rect());
-            s.change_anchor(dd::anchors::centered);
+            s.bounds["hit"].rects.push_back({{0, 0}, s.rect().size()});
+            s.anchor = (dd::anchors::centered);
             tractorAnim.add_frame(s);
         }
         tractorAnim.fps(3.0f);
-        tractorAnim.change_anchor(dd::anchors::centered);
+        tractorAnim.anchor = (dd::anchors::centered);
         tractorAnim.visible = true;
         tractorAnim.loop = true;
     }
@@ -166,10 +177,10 @@ void ResourcesModule::Load()
     // Slow car left
     {
         auto s = cars[LEFT_SLOW];
-        s.change_anchor(dd::anchors::centered);
-        s.bounds["hit"].rects.push_back(s.rect());
+        s.anchor = (dd::anchors::centered);
+        s.bounds["hit"].rects.push_back({{0, 0}, s.rect().size()});
         slowCarAnim.add_frame(s);
-        slowCarAnim.change_anchor(dd::anchors::centered);
+        slowCarAnim.anchor = (dd::anchors::centered);
         slowCarAnim.visible = true;
         slowCarAnim.loop = true;
     }
@@ -177,10 +188,10 @@ void ResourcesModule::Load()
     // White car (fast car right)
     {
         auto s = cars[RIGHT_FAST];
-        s.change_anchor(dd::anchors::centered);
-        s.bounds["hit"].rects.push_back(s.rect());
+        s.anchor = (dd::anchors::centered);
+        s.bounds["hit"].rects.push_back({{0, 0}, s.rect().size()});
         fastRightCarAnim.add_frame(s);
-        fastRightCarAnim.change_anchor(dd::anchors::centered);
+        fastRightCarAnim.anchor = (dd::anchors::centered);
         fastRightCarAnim.visible = true;
         fastRightCarAnim.loop = true;
     }
@@ -188,12 +199,105 @@ void ResourcesModule::Load()
     // Truck
     {
         auto s = truck;
-        s.change_anchor(dd::anchors::centered);
-        s.bounds["hit"].rects.push_back(s.rect());
+        s.anchor = (dd::anchors::centered);
+        s.bounds["hit"].rects.push_back({{0, 0}, s.rect().size()});
         truckAnim.add_frame(s);
-        truckAnim.change_anchor(dd::anchors::centered);
+        truckAnim.anchor = (dd::anchors::centered);
         truckAnim.visible = true;
         truckAnim.loop = true;
+    }
+
+    // Skull
+    {
+        auto s = skull_1;
+        s.anchor = dd::anchors::centered;
+        landDeathAnim.add_frame(s);
+        landDeathAnim.loop = false;
+        landDeathAnim.fps(0.4);
+        landDeathAnim.visible = true;
+    }
+
+    //dd::anim smallTreeAnim;
+    {
+        auto s = trees[SMALL];
+        s.anchor = (dd::anchors::centered);
+        s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+        smallTreeAnim.add_frame(s);
+        smallTreeAnim.anchor = (dd::anchors::centered);
+        smallTreeAnim.visible = true;
+        smallTreeAnim.loop = true;
+    }
+
+    //dd::anim midTreeAnim;
+    {
+        auto s = trees[MID];
+        s.anchor = (dd::anchors::centered);
+        s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+        midTreeAnim.add_frame(s);
+        midTreeAnim.anchor = (dd::anchors::centered);
+        midTreeAnim.visible = true;
+        midTreeAnim.loop = true;
+    }
+    //dd::anim bigTreeAnim;
+    {
+        auto s = trees[BIG];
+        s.anchor = (dd::anchors::centered);
+        s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+        bigTreeAnim.add_frame(s);
+        bigTreeAnim.anchor = (dd::anchors::centered);
+        bigTreeAnim.visible = true;
+        bigTreeAnim.loop = true;
+    }
+    //dd::anim turtleAnim;
+    {
+        for (auto s : turtle)
+        {
+            s.anchor = (dd::anchors::centered);
+            s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+            turtleAnim.add_frame(s);
+        }
+        turtleAnim.fps(0.6f);
+        turtleAnim.anchor = (dd::anchors::centered);
+        turtleAnim.visible = true;
+        turtleAnim.loop = true;
+    }
+    //dd::anim divingTurtleAnim;
+    {
+        for (auto s : turtle)
+        {
+            s.anchor = (dd::anchors::centered);
+            s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+            divingTurtleAnim.add_frame(s);
+        }
+        for (auto s : turtleDive)
+        {
+            s.anchor = (dd::anchors::centered);
+            s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+            divingTurtleAnim.add_frame(s);
+        }
+        divingTurtleAnim.add_frame(emptySprite);
+        divingTurtleAnim.fps(1.5f);
+        divingTurtleAnim.anchor = (dd::anchors::centered);
+        divingTurtleAnim.visible = true;
+        divingTurtleAnim.loop = true;
+    }
+    //dd::anim crocodileAnim;
+    {
+        for (auto s : crocodile)
+        {
+            s.anchor = (dd::anchors::centered);
+            dd::rect crocodileBody = {{0, 0}, s.rect().size()};
+            crocodileBody.width -= 23;
+            dd::rect crocodileMouth = {{crocodileBody.width, 0}, {23, crocodileBody.height}};
+
+            s.bounds["step"].rects.push_back(crocodileBody);
+            s.bounds["hit"].rects.push_back(crocodileMouth);
+            crocodileAnim.add_frame(s);
+        }
+        crocodileAnim.fps(0.4f);
+        crocodileAnim.anchor = (dd::anchors::centered);
+        crocodileAnim.visible = true;
+        crocodileAnim.loop = true;
     }
 }
 

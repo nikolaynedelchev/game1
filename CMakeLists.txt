@@ -21,9 +21,9 @@ function(add_game GAME_NAME)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         if(CMAKE_BUILD_TYPE STREQUAL "Release")
             # hide the windows console
-            set_target_properties(${GAME_NAME} PROPERTIES
-                                  WIN32_EXECUTABLE YES
-                                  LINK_FLAGS "/ENTRY:mainCRTStartup")
+            #set_target_properties(${GAME_NAME} PROPERTIES
+            #                      WIN32_EXECUTABLE YES
+            #                      LINK_FLAGS "/ENTRY:mainCRTStartup")
         endif()
         target_compile_definitions(${GAME_NAME} PRIVATE DD_RSS_FOLDER="./resources/${GAME_NAME}")
     else()

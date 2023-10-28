@@ -5,8 +5,7 @@ namespace FroggerGame
 
 void FroggerModule::Init()
 {
-    position = {(rss.jumpingMinPos.x + rss.jumpingMaxPos.x) / 2.0f, rss.jumpingMaxPos.y};
-    direction = dd::direction::up;
+    RestartPosition();
 }
 
 void FroggerModule::Update()
@@ -41,6 +40,14 @@ void FroggerModule::UpdateStill()
 {
     // update river object movements that affects frogger position
     // TODO:
+    if (false == CheckAndUpdateStep())
+    {
+        if (CheckForWatter())
+        {
+            Drown();
+            return;
+        }
+    }
 
     // update jump commands
     if (engine.key_pressed(dd::keys::UP))
@@ -62,7 +69,14 @@ void FroggerModule::UpdateStill()
 
     if (CheckForCollision())
     {
-        Die();
+        Hit();
+        return;
+    }
+
+    if (position.x < 5.0f || position.x > rss.screen.width - 5.0f)
+    {
+        Drown();
+        return;
     }
 }
 
@@ -78,18 +92,30 @@ void FroggerModule::UpdateJumping()
 
     if (CheckForCollision())
     {
-        Die();
+        Hit();
+        return;
     }
 }
 
 void FroggerModule::UpdateAtHome()
 {
-
+    if (rss.extraLife.is_playing())
+    {
+        return;
+    }
+    RestartPosition();
 }
 
 void FroggerModule::UpdateDead()
 {
-
+    rss.landDeathAnim.update();
+    if (rss.landDeathAnim.finished())
+    {
+        rss.landDeathAnim.visible = false;
+        position = {(rss.jumpingMinPos.x + rss.jumpingMaxPos.x) / 2.0f, rss.jumpingMaxPos.y};
+        direction = dd::direction::up;
+        state = FroggerState::Still;
+    }
 }
 
 void FroggerModule::DrawStill()
@@ -100,11 +126,6 @@ void FroggerModule::DrawStill()
 void FroggerModule::DrawJumping()
 {
     GetCurrentSprite().draw();
-
-    if (firstStateFrame)
-    {
-        rss.jump.play();
-    }
 }
 
 void FroggerModule::DrawAtHome()
@@ -114,13 +135,31 @@ void FroggerModule::DrawAtHome()
 
 void FroggerModule::DrawDead()
 {
-
+    rss.landDeathAnim.draw();
 }
 
-void FroggerModule::Die()
+void FroggerModule::Hit()
 {
-    position = {(rss.jumpingMinPos.x + rss.jumpingMaxPos.x) / 2.0f, rss.jumpingMaxPos.y};
-    direction = dd::direction::up;
+    rss.hit.play();
+    state = FroggerState::Dead;
+    rss.landDeathAnim.visible = true;
+    rss.landDeathAnim.position = jumpTarget;
+    rss.landDeathAnim.play();
+}
+
+void FroggerModule::Drown()
+{
+    rss.drown.play();
+    state = FroggerState::Dead;
+    rss.landDeathAnim.visible = true;
+    rss.landDeathAnim.position = jumpTarget;
+    rss.landDeathAnim.play();
+}
+
+void FroggerModule::AtHome()
+{
+    state = FroggerState::AtHome;
+    rss.extraLife.play();
 }
 
 void FroggerModule::StartJump(dd::direction jumpDir)
@@ -141,6 +180,7 @@ void FroggerModule::StartJump(dd::direction jumpDir)
     direction = jumpDir;
     jumpFramesRemaining = rss.jumpFrames;
     state = FroggerState::Jumping;
+    rss.jump.play();
 }
 
 void FroggerModule::JumpDone()
@@ -195,8 +235,15 @@ dd::sprite FroggerModule::GetCurrentSprite() const
         }
     }
     s.position = position;
-    s.change_anchor(dd::anchors::centered);
+    s.anchor = dd::anchors::centered;
     return s;
+}
+
+void FroggerModule::RestartPosition()
+{
+    position = {(rss.jumpingMinPos.x + rss.jumpingMaxPos.x) / 2.0f, rss.jumpingMaxPos.y};
+    direction = dd::direction::up;
+    state = FroggerState::Still;
 }
 
 bool FroggerModule::CheckForCollision()
@@ -208,6 +255,34 @@ bool FroggerModule::CheckForCollision()
 
         if (dd::anim::collision(obj.animation, "hit", froggerSprite, "hit"))
         {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool FroggerModule::CheckForWatter()
+{
+    if (position.y < MID_LAND_Y && position.y > UPPER_ROW_Y)
+    {
+        return true;
+    }
+    return false;
+}
+
+bool FroggerModule::CheckAndUpdateStep()
+{
+    if (state != FroggerState::Still)
+        return false;
+
+    auto froggerSprite = GetCurrentSprite();
+    for(auto& obj : cars.objects)
+    {
+        if (obj.isActive == false) continue;
+
+        if (dd::anim::collision(obj.animation, "step", froggerSprite, "step"))
+        {
+            position += obj.velocity;
             return true;
         }
     }

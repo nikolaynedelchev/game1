@@ -25,13 +25,15 @@ struct bound
     void draw(const vec& v) const;
     static bool collision(const bound& b1, const vec& v1,
                           const bound& b2, const vec& v2);
+    static bool collision(const bound& b1, const vec& v1,
+                          const rect& r2);
 };
 
 struct sprite
 {
     bool visible = false;
     dd::point position;
-    dd::vec anchor;
+    dd::anchors anchor = dd::anchors::centered;
     dd::vec size;
     dd::rect source;
     float rotate = 0.0f;
@@ -53,7 +55,6 @@ struct sprite
               dd::rect sourceRectangle,
               dd::vec size);
     //
-    void change_anchor(dd::anchors);
     dd::rect rect() const;
     static void release_spritres();
 
@@ -61,6 +62,8 @@ struct sprite
 
     static bool collision(const sprite& s1, const std::string& boundName1,
                           const sprite& s2, const std::string& boundName2);
+    static bool collision(const sprite& s1, const std::string& boundName1,
+                          const dd::rect& r2);
 };
 
 
@@ -68,7 +71,7 @@ struct anim
 {
     bool visible = false;
     dd::point position;
-    dd::vec anchor;
+    dd::anchors anchor = dd::anchors::centered;
     dd::vec size;
     float rotate = 0.0f;
     bool flip_x = false;
@@ -89,9 +92,8 @@ struct anim
     float elapsed() const;
     int frame() const;
 
-    void update();
-    void draw() const;
-    void change_anchor(dd::anchors);
+    void update(bool firstFrame = false);
+    void draw() ;
     dd::rect rect() const;
 
     static bool collision(const anim& a1, const anim& a2);
@@ -117,6 +119,7 @@ struct sound
 {
     void load(const std::string& file);
     void play();
+    void stop();
     bool is_playing() const;
     void volume(float v);
 

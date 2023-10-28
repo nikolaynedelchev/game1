@@ -87,7 +87,7 @@ namespace dd
         }
     }
 
-    dd::point rect::anchor(anchors a) const
+    dd::point rect::anchor_pos(anchors a) const
     {
         dd::point res;
         switch (a)
@@ -104,6 +104,11 @@ namespace dd
         default: break;
         }
         return dd::point();
+    }
+
+    dd::rect rect::anchor_rect(anchors a) const
+    {
+        return { position() - dd::rect(0, 0, width, height).anchor_pos(a), {width, height}};
     }
 
     bool rect::collision(const rect &r1, const rect &r2)

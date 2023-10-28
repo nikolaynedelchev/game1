@@ -8,25 +8,151 @@ void LevelsModule::Init()
 
 }
 
+static ObjectEmitter EmptyEmitter()
+{
+    ObjectEmitter e;
+    e.isActive = true;
+    e.distIdx = 0;
+    e.objTemplate.isActive = true;
+    e.objTemplate.velocity = {1.0f, 0.0f};
+    for(size_t i = 0; i < 8; i++) e.emitDistribution[i] = 0;
+    return e;
+}
+
+static ObjectEmitter CreateRow1Car()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 35;
+    e.objTemplate.animation = rss.fastLeftCarAnim;
+    float startingPoint = OFFSCR_MAX;
+    e.objTemplate.animation.position = {startingPoint, CARS_1_Y};
+    e.objTemplate.velocity *= -0.7f;
+    return e;
+}
+
+static ObjectEmitter CreateRow2Tractor()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 90;
+    e.objTemplate.animation = rss.tractorAnim;
+    float startingPoint = OFFSCR_MIN;
+    e.objTemplate.animation.position = {startingPoint, CARS_2_Y};
+    e.objTemplate.velocity *= 0.4f;
+    return e;
+}
+
+static ObjectEmitter CreateRow3Car()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 70;
+    e.objTemplate.animation = rss.slowCarAnim;
+    float startingPoint = OFFSCR_MAX;
+    e.objTemplate.animation.position = {startingPoint, CARS_3_Y};
+    e.objTemplate.velocity *= -0.6f;
+    return e;
+}
+
+static ObjectEmitter CreateRow4Car()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 130;
+    e.objTemplate.animation = rss.fastRightCarAnim;
+    float startingPoint = OFFSCR_MIN;
+    e.objTemplate.animation.position = {startingPoint, CARS_4_Y};
+    e.objTemplate.velocity *= 1.0f;
+    return e;
+}
+
+static ObjectEmitter CreateRow5Truck()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 130;
+    e.objTemplate.animation = rss.truckAnim;
+    float startingPoint = OFFSCR_MAX;
+    e.objTemplate.animation.position = {startingPoint, CARS_5_Y};
+    e.objTemplate.velocity *= -0.5f;
+    return e;
+}
+
+static ObjectEmitter Create3Turtles()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 50;
+    e.objTemplate.animation = rss.turtleAnim;
+    float startingPoint = OFFSCR_MAX;
+    e.objTemplate.animation.position = {startingPoint, WATER_1_Y};
+    e.objTemplate.velocity *= -0.3f;
+    return e;
+}
+
+static ObjectEmitter CreateSmallTree()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 50;
+    e.objTemplate.animation = rss.smallTreeAnim;
+    float startingPoint = OFFSCR_MIN;
+    e.objTemplate.animation.position = {startingPoint, WATER_2_Y};
+    e.objTemplate.velocity *= 0.5f;
+    return e;
+}
+
+static ObjectEmitter CreateBigTree()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 50;
+    e.objTemplate.animation = rss.bigTreeAnim;
+    float startingPoint = OFFSCR_MIN;
+    e.objTemplate.animation.position = {startingPoint, WATER_3_Y};
+    e.objTemplate.velocity *= 0.8f;
+    return e;
+}
+
+static ObjectEmitter Create2Turtles()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 50;
+    e.objTemplate.animation = rss.divingTurtleAnim;
+    float startingPoint = OFFSCR_MAX;
+    e.objTemplate.animation.position = {startingPoint, WATER_4_Y};
+    e.objTemplate.velocity *= -0.5f;
+    return e;
+}
+
+
+static ObjectEmitter CreateMidTree()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 20;
+    e.objTemplate.animation = rss.midTreeAnim;
+    float startingPoint = OFFSCR_MIN;
+    e.objTemplate.animation.position = {startingPoint, WATER_5_Y};
+    e.objTemplate.velocity *= 0.8f;
+    return e;
+}
+
+static ObjectEmitter CreateCrocodile()
+{
+    ObjectEmitter e = EmptyEmitter();
+    e.frameCounter = 20;
+    e.objTemplate.animation = rss.crocodileAnim;
+    float startingPoint = OFFSCR_MIN;
+    e.objTemplate.animation.position = {startingPoint, WATER_5_Y};
+    e.objTemplate.velocity *= 0.8f;
+    return e;
+}
+
 LevelEmitters GetTestLevelObjectEmitter()
 {
     LevelEmitters levelEmitters;
     for(auto& e : levelEmitters.emitters) e.isActive = false;
 
     // row 1 (fast left car)
-    levelEmitters.emitters[0].isActive = true;
-    levelEmitters.emitters[0].distIdx = 0;
-    levelEmitters.emitters[0].frameCounter = 810;
-    levelEmitters.emitters[0].objTemplate.animation = rss.fastLeftCarAnim;
-    levelEmitters.emitters[0].objTemplate.animation.position = {rss.screen.width, CARS_1_Y};
-    levelEmitters.emitters[0].objTemplate.isActive = true;
-    levelEmitters.emitters[0].objTemplate.velocity = {-0.3f, 0.0f};
-    levelEmitters.emitters[0].emitDistribution[0] = 1010;
-    levelEmitters.emitters[0].emitDistribution[1] = 0; // end
+    levelEmitters.emitters[0] = CreateSmallTree();
+    levelEmitters.emitters[0].objTemplate.velocity *= 0.5f;
+    levelEmitters.emitters[0].emitDistribution[0] = 400;
 
     return levelEmitters;
 }
-
 
 LevelEmitters LevelsModule::GetLevelObjectEmitter(int level) const
 {
@@ -35,65 +161,72 @@ LevelEmitters LevelsModule::GetLevelObjectEmitter(int level) const
     LevelEmitters levelEmitters;
     for(auto& e : levelEmitters.emitters) e.isActive = false;
 
+    float levelSpeed = 0.7f;
+
     // row 1 (fast left car)
-    levelEmitters.emitters[0].isActive = true;
-    levelEmitters.emitters[0].distIdx = 0;
-    levelEmitters.emitters[0].frameCounter = 190;
-    levelEmitters.emitters[0].objTemplate.animation = rss.fastLeftCarAnim;
-    levelEmitters.emitters[0].objTemplate.animation.position = {rss.screen.width, CARS_1_Y};
-    levelEmitters.emitters[0].objTemplate.isActive = true;
-    levelEmitters.emitters[0].objTemplate.velocity = {-0.7f, 0.0f};
-    levelEmitters.emitters[0].emitDistribution[0] = 210;
-    levelEmitters.emitters[0].emitDistribution[1] = 80;
-    levelEmitters.emitters[0].emitDistribution[2] = 150;
-    levelEmitters.emitters[0].emitDistribution[3] = 80;
-    levelEmitters.emitters[0].emitDistribution[4] = 0; // end
+    levelEmitters.emitters[0] = CreateRow1Car();
+    levelEmitters.emitters[0].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[0].emitDistribution[0] = 290;
+    levelEmitters.emitters[0].emitDistribution[1] = 100;
+    levelEmitters.emitters[0].emitDistribution[2] = 190;
+    levelEmitters.emitters[0].emitDistribution[3] = 100;
 
     // row 2 (tractor)
-    levelEmitters.emitters[1].isActive = true;
-    levelEmitters.emitters[1].distIdx = 0;
-    levelEmitters.emitters[1].frameCounter = 240;
-    levelEmitters.emitters[1].objTemplate.animation = rss.tractorAnim;
-    levelEmitters.emitters[1].objTemplate.animation.position = {0, CARS_2_Y};
-    levelEmitters.emitters[1].objTemplate.isActive = true;
-    levelEmitters.emitters[1].objTemplate.velocity = {0.4f, 0.0f};
-    levelEmitters.emitters[1].emitDistribution[0] = 250;
-    levelEmitters.emitters[1].emitDistribution[1] = 0; // end
+    levelEmitters.emitters[1] = CreateRow2Tractor();
+    levelEmitters.emitters[1].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[1].emitDistribution[0] = 380;
 
     // row 3 (slow left car)
-    levelEmitters.emitters[2].isActive = true;
-    levelEmitters.emitters[2].distIdx = 0;
-    levelEmitters.emitters[2].frameCounter = 100;
-    levelEmitters.emitters[2].objTemplate.animation = rss.slowCarAnim;
-    levelEmitters.emitters[2].objTemplate.animation.position = {rss.screen.width, CARS_3_Y};
-    levelEmitters.emitters[2].objTemplate.isActive = true;
-    levelEmitters.emitters[2].objTemplate.velocity = {-0.6f, 0.0f};
-    levelEmitters.emitters[2].emitDistribution[0] = 160;
-    levelEmitters.emitters[2].emitDistribution[1] = 100;
-    levelEmitters.emitters[2].emitDistribution[2] = 0; // end
+    levelEmitters.emitters[2] = CreateRow3Car();
+    levelEmitters.emitters[2].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[2].emitDistribution[0] = 350;
+    levelEmitters.emitters[2].emitDistribution[1] = 120;
 
     // row 4 (fast right car)
-    levelEmitters.emitters[3].isActive = true;
-    levelEmitters.emitters[3].distIdx = 0;
-    levelEmitters.emitters[3].frameCounter = 100;
-    levelEmitters.emitters[3].objTemplate.animation = rss.fastRightCarAnim;
-    levelEmitters.emitters[3].objTemplate.animation.position = {0.0f, CARS_4_Y};
-    levelEmitters.emitters[3].objTemplate.isActive = true;
-    levelEmitters.emitters[3].objTemplate.velocity = {0.9f, 0.0f};
+    levelEmitters.emitters[3] = CreateRow4Car();
+    levelEmitters.emitters[3].objTemplate.velocity *= levelSpeed;
     levelEmitters.emitters[3].emitDistribution[0] = 210;
-    levelEmitters.emitters[3].emitDistribution[1] = 0;
 
     // row 5 (truck)
-    levelEmitters.emitters[4].isActive = true;
-    levelEmitters.emitters[4].distIdx = 0;
-    levelEmitters.emitters[4].frameCounter = 165;
-    levelEmitters.emitters[4].objTemplate.animation = rss.truckAnim;
-    levelEmitters.emitters[4].objTemplate.animation.position = {rss.screen.width, CARS_5_Y};
-    levelEmitters.emitters[4].objTemplate.isActive = true;
-    levelEmitters.emitters[4].objTemplate.velocity = {-0.5f, 0.0f};
-    levelEmitters.emitters[4].emitDistribution[0] = 300;
-    levelEmitters.emitters[4].emitDistribution[1] = 180;
-    levelEmitters.emitters[4].emitDistribution[2] = 0;
+    levelEmitters.emitters[4] = CreateRow5Truck();
+    levelEmitters.emitters[4].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[4].emitDistribution[0] = 360;
+    levelEmitters.emitters[4].emitDistribution[1] = 250;
+
+    // water 1 (3 x turtles)
+    levelEmitters.emitters[5] = Create3Turtles();
+    levelEmitters.emitters[5].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[5].emitDistribution[0] = 300;
+    levelEmitters.emitters[5].emitDistribution[1] = 180;
+
+    // water 2 (small tree)
+    levelEmitters.emitters[6] = CreateSmallTree();
+    levelEmitters.emitters[6].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[6].emitDistribution[0] = 400;
+
+    // water 3 (big tree)
+    levelEmitters.emitters[7] = CreateBigTree();
+    levelEmitters.emitters[7].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[7].emitDistribution[0] = 500;
+
+    // water 4 (2 x turtles)
+    levelEmitters.emitters[8] = Create2Turtles();
+    levelEmitters.emitters[8].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[8].emitDistribution[0] = 200;
+    levelEmitters.emitters[8].emitDistribution[1] = 120;
+
+    // water 5 (mid tree)
+    levelEmitters.emitters[9] = CreateMidTree();
+    levelEmitters.emitters[9].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[9].emitDistribution[0] = 700;
+    levelEmitters.emitters[9].frameCounter = 250;
+
+    // water 5 (crocodile)
+    levelEmitters.emitters[10] = CreateCrocodile();
+    levelEmitters.emitters[10].objTemplate.velocity *= levelSpeed;
+    levelEmitters.emitters[10].emitDistribution[0] = 700;
+    levelEmitters.emitters[10].frameCounter = 0;
+    levelEmitters.emitters[10].name = "crocodile";
 
     return levelEmitters;
 }

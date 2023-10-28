@@ -16,7 +16,7 @@ struct CarsModule
     void EmitObject(ObjectEmitter& emitter);
 
     LevelEmitters levelEmitters;
-    GameObject objects[64];
+    GameObject objects[128];
 };
 
 extern CarsModule cars;

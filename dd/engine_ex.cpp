@@ -23,7 +23,8 @@ void circle::draw(color color, bool filled) const
     }
 }
 
-bool bound::collision(const bound &b1, const vec &v1, const bound &b2, const vec &v2)
+bool bound::collision(const bound &b1, const vec &v1,
+                      const bound& b2, const vec& v2)
 {
     for(const auto& r1 : b1.rects)
     {
@@ -63,6 +64,14 @@ bool bound::collision(const bound &b1, const vec &v1, const bound &b2, const vec
     return false;
 }
 
+bool bound::collision(const bound& b1, const vec& v1,
+                      const rect& r2)
+{
+    bound b2;
+    b2.rects.push_back(r2);
+    return collision(b1, v1, b2, {});
+}
+
 void bound::draw(const vec &v) const
 {
     for(const auto& r : rects)
@@ -74,7 +83,6 @@ void bound::draw(const vec &v) const
         (c+v).draw(colors::white, false);
     }
 }
-
 
 static std::map<std::string, uint32_t> s_ids;
 static std::vector<texture> s_textures;
@@ -106,6 +114,12 @@ static bool create(const std::string& imageFile)
     return true;
 }
 
+/*
+
+RLAPI void BeginTextureMode(RenderTexture2D target);              // Begin drawing to render texture
+RLAPI void EndTextureMode(void);
+
+*/
 void sprite::load(const std::string& imageFile, 
                   dd::rect src,
                   dd::vec sz)
@@ -147,16 +161,10 @@ void sprite::load(const std::string& imageFile,
     this->loaded = true;
 }
 
-void sprite::change_anchor(dd::anchors a)
-{
-    this->anchor = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(a);
-}
-
 dd::rect sprite::rect() const
 {
-    return dd::rect(this->position - this->anchor, this->size);
+    return dd::rect(this->position, this->size).anchor_rect(anchor);
 }
-
 
 void sprite::release_spritres()
 {
@@ -179,11 +187,12 @@ void sprite::draw() const
     auto src = this->source;
     if (flip_x) src.width = -src.width;
     if (flip_y) src.height = -src.height;
+    vec anchor_pos = dd::rect({0.0f, 0.0f}, this->size).anchor_pos(this->anchor);
 
     DrawTexturePro(cast(s_textures[ this->texture_id ]), 
                    cast(src),
                    cast(dd::rect(this->position, this->size)),
-                   cast(this->anchor),
+                   cast(anchor_pos),
                    this->rotate,
                    WHITE);
 }
@@ -199,7 +208,7 @@ void sprite::draw_at(point pos, anchors anchor) const
     auto src = this->source;
     if (flip_x) src.width = -src.width;
     if (flip_y) src.height = -src.height;
-    vec anchor_pos = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(anchor);
+    vec anchor_pos = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor_pos(anchor);
 
     DrawTexturePro(cast(s_textures[ this->texture_id ]),
                    cast(src),
@@ -224,6 +233,15 @@ bool sprite::collision(const sprite& s1, const std::string& boundName1,
 
     return bound::collision(it1->second, s1.rect().position(),
                             it2->second, s2.rect().position());
+}
+
+bool sprite::collision(const sprite& s1, const std::string& boundName1,
+                       const dd::rect& r2)
+{
+    auto it1 = s1.bounds.find(boundName1);
+    if (it1 == s1.bounds.end()) return false;
+
+    return bound::collision(it1->second, s1.rect().position(), r2);
 }
 
 void anim::fps(float fps)
@@ -261,6 +279,7 @@ void anim::play()
 void anim::pause(bool paused)
 {
     p_.paused = paused;
+    update(true);
 }
 
 void anim::restart()
@@ -316,12 +335,28 @@ int anim::frame() const
     return f;
 }
 
-void anim::update()
+void anim::update(bool firstFrame)
 {
+    auto setup_frame = [this](){
+        auto fr = this->frame();
+        if (fr < 0)
+        {
+            return;
+        }
+
+        auto& frame_sprite = p_.frames[size_t(fr)];
+
+        frame_sprite.position = this->position;
+        frame_sprite.anchor = this->anchor;
+        frame_sprite.rotate = this->rotate;
+        frame_sprite.flip_x = this->flip_x;
+        frame_sprite.flip_y = this->flip_y;
+    };
     if (p_.paused ||
         p_.fps == 0 ||
         p_.frames.empty())
     {
+        setup_frame();
         return;
     }
 
@@ -334,7 +369,7 @@ void anim::update()
     {
         if (loop || p_.elapsed <= dur)
         {
-            p_.elapsed += GetFrameTime();
+            p_.elapsed += firstFrame ? 0.0f : GetFrameTime();
         }
     }
 
@@ -349,10 +384,10 @@ void anim::update()
             p_.elapsed = 0.0f;
         }
     }
-
+    setup_frame();
 }
 
-void anim::draw() const
+void anim::draw()
 {
     auto fr = this->frame();
     if (fr < 0)
@@ -360,20 +395,15 @@ void anim::draw() const
         return;
     }
 
-    auto frame_sprite = p_.frames[size_t(fr)];
+    const auto& frame_sprite = p_.frames[size_t(fr)];
 
-    frame_sprite.position = this->position;
-    frame_sprite.anchor = this->anchor;
-    frame_sprite.size = this->size;
-    frame_sprite.rotate = this->rotate;
-    frame_sprite.flip_x = this->flip_x;
-    frame_sprite.flip_y = this->flip_y;
+//    frame_sprite.position = this->position;
+//    frame_sprite.anchor = this->anchor;
+//    frame_sprite.size = this->size;
+//    frame_sprite.rotate = this->rotate;
+//    frame_sprite.flip_x = this->flip_x;
+//    frame_sprite.flip_y = this->flip_y;
     frame_sprite.draw();
-}
-
-void anim::change_anchor(dd::anchors a)
-{
-    this->anchor = dd::rect(dd::point(0.0f, 0.0f), this->size).anchor(a);
 }
 
 rect anim::rect() const
@@ -383,7 +413,7 @@ rect anim::rect() const
     {
         return {0.0f, 0.0f, 0.0f, 0.0f};
     }
-    return this->p_.frames[f].rect() + position;
+    return this->p_.frames[f].rect();// + position;
 }
 
 bool anim::collision(const anim &a1, const anim &a2)
@@ -430,12 +460,30 @@ bool anim::collision(const anim& a1, const std::string& boundName1,
 void sound::load(const std::string& file)
 {
     std::string full_name = rss_folder() + "/sounds/" + file;
-    p_.sound_ = cast(LoadSound(full_name.c_str()));
+//    if (file == "jump.wav")
+//    {
+//        Wave w = LoadWave(full_name.c_str());
+//        int from = 4500;
+//        int to = 33074;
+//        WaveCrop(&w, from, to);
+//        w.frameCount = (to - from) / w.channels;
+//        ExportWave(w, "exported_jump.wav");
+//        p_.sound_ = cast(LoadSoundFromWave(w));
+//    }
+//    else
+    {
+        p_.sound_ = cast(LoadSound(full_name.c_str()));
+    }
 }
 
 void sound::play()
 {
     PlaySound(cast(p_.sound_));
+}
+
+void sound::stop()
+{
+    StopSound(cast(p_.sound_));
 }
 
 bool sound::is_playing() const
@@ -479,7 +527,7 @@ rect text::rect() const
     if (anchor != anchors::up_left)
     {
         dd::rect r = {{0, 0}, sz};
-        dd::point p = r.anchor(anchor);
+        dd::point p = r.anchor_pos(anchor);
         pos = pos - p;
     }
     return {pos, sz};
@@ -494,7 +542,7 @@ void text::draw() const
         if (anchor != anchors::up_left)
         {
             dd::rect r = {{0, 0}, size()};
-            dd::point p = r.anchor(anchor);
+            dd::point p = r.anchor_pos(anchor);
             pos = pos - p;
         }
         DrawTextEx(cast(p_.text_font),
