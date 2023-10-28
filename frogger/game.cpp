@@ -111,8 +111,8 @@ void GameModule::Draw()
 
     homes.Draw();
     cars.Draw();
-    frogger.Draw();
     homes.Draw();
+    frogger.Draw();
 
     engine.clipping_off();
     engine.camera_off();

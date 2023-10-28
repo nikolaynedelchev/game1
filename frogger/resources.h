@@ -117,7 +117,7 @@ struct ResourcesModule
 
     dd::vec hJumpSize = {27.0f, 0.0f};
     dd::vec vJumpSize = {0.0f, 36.0f};
-    float jumpFrames = 6;
+    float jumpFrames = 9; //6
     dd::vec jumpingMinPos = {10.0f, HOMES_Y + HOMES_H / 2.0f};
     dd::vec jumpingMaxPos = {SCREEN_WIDTH - 10.0f, LOW_LAND_Y + ROW_H / 2.0f};
 };

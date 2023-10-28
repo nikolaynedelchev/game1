@@ -111,7 +111,7 @@ static ObjectEmitter Create2Turtles()
 {
     ObjectEmitter e = EmptyEmitter();
     e.frameCounter = 50;
-    e.objTemplate.animation = rss.divingTurtleAnim;
+    e.objTemplate.animation = rss.turtleAnim;
     float startingPoint = OFFSCR_MAX;
     e.objTemplate.animation.position = {startingPoint, WATER_4_Y};
     e.objTemplate.velocity *= -0.5f;
