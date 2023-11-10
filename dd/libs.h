@@ -23,6 +23,9 @@ inline void println(const S& fmt, T&&... args)
     std::cout << vformat(fmt, fmt::make_format_args(args...)) << std::endl;
 }
 
+
+void println();
+
 template <typename S, typename... T>
 [[noreturn]]
 inline void fatal_error(const S& fmt, T&&... args)

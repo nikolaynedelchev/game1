@@ -217,6 +217,7 @@ public:
     int target_fps();
     float frame_time();
     double global_time();
+    static int64_t time_since_epoch();
 
     // frame
     void begin_frame();

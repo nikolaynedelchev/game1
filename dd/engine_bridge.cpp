@@ -196,6 +196,13 @@ namespace dd
         {
             return GetTime();
         }
+
+        int64_t engine::time_since_epoch()
+        {
+            auto now = std::chrono::system_clock::now();
+            auto now_ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch());
+            return now_ms.count();
+        }
     // }
         static bool is_in_clipping = false;
         static bool is_in_transform = false;
