@@ -46,7 +46,7 @@ struct sprite
     bool loaded = false;
 
 
-
+    void update();
     void draw() const;
     void draw_at(point position,
                  anchors anchor) const;
@@ -54,6 +54,8 @@ struct sprite
     void load(const std::string& imageFile, 
               dd::rect sourceRectangle,
               dd::vec size);
+
+    void attach(sprite s, point offset);
     //
     dd::rect rect() const;
     static void release_spritres();
@@ -64,6 +66,15 @@ struct sprite
                           const sprite& s2, const std::string& boundName2);
     static bool collision(const sprite& s1, const std::string& boundName1,
                           const dd::rect& r2);
+
+    struct attached
+    {
+        std::shared_ptr<sprite> sprite_ptr;
+        dd::point offset_pos;
+    };
+
+    void update_attached();
+    std::vector<attached> attached;
 };
 
 

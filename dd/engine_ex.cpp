@@ -161,6 +161,13 @@ void sprite::load(const std::string& imageFile,
     this->loaded = true;
 }
 
+void sprite::attach(sprite s, point offset)
+{
+    auto sprite_ptr = std::make_shared<sprite>();
+    *sprite_ptr = std::move(s);
+    attached.push_back({sprite_ptr, offset});
+}
+
 dd::rect sprite::rect() const
 {
     return dd::rect(this->position, this->size).anchor_rect(anchor);
@@ -174,6 +181,11 @@ void sprite::release_spritres()
     }
     s_textures.clear();
     s_ids.clear();
+}
+
+void sprite::update()
+{
+    update_attached();
 }
 
 void sprite::draw() const
@@ -195,6 +207,11 @@ void sprite::draw() const
                    cast(anchor_pos),
                    this->rotate,
                    WHITE);
+
+    for(const auto& a : attached)
+    {
+        a.sprite_ptr->draw_at(position + a.offset_pos, anchor);
+    }
 }
 
 void sprite::draw_at(point pos, anchors anchor) const
@@ -216,32 +233,146 @@ void sprite::draw_at(point pos, anchors anchor) const
                    cast(anchor_pos),
                    this->rotate,
                    WHITE);
+
+    for(const auto& a : attached)
+    {
+        a.sprite_ptr->draw_at(pos + a.offset_pos, anchor);
+    }
 }
 
 bool sprite::collision(const sprite &s1, const sprite &s2)
 {
-    return collision(s1, "", s2, "");
+    if (collision(s1, "", s2, ""))
+    {
+        return true;
+    }
+    for(const auto& a1 : s1.attached)
+    {
+        for(const auto& a2 : s2.attached)
+        {
+            if (collision(*a1.sprite_ptr, "", *a2.sprite_ptr, ""))
+            {
+                return true;
+            }
+        }
+    }
+    for(const auto& a1 : s1.attached)
+    {
+        if (collision(*a1.sprite_ptr, "", s2, ""))
+        {
+            return true;
+        }
+    }
+    for(const auto& a2 : s2.attached)
+    {
+        if (collision(*a2.sprite_ptr, "", s1, ""))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 bool sprite::collision(const sprite& s1, const std::string& boundName1,
                        const sprite& s2, const std::string& boundName2)
 {
     auto it1 = s1.bounds.find(boundName1);
-    if (it1 == s1.bounds.end()) return false;
     auto it2 = s2.bounds.find(boundName2);
-    if (it2 == s2.bounds.end()) return false;
 
-    return bound::collision(it1->second, s1.rect().position(),
-                            it2->second, s2.rect().position());
+    if (it1 != s1.bounds.end() && it2 != s2.bounds.end())
+    {
+        if (bound::collision(it1->second, s1.rect().position(),
+                             it2->second, s2.rect().position()))
+        {
+            return true;
+        }
+    }
+
+    for(const auto& a1 : s1.attached)
+    {
+        auto it1 = a1.sprite_ptr->bounds.find(boundName1);
+        if (it1 != a1.sprite_ptr->bounds.end())
+        {
+            for(const auto& a2 : s2.attached)
+            {
+                auto it2 = a2.sprite_ptr->bounds.find(boundName2);
+                if (it2 != a2.sprite_ptr->bounds.end())
+                {
+                    if (bound::collision(it1->second, s1.rect().position() + a1.offset_pos,
+                                         it2->second, s2.rect().position() + a2.offset_pos))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    if (it2 != s2.bounds.end())
+    {
+        for(const auto& a1 : s1.attached)
+        {
+            auto it1 = a1.sprite_ptr->bounds.find(boundName1);
+            if (it1 != a1.sprite_ptr->bounds.end())
+            {
+                if (bound::collision(it1->second, s1.rect().position() + a1.offset_pos,
+                                     it2->second, s2.rect().position()))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    if (it1 != s1.bounds.end())
+    {
+        for(const auto& a2 : s2.attached)
+        {
+            auto it2 = a2.sprite_ptr->bounds.find(boundName2);
+            if (it2 != a2.sprite_ptr->bounds.end())
+            {
+                if (bound::collision(it1->second, s1.rect().position(),
+                                     it2->second, s2.rect().position() + a2.offset_pos))
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 bool sprite::collision(const sprite& s1, const std::string& boundName1,
                        const dd::rect& r2)
 {
     auto it1 = s1.bounds.find(boundName1);
-    if (it1 == s1.bounds.end()) return false;
+    if (it1 != s1.bounds.end())
+    {
+        if (bound::collision(it1->second, s1.rect().position(), r2))
+        {
+            return true;
+        }
+    }
 
-    return bound::collision(it1->second, s1.rect().position(), r2);
+    for(const auto& a1 : s1.attached)
+    {
+        auto it1 = a1.sprite_ptr->bounds.find(boundName1);
+        if (it1 != a1.sprite_ptr->bounds.end())
+        {
+            if (bound::collision(it1->second, s1.rect().position() + a1.offset_pos, r2))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void sprite::update_attached()
+{
+    for(auto& a : attached)
+    {
+        a.sprite_ptr->position = position + a.offset_pos;
+        a.sprite_ptr->anchor = anchor;
+    }
 }
 
 void anim::fps(float fps)
@@ -351,6 +482,7 @@ void anim::update(bool firstFrame)
         frame_sprite.rotate = this->rotate;
         frame_sprite.flip_x = this->flip_x;
         frame_sprite.flip_y = this->flip_y;
+        frame_sprite.update();
     };
     if (p_.paused ||
         p_.fps == 0 ||
