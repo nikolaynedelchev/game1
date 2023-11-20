@@ -9,7 +9,7 @@ using Json = ::nlohmann::json;
 
 void Test()
 {
-    std::string api_key = "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";
+    std::string api_key = "...";
     //std::string url = "https://api.openai.com/v1/completions";
 std::string url = "https://api.openai.com/v1/chat/completions";
 
@@ -64,7 +64,7 @@ std::string url = "https://api.openai.com/v1/chat/completions";
 
 int main()
 {
-    Test(); return 0;
+    //Test(); return 0;
     FroggerGame::game.Init();
     FroggerGame::game.MainLoop();
     FroggerGame::game.Deinit();
