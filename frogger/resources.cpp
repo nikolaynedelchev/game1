@@ -254,9 +254,10 @@ void ResourcesModule::Load()
         {
             s.anchor = (dd::anchors::centered);
             s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+            s.attach(s, {s.size.x, 0});
             turtleAnim.add_frame(s);
         }
-        turtleAnim.fps(0.6f);
+        turtleAnim.fps(2.6f);
         turtleAnim.anchor = (dd::anchors::centered);
         turtleAnim.visible = true;
         turtleAnim.loop = true;
@@ -267,16 +268,23 @@ void ResourcesModule::Load()
         {
             s.anchor = (dd::anchors::centered);
             s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+            s.attach(s, {s.size.x, 0});
             divingTurtleAnim.add_frame(s);
         }
+        std::vector<dd::sprite> diveFrames;
         for (auto s : turtleDive)
         {
             s.anchor = (dd::anchors::centered);
             s.bounds["step"].rects.push_back({{0, 0}, s.rect().size()});
+            s.attach(s, {s.size.x, 0});
+            diveFrames.push_back(s);
             divingTurtleAnim.add_frame(s);
         }
         divingTurtleAnim.add_frame(emptySprite);
-        divingTurtleAnim.fps(1.5f);
+        divingTurtleAnim.add_frame(diveFrames[1]);
+        divingTurtleAnim.add_frame(diveFrames[0]);
+
+        divingTurtleAnim.fps(2.6f);
         divingTurtleAnim.anchor = (dd::anchors::centered);
         divingTurtleAnim.visible = true;
         divingTurtleAnim.loop = true;

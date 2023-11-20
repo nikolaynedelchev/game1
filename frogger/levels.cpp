@@ -78,7 +78,8 @@ static ObjectEmitter Create3Turtles()
 {
     ObjectEmitter e = EmptyEmitter();
     e.frameCounter = 50;
-    e.objTemplate.animation = rss.turtleAnim;
+    //e.objTemplate.animation = rss.turtleAnim;
+    e.objTemplate.animation = rss.divingTurtleAnim;
     float startingPoint = OFFSCR_MAX;
     e.objTemplate.animation.position = {startingPoint, WATER_1_Y};
     e.objTemplate.velocity *= -0.3f;
@@ -115,6 +116,7 @@ static ObjectEmitter Create2Turtles()
     float startingPoint = OFFSCR_MAX;
     e.objTemplate.animation.position = {startingPoint, WATER_4_Y};
     e.objTemplate.velocity *= -0.5f;
+    e.objTemplate.name = "turtle";
     return e;
 }
 
@@ -196,8 +198,7 @@ LevelEmitters LevelsModule::GetLevelObjectEmitter(int level) const
     // water 1 (3 x turtles)
     levelEmitters.emitters[5] = Create3Turtles();
     levelEmitters.emitters[5].objTemplate.velocity *= levelSpeed;
-    levelEmitters.emitters[5].emitDistribution[0] = 300;
-    levelEmitters.emitters[5].emitDistribution[1] = 180;
+    levelEmitters.emitters[5].emitDistribution[0] = 500;
 
     // water 2 (small tree)
     levelEmitters.emitters[6] = CreateSmallTree();
@@ -212,8 +213,7 @@ LevelEmitters LevelsModule::GetLevelObjectEmitter(int level) const
     // water 4 (2 x turtles)
     levelEmitters.emitters[8] = Create2Turtles();
     levelEmitters.emitters[8].objTemplate.velocity *= levelSpeed;
-    levelEmitters.emitters[8].emitDistribution[0] = 200;
-    levelEmitters.emitters[8].emitDistribution[1] = 120;
+    levelEmitters.emitters[8].emitDistribution[0] = 350;
 
     // water 5 (mid tree)
     levelEmitters.emitters[9] = CreateMidTree();

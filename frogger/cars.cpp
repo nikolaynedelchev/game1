@@ -21,7 +21,7 @@ void CarsModule::Draw()
     for(auto& obj : objects)
     {
         if (obj.isActive == false) continue;
-        if (obj.animation.position.y <= HOMES_H + HOMES_Y)
+        if (obj.name == "turtle")
         {
             int aaa = 34;
             (void)aaa;
@@ -51,11 +51,6 @@ void CarsModule::UpdateEmitters()
 {
     for(auto& emitter : levelEmitters.emitters)
     {
-        if (emitter.name == "crocodile")
-        {
-            int aa = 34;
-            (void)aa;
-        }
         if (emitter.isActive == false) continue;
         if (emitter.frameCounter >= emitter.emitDistribution[emitter.distIdx])
         {

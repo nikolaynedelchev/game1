@@ -9,6 +9,7 @@ struct GameObject
     bool isActive = false;
     dd::anim animation;
     dd::vec velocity;
+    std::string name;
 };
 
 struct ObjectEmitter
