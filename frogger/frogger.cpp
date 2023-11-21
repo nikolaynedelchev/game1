@@ -249,7 +249,7 @@ void FroggerModule::RestartPosition()
 bool FroggerModule::CheckForCollision()
 {
     auto froggerSprite = GetCurrentSprite();
-    for(auto& obj : cars.objects)
+    for(auto& obj : objects.objects)
     {
         if (obj.isActive == false) continue;
 
@@ -276,7 +276,7 @@ bool FroggerModule::CheckAndUpdateStep()
         return false;
 
     auto froggerSprite = GetCurrentSprite();
-    for(auto& obj : cars.objects)
+    for(auto& obj : objects.objects)
     {
         if (obj.isActive == false) continue;
 

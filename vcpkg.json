@@ -1,4 +1,4 @@
  
 {
-    "dependencies": ["raylib", "pthread", "raygui", "fmt", "nlohmann-json", "cpr"]
+    "dependencies": ["raylib", "pthread", "raygui", "fmt", "nlohmann-json", "cpr", "entt"]
 }

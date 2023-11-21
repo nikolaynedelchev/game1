@@ -13,6 +13,7 @@
 #include "game.h"
 #include "frogger.h"
 #include "homes.h"
-#include "cars.h"
+#include "objects.h"
 #include "trees.h"
+#include "snakes.h"
 #include "levels.h"

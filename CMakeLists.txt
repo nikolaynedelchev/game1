@@ -13,6 +13,7 @@ function(add_game GAME_NAME)
     find_package(nlohmann_json REQUIRED)
     find_package(CURL REQUIRED)
     find_package(cpr REQUIRED)
+    find_package(EnTT CONFIG REQUIRED)
 
     file(GLOB_RECURSE GAME1_SOURCE_FILES  ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.cpp
                                           ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.c)
@@ -33,7 +34,8 @@ function(add_game GAME_NAME)
         message(FATAL_ERROR "Unknown compiler")
     endif()
 
-    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES})
+    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES} EnTT::EnTT)
+
     target_include_directories(${GAME_NAME} PRIVATE dd)
 
     message(STATUS "Copy resource files...")

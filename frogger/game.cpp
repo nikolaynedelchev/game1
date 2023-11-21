@@ -50,7 +50,7 @@ void GameModule::Init()
 
     dd::println("CLIPPING RECT: {}", clippingRect);
     frogger.Init();
-    cars.Init();
+    objects.Init();
     homes.Init();
 }
 
@@ -85,7 +85,7 @@ void GameModule::Update()
     remainingTime -= engine.frame_time();
     if (remainingTime < 0.0f) remainingTime = 0.0f;
     frogger.Update();
-    cars.Update();
+    objects.Update();
     homes.Update();
 }
 
@@ -110,7 +110,7 @@ void GameModule::Draw()
     DrawTime();
 
     homes.Draw();
-    cars.Draw();
+    objects.Draw();
     homes.Draw();
     frogger.Draw();
 

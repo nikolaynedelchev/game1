@@ -5,7 +5,7 @@
 namespace FroggerGame
 {
 
-struct ObjectsModule
+struct SnakesModule
 {
     void Init();
     void Update();
@@ -19,5 +19,5 @@ struct ObjectsModule
     GameObject objects[128];
 };
 
-extern ObjectsModule objects;
+extern SnakesModule snakes;
 }

@@ -3,20 +3,20 @@
 namespace FroggerGame
 {
 
-void ObjectsModule::Init()
+void SnakesModule::Init()
 {
     for(auto& o : objects) o.isActive = false;
     levelEmitters = levels.GetLevelObjectEmitter(1);
     for(int i = 0; i < 1400; i++) Update();
 }
 
-void ObjectsModule::Update()
+void SnakesModule::Update()
 {
     UpdateObjects();
     UpdateEmitters();
 }
 
-void ObjectsModule::Draw()
+void SnakesModule::Draw()
 {
     for(auto& obj : objects)
     {
@@ -30,7 +30,7 @@ void ObjectsModule::Draw()
     }
 }
 
-void ObjectsModule::UpdateObjects()
+void SnakesModule::UpdateObjects()
 {
     for(auto& obj : objects)
     {
@@ -47,7 +47,7 @@ void ObjectsModule::UpdateObjects()
     }
 }
 
-void ObjectsModule::UpdateEmitters()
+void SnakesModule::UpdateEmitters()
 {
     for(auto& emitter : levelEmitters.emitters)
     {
@@ -63,7 +63,7 @@ void ObjectsModule::UpdateEmitters()
     }
 }
 
-void ObjectsModule::EmitObject(ObjectEmitter &emitter)
+void SnakesModule::EmitObject(ObjectEmitter &emitter)
 {
     for(auto& object : objects)
     {
@@ -80,6 +80,6 @@ void ObjectsModule::EmitObject(ObjectEmitter &emitter)
     }
 }
 
-ObjectsModule objects;
+SnakesModule snakes;
 }
 
