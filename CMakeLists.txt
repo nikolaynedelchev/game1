@@ -13,7 +13,7 @@ function(add_game GAME_NAME)
     find_package(nlohmann_json REQUIRED)
     find_package(CURL REQUIRED)
     find_package(cpr REQUIRED)
-    find_package(EnTT CONFIG REQUIRED)
+	find_package(flecs CONFIG REQUIRED)
 
     file(GLOB_RECURSE GAME1_SOURCE_FILES  ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.cpp
                                           ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.c)
@@ -34,7 +34,7 @@ function(add_game GAME_NAME)
         message(FATAL_ERROR "Unknown compiler")
     endif()
 
-    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES} EnTT::EnTT)
+    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES} flecs::flecs)
 
     target_include_directories(${GAME_NAME} PRIVATE dd)
 
@@ -48,6 +48,7 @@ add_subdirectory(dd)
 add_game(frogger)
 add_game(sprite_mgr)
 add_game(hello_world)
+add_game(misc_tests)
 
 message(STATUS "User CMake config done!")
 
