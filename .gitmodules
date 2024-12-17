@@ -1,3 +1,6 @@
 [submodule "vcpkg"]
 	path = vcpkg
 	url = https://github.com/microsoft/vcpkg.git
+[submodule "thirdparty/tiny-dnn"]
+	path = thirdparty/tiny-dnn
+	url = https://github.com/tiny-dnn/tiny-dnn.git

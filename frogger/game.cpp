@@ -27,8 +27,8 @@ void PrintDebugInfo()
 void GameModule::Init()
 {
     PrintDebugInfo();
-    //auto res = engine.init(DD_RSS_FOLDER, 1600, 1200, "FROGGER", false);
-    auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
+    auto res = engine.init(DD_RSS_FOLDER, 600, 800, "FROGGER", false);
+    //auto res = engine.init_fs(DD_RSS_FOLDER, "FROGGER");
     systemWidth = res.x;
     systemHeight = res.y;
     engine.target_fps(60);

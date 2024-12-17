@@ -15,6 +15,9 @@ function(add_game GAME_NAME)
     find_package(cpr REQUIRED)
 	find_package(flecs CONFIG REQUIRED)
 
+    add_subdirectory(thirdparty/tiny-dnn)
+    include_directories(thirdparty/tiny-dnn)
+
     file(GLOB_RECURSE GAME1_SOURCE_FILES  ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.cpp
                                           ${CMAKE_SOURCE_DIR}/${GAME_NAME}/*.c)
 
@@ -34,7 +37,7 @@ function(add_game GAME_NAME)
         message(FATAL_ERROR "Unknown compiler")
     endif()
 
-    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES} flecs::flecs)
+    target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES} flecs::flecs tiny_dnn)
 
     target_include_directories(${GAME_NAME} PRIVATE dd)
 
@@ -46,9 +49,9 @@ file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 add_subdirectory(dd)
 #add_game(test_game)
 add_game(frogger)
-add_game(sprite_mgr)
-add_game(hello_world)
-add_game(misc_tests)
+#add_game(sprite_mgr)
+#add_game(hello_world)
+#add_game(misc_tests)
 
 message(STATUS "User CMake config done!")
 
