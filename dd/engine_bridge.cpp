@@ -375,6 +375,11 @@ namespace dd
             HideCursor();
         }
 
+        void engine::mouse_cursor_show()
+        {
+            ShowCursor();
+        }
+
         void engine::sleep(int milli)
         {
             std::this_thread::sleep_for( std::chrono::milliseconds(milli) );

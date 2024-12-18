@@ -254,6 +254,7 @@ public:
     vec mouse_wheel_move_v(void);                     // Get mouse wheel movement for both X and Y
     void mouse_cursor_set(int cursor);                // Set mouse cursor
     void mouse_cursor_hide();
+    void mouse_cursor_show();
 
     // tools
     void sleep(int milli);
