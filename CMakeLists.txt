@@ -9,6 +9,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 
 function(add_game GAME_NAME)
+
+    #find_package(entt CONFIG REQUIRED)
     find_package(fmt CONFIG REQUIRED)
     find_package(nlohmann_json REQUIRED)
     find_package(CURL REQUIRED)
@@ -37,18 +39,26 @@ function(add_game GAME_NAME)
     target_link_libraries(${GAME_NAME} PRIVATE dd fmt::fmt cpr::cpr nlohmann_json::nlohmann_json ${CURL_LIBRARIES} flecs::flecs tiny_dnn)
 
     target_include_directories(${GAME_NAME} PRIVATE dd)
+    target_include_directories(${GAME_NAME} PRIVATE ${ENTT_INCLUDE_DIRS})
 
     message(STATUS "Copy resource files...")
 endfunction()
 
-file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
+
+#file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
+file(GLOB_RECURSE RESOURCE_FILES "${CMAKE_SOURCE_DIR}/resources/*")
+foreach(RESOURCE ${RESOURCE_FILES})
+    get_filename_component(FILENAME ${RESOURCE} NAME)
+    configure_file(${RESOURCE} ${CMAKE_BINARY_DIR}/resources/${FILENAME} COPYONLY)
+endforeach()
+#file(COPY ${CMAKE_SOURCE_DIR}/resources DESTINATION ${CMAKE_BINARY_DIR})
 
 add_subdirectory(dd)
 add_subdirectory(thirdparty/tiny-dnn)
 include_directories(thirdparty/tiny-dnn)
 add_game(checkers)
 #add_game(test_game)
-add_game(frogger)
+#add_game(frogger)
 #add_game(sprite_mgr)
 #add_game(hello_world)
 #add_game(misc_tests)
